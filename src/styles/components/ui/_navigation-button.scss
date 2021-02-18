@@ -1,0 +1,79 @@
+.navigation {
+
+    &__checkbox {
+        display: none;
+    }
+    
+    &__button {
+        height: 7rem;
+        width: 7rem;
+        border-radius: 50%;
+        z-index: 200;
+        text-align: center; //centers the 3 lines icon
+        cursor: pointer;
+
+        @include respond(tab-port) {
+            top: 3.5rem;
+            right: 3.5rem;
+        }
+        @include respond(phone) {
+            top: 3rem;
+            right: 3rem;
+        }
+    }
+
+    //icon
+    &__icon {
+
+        position: relative;
+        margin-top: 3.5rem;
+
+        //create the 3 lines as sudo elements
+
+        &,
+        &::before,
+        &::after {
+            width: 3rem;
+            height: 2px;
+            background-color: $color-grey-dark-3;
+            display: inline-block;
+            transition: all .2s;
+        }
+
+        &::before,
+        &::after {
+            content: "";
+            position: absolute;
+            left: 0;
+        }
+
+        &::before {
+            top: -.8rem;
+        }
+        &::after {
+            top: .8rem;
+        }
+    }
+
+    &__button:hover &__icon::before {
+        top: -1rem;
+    }
+    &__button:hover &__icon::after {
+        top: 1rem;
+    }
+
+    //make the line in the meddle transparent
+    &__checkbox:checked + &__button &__icon {
+        background-color: transparent;
+    }
+   
+    //rotate the before and after lines to make an x
+    &__checkbox:checked + &__button &__icon::before {
+        top: 0;
+        transform: rotate(135deg);
+    }
+    &__checkbox:checked + &__button &__icon::after {
+        top: 0;
+        transform: rotate(-135deg);
+    }
+}

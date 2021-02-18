@@ -1,0 +1,91 @@
+body {
+    font-family: "Lato", sans-serif;
+    font-weight: 400;
+    /* font-size: 16px; */
+    line-height: 1.7;
+    color: $color-grey-dark;
+}
+
+.heading-primary{
+    color: $color-white;
+    text-transform: uppercase;
+    backface-visibility: hidden; /*It fix the little shake in the animation. It hides the back part of the element for the user */
+    margin-bottom: 6rem;
+
+
+    &--main {
+        display: block;
+        font-size: $font-size-big;
+        font-weight: 400;
+        letter-spacing: 3.5rem;
+        animation-name: move-in-left;
+        animation-duration: 1s;
+        animation-timing-function: ease-out;
+        /* animation-delay: 2s; 
+        animation-iteration-count: 3; */
+
+        @include respond(phone) {
+            letter-spacing: 2rem;
+            font-size: 5rem;
+        }
+    }
+    
+    /* .heading-primary-main:hover {
+        animation: move-in-right 1s ease-out;
+    } */
+    
+    &--sub {
+        display: block;
+        font-size: 2rem;
+        font-weight: 400;
+        letter-spacing: 1.75rem;
+        animation: move-in-right 1s ease-out;
+
+        @include respond(phone) {
+            letter-spacing: .5rem;
+        }
+    
+        /* animation-name: move-in-right;
+        animation-duration: 1s;
+        animation-timing-function: ease-out; */
+    }
+}
+
+.heading-secondary{
+    font-size: 3.5rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    background-image: linear-gradient(to right, $color-primary-light, $color-primary);
+    display: inline-block;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    letter-spacing: .2rem;
+    transition: all .2s;
+
+    @include respond(tab-port) {
+        font-size: 3rem;
+    }
+    
+    @include respond(phone) {
+        font-size: 2.5rem;
+    }
+
+    &:hover {
+        transform: skewY(2deg) skewX(15deg) scale(1.1);
+        text-shadow: .5rem 1rem 2rem rgba($color-black, .2);
+    }
+}
+
+.heading-tertiary {
+    font-size: $font-size-default;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.paragraph {
+    font-size: $font-size-default;
+    &:not(:last-child) {
+        margin-bottom: 3rem;
+    }
+}
