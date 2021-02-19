@@ -1,0 +1,106 @@
+.switch-container{
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    position: relative;
+    width: 10%;
+}
+
+.switch-label {
+    position: relative;
+    margin-left: 150px;
+    top: 6;
+    left: 10;
+    font-family: inherit;
+    font-size: $font-size-small;
+    display: inline-block;
+}
+
+.toggle-switch {
+    position: absolute;
+    width: 75px;
+    display: inline-block;
+    vertical-align: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    text-align: left;
+
+    &-checkbox {
+      display: none;
+    }
+
+    //build the switch rectangle
+    &-label {
+      display: block;
+      overflow: hidden;
+      cursor: pointer;
+      border: 0 solid $color-white;
+      border-radius: 20px;
+      margin: 0;
+    }
+
+    &-inner {
+      display: block;
+      width: 200%;
+      margin-left: -100%;
+      transition: margin 0.3s ease-in 0s;
+
+      &:before,
+      &:after {
+        display: block;
+        float: left;
+        width: 50%;
+        height: 34px;
+        padding: 0;
+        line-height: 34px;
+        font-size: 14px;
+        color: $color-white;
+        box-sizing: border-box;
+      }
+
+      //build the active rectangle
+      &:before {
+        content: "";
+        text-transform: uppercase;
+        padding-left: 10px;
+        background-color: $color-primary;
+        color: $color-white;
+      }
+    }
+
+    //build the not active rectangle
+    &-inner:after {
+      content: "";
+      text-transform: uppercase;
+      padding-right: 10px;
+      background-color: $color-grey-light-2;
+      color: $color-white;
+      text-align: right;
+    }
+
+    //build the switch white circle
+    &-switch {
+      display: block;
+      width: 24px;
+      margin: 5px;
+      background: $color-white;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 40px;
+      border: 0 solid #bbb;
+      border-radius: 20px;
+      transition: all 0.3s ease-in 0s;
+    }
+
+    //move the switch white circle
+    &-checkbox:checked + &-label {
+      .toggle-switch-inner {
+        margin-left: 0;
+      }
+      .toggle-switch-switch {
+        right: 0px;
+      }
+    }
+  }

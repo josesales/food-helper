@@ -1,0 +1,11 @@
+.helper-button-container{
+    border: none;
+    cursor: pointer;
+    font-size: 2.5rem;
+    color: inherit;
+
+    &:active,
+    &:focus {
+        outline:none;
+    }
+}

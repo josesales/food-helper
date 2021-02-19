@@ -1,5 +1,6 @@
 .search-container {
-    flex: 0 0 40%;
+    // flex: 0 0 40%;
+    width: 50%;
     
     display: flex;
     align-items: center;
@@ -7,9 +8,9 @@
 
     &__input {
         font-family: inherit;
-        font-size: inherit;
+        font-size: $font-size-small;
         color: inherit;
-        background-color: $color-grey-light-2;
+        background-color: $color-grey-light-1;
         border: none;
         padding: .7rem 2rem;
         border-radius: 10rem;
@@ -18,18 +19,9 @@
         margin-right: -3.25rem;
 
         &:focus {
-            width: 100%;
             outline: none;
-            background-color: $color-grey-light-2;
+            background-color: $color-grey-light-1;
+            width: 100%;
         }
-
-        &::-webkit-input-placeholder {
-            font-weight: 100;
-            color: $color-grey-dark-3;
-        }
-    }
-
-    &__input:focus + &__button {
-        background-color: $color-grey-light-2;
     }
 }

@@ -1,28 +1,16 @@
 import React from 'react';
+import HelperButton from './HelperButton';
 
-const Search = ({ placeholder, name, onSearchChange, button }) => {
+const Search = ({ placeholder, onSearchChange, buttonName, onButtonClick }) => {
 
     return (
         <div className="search-container">
+
             <input type="text" placeholder={placeholder} onChange={onSearchChange} className="search-container__input" />
-            {button}
+
+            <HelperButton name={buttonName} onButtonClick={onButtonClick} />
         </div>
     );
 }
-
-//plus
-// &box&boxvh;
-// &#x0253C;
-// &#9532;
-
-//left arrow
-// &Lang;
-// &#x027EA;
-// &#10218;
-
-//right arrow
-// &Rang;
-// &#x027EB;
-// &#10219;
 
 export default Search;
