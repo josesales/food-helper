@@ -6,7 +6,7 @@ const NavigationButton = () => (
 
         <input type="checkbox" id="nav-toggle" className="navigation__checkbox" />
 
-        <label for="nav-toggle" className="navigation__button">
+        <label htmlFor="nav-toggle" className="navigation__button">
             <span className="navigation__icon"></span>
         </label>
     </React.Fragment>

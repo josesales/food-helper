@@ -1,10 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
+import { fetchRecipes } from '../redux/recipe/recipe-actions';
+import RecipeItems from '../components/RecipeItems';
 
-const Home = () => {
+const Home = ({ fetchRecipes }) => {
+
+
+    //Fetch recipes like componentDidMount style
+    useEffect(() => {
+        fetchRecipes();
+    }, []);
 
     return (
-        <div className="home">HomePage</div>
+        <div className="home">
+            <RecipeItems />
+        </div>
     );
 };
 
-export default Home;
+const mapDispatchToProps = dispatch => ({
+    fetchRecipes: () => dispatch(fetchRecipes())
+})
+
+export default connect(null, mapDispatchToProps)(Home);

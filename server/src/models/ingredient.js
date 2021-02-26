@@ -8,6 +8,11 @@ const ingredientSchema = new mongoose.Schema(
             trim: true
         },
 
+        amount: {
+            type: String,
+            trim: true
+        },
+
         recipes: [
             {
                 type: mongoose.Schema.Types.ObjectId,
