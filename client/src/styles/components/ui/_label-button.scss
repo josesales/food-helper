@@ -1,0 +1,14 @@
+.label-button {
+    margin-top: auto;
+    margin-bottom: 1rem;
+    padding: .8rem;
+    font-size: $font-size-default;
+    border: 1px solid $color-white;
+    border-radius: 10px;
+    cursor: pointer;
+
+    &:hover {
+        background-color: $color-white;
+        color: $color-primary;
+    }
+}

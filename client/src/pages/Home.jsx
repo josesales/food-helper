@@ -5,7 +5,6 @@ import RecipeItems from '../components/RecipeItems';
 
 const Home = ({ fetchRecipes }) => {
 
-
     //Fetch recipes like componentDidMount style
     useEffect(() => {
         fetchRecipes();

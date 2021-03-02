@@ -1,7 +1,8 @@
 import { RecipeActionTypes } from './recipe-types';
 
 const INITIAL_STATE = {
-    recipes: []
+    recipes: [],
+    recipe: null
 }
 
 const recipeReducer = (state = INITIAL_STATE, action) => {
@@ -10,7 +11,14 @@ const recipeReducer = (state = INITIAL_STATE, action) => {
 
         case RecipeActionTypes.FETCH_RECIPES:
             return {
+                ...state,
                 recipes: action.payload
+            };
+
+        case RecipeActionTypes.SET_RECIPE:
+            return {
+                ...state,
+                recipe: action.payload
             };
 
         default:

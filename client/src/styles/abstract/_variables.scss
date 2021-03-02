@@ -18,11 +18,8 @@ $color-white: #fff;
 //Font
 $font-size-small: 1.5rem;
 $font-size-default: 1.6rem;
-$font-size-big: 6rem;
+$font-size-big: 2rem;
 
-//Grid
-$grid-width-small: 50rem;
-$grid-width: 114rem;
-$space-vertical-small: 6rem;
-$space-vertical: 8rem;
-$space-horizontal: 6rem;
+//Shadows
+$shadow-dark: 0 2rem 6rem rgba(0, 0, 0, .3);
+$shadow-light: 0 2rem 5rem rgba(0, 0, 0, .06);

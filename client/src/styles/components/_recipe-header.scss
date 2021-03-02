@@ -1,0 +1,15 @@
+
+.recipe-header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 5rem;
+}
+
+.recipe-header__rate {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: $color-primary;
+}

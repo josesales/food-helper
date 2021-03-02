@@ -2,11 +2,12 @@
 
     font-size: 1.2rem;
     width: 28rem;
-	height: 28rem;
+	height: 32rem;
     margin: 1rem;
     perspective: 150rem;
     -moz-perspective: 150rem;
-    
+    cursor: default;
+
     .details-checkbox {
         display: none;
     }
@@ -26,34 +27,36 @@
         transition: transform 1s ease;
 
         &--front {
-            background-color: $color-primary;
+            // background-color: $color-grey-dark-1;
+            background-image: linear-gradient(to right bottom, $color-grey-dark-1, $color-primary-light);
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
             align-items: center;
+            z-index: 100;
         }
 
-        &--button {
-            margin-top: auto;
-            padding: 1.5rem;
+        &--back-button {
+            font-size: 2.5rem;
+            padding: 0 2rem
+        }
+
+        &--recipe-button {
+            text-decoration: none;
+            color: inherit;
         }
 
         &--back {
             //makes the back part start rotated because when we go to the back part of the card 
             //we want to see the front of the div of the back part
             transform: rotateY(180deg);
-            background-color: $color-secondary;
+            // background-image: linear-gradient(to right bottom, $color-grey-dark-1, $color-primary-light);
+            background-image: linear-gradient(to left bottom, $color-grey-dark-1, $color-primary-light);
             display: flex;
+            flex-flow: row wrap;
             flex-direction: column;
             justify-content: flex-start;
             align-items: center;
-            overflow: auto;
-        }
-
-        &--button {
-            font-size: $font-size-default;
-            border: 1px solid $color-grey-light-2;
-            cursor: pointer;
         }
     }
 
@@ -66,23 +69,48 @@
         transform: rotateY(0);
     }
 
-    &__details {
-        padding: 1.5rem;
+    &__ingredients {
+        list-style: none;
+        width: 100%;
+        height: 60%;
+        text-align: center;
+        overflow-y: auto;
         
-        ul {
-            list-style: none;
-            width: 70%;
-            li {
-                text-align: center;
-                font-size: $font-size-default;
-                // padding: 1rem;
-
-                &:not(:last-child){
-                    border-bottom: 1px solid $color-grey-light-2;
-                }
-
-            }
+        li {
+            font-size: $font-size-default;
         }
+
+        :not(:last-child) {
+            margin-bottom: .8rem;
+        }
+
+        :hover {
+            color: $color-grey-dark-2;
+        }
+
+        /* width */
+        &::-webkit-scrollbar {
+            width: 1.5rem;
+        }
+        
+        /* Track */
+        &::-webkit-scrollbar-track {
+            box-shadow: inset 0 0 5px $color-white;
+            border-radius: 10px;
+        }
+        
+        /* Handle */
+        &::-webkit-scrollbar-thumb {
+            background: $color-white;
+            border-radius: 10px;
+        }
+    }
+
+    .back-button-container {
+        display: flex;
+        width: 100%;
+        justify-content: space-evenly;
+        margin-top: auto;
     }
 } 
 

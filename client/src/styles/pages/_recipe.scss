@@ -1,0 +1,17 @@
+.recipe-container {
+	display: flex;
+	flex-flow: row wrap;
+	justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 10rem;
+
+    .image-container,
+    .video-container{
+        width: 35rem;
+        height: 27rem;
+        display: flex;
+        margin-left: auto;
+    }
+}
+
+

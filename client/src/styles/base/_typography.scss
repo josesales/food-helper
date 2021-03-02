@@ -1,48 +1,14 @@
 
-.heading-primary{
-    color: $color-white;
-    text-transform: uppercase;
-    backface-visibility: hidden; /*It fix the little shake in the animation. It hides the back part of the element for the user */
-    margin-bottom: 6rem;
-
-
-    &--main {
-        display: block;
-        font-size: $font-size-big;
-        font-weight: 400;
-        letter-spacing: 3.5rem;
-        animation-name: move-in-left;
-        animation-duration: 1s;
-        animation-timing-function: ease-out;
-        /* animation-delay: 2s; 
-        animation-iteration-count: 3; */
-
-        @include respond(phone) {
-            letter-spacing: 2rem;
-            font-size: 5rem;
-        }
-    }
-    
-    &--sub {
-        display: block;
-        font-size: 2rem;
-        font-weight: 400;
-        letter-spacing: 1.75rem;
-        animation: move-in-right 1s ease-out;
-
-        @include respond(phone) {
-            letter-spacing: .5rem;
-        }
-    
-        /* animation-name: move-in-right;
-        animation-duration: 1s;
-        animation-timing-function: ease-out; */
-    }
+.heading-primary {
+    text-transform: capitalize;
+    font-weight: 700;
+    font-size: 3.5rem;
+    letter-spacing: 3px;
 }
 
-.heading-secondary{
+.heading-secondary {
     font-size: 3.5rem;
-    text-transform: uppercase;
+    text-transform: capitalize;
     font-weight: 700;
     background-image: linear-gradient(to right, $color-primary-light, $color-primary);
     display: inline-block;
@@ -69,11 +35,13 @@
 .heading-tertiary {
     font-size: $font-size-default;
     font-weight: 700;
-    text-transform: uppercase;
+    text-transform: capitalize;
+    margin-bottom: 1rem;
 }
 
 .paragraph {
     font-size: $font-size-default;
+
     &:not(:last-child) {
         margin-bottom: 3rem;
     }

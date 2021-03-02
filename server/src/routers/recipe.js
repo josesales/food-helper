@@ -39,11 +39,12 @@ router.get('/recipes', async (req, res) => {
             limit: parseInt(req.query.limit), //if not provided it will or if its not an int its gonna be ignored by mongoose
             skip: parseInt(req.query.skip),
             sort
-        });
-        //TODO Populate the ingredients
+        }).populate('ingredients').populate('comments');
+
         res.send(recipes);
     } catch (error) {
-        res.status(500).send(error.message);
+        console.log(error)
+        res.sendStatus(500).send(error);
     }
 });
 

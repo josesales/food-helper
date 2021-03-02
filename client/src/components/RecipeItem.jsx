@@ -1,13 +1,21 @@
-import Rate from './ui/Rate';
+import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { setRecipe } from '../redux/recipe/recipe-actions';
+import HTML_ENTITIES from '../util/htmlEntities';
+import Media from './ui/Media';
+import LabelButton from './ui/LabelButton';
+import Rate from './Rate';
 
-const RecipeItem = ({ recipe }) => {
+const RecipeItem = ({ recipe, setRecipe }) => {
 
+    const IngredientsUi = recipe.ingredients.map(ingredient => <li key={ingredient._id}>{ingredient.name}</li>);
 
-    const IngredientsLi = recipe.ingredients.map(ingredient => <li>{ingredient}</li>);
+    const onRecipeClick = () => {
+        setRecipe(recipe);
+    }
 
-    // style={`background-image:url(${recipe.image})`}
     return (
-        <div className="recipe-item">
+        <div className="recipe-item" >
 
             <input type="checkbox" id={'details-checkbox_' + recipe._id} className="details-checkbox" />
 
@@ -17,20 +25,39 @@ const RecipeItem = ({ recipe }) => {
 
                 <Rate number={5} />
 
-                <label className="recipe-item__container--button" htmlFor={'details-checkbox_' + recipe._id}>
+                <Media image={recipe.image} />
+
+                <LabelButton className="recipe-item__container--details-button" htmlFor={'details-checkbox_' + recipe._id}>
                     Details
-                </label>
+                </LabelButton>
             </div>
 
             <div className="recipe-item__container recipe-item__container--back">
-                <div class="recipe-item__details">
-                    <ul>
-                        {IngredientsLi}
-                    </ul>
+
+                <h2 className="heading-tertiary">Ingredients</h2>
+
+                <ul className="recipe-item__ingredients">
+                    {IngredientsUi}
+                </ul>
+
+                <div className="back-button-container">
+                    <LabelButton className="recipe-item__container--back-button" htmlFor={'details-checkbox_' + recipe._id}>
+                        {HTML_ENTITIES.leftArrow}
+                    </LabelButton>
+
+                    <LabelButton>
+                        <Link className="recipe-item__container--recipe-button" to='/recipe' onClick={onRecipeClick} >
+                            Recipe
+                        </Link>
+                    </LabelButton>
                 </div>
             </div>
         </div>
     );
 }
 
-export default RecipeItem;
+const mapDispatchToProps = dispatch => ({
+    setRecipe: recipe => dispatch(setRecipe(recipe))
+});
+
+export default connect(null, mapDispatchToProps)(RecipeItem);

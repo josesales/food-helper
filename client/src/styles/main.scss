@@ -7,18 +7,23 @@
 @import "base/typography";
 @import "base/utilities";
 
+@import "components/ui/label-button";
+@import "components/ui/media";
+@import "components/ui/loader";
+@import "components/ui/navigation-button";
+
 @import "components/header";
 @import "components/helper-button";
 @import "components/navigation";
 @import "components/navigation-items";
 @import "components/recipe-items";
 @import "components/recipe-item";
+@import "components/rate";
+@import "components/recipe-header";
+@import "components/recipe-steps";
 @import "components/search";
 @import "components/toggle-switch";
+@import "components/user-comment-items";
+@import "components/user-comment-item";
 
-@import "components/ui/loader";
-@import "components/ui/navigation-button";
-@import "components/ui/rate";
-
-@import "pages/home";
 @import "pages/recipe";

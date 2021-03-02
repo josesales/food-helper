@@ -1,4 +1,7 @@
 const mongoose = require('mongoose');
+const Ingredient = require('./ingredient');
+const Material = require('./material');
+const Comment = require('./comment');
 
 const recipeSchema = new mongoose.Schema(
     {
@@ -42,6 +45,22 @@ const recipeSchema = new mongoose.Schema(
             trim: true,
         },
 
+        ingredients: [{
+            type: mongoose.Schema.Types.ObjectId,
+            //Using the Object instead of just a string otherwise we get the error Schema hasn't been registered for model
+            ref: Ingredient
+        }],
+
+        comments: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Comment'
+        }],
+
+        materials: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: Material
+        }],
+
         category: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Category'
@@ -51,20 +70,6 @@ const recipeSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'DietType'
         },
-
-        ingredients: [
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'Ingredient'
-            }
-        ],
-
-        materials: [
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'Material'
-            }
-        ],
     },
 
     {

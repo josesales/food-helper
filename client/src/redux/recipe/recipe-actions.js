@@ -18,3 +18,8 @@ export const fetchRecipes = () => {
         dispatch({ type: RecipeActionTypes.FETCH_RECIPES, payload: recipes });
     };
 };
+
+export const setRecipe = recipe => {
+
+    return { type: RecipeActionTypes.SET_RECIPE, payload: recipe }
+};

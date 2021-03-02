@@ -1,0 +1,46 @@
+.recipe-steps {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: center;
+	max-width: 60%;
+	cursor: default;
+	
+	&__list {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: flex-start;
+		font-weight: 600;
+		
+		li {
+			font-size: $font-size-default;
+			font-weight: 400;
+		}
+	
+		:not(:last-child) {
+			margin-bottom: .8rem;
+		}
+	
+		:hover {
+			color: $color-grey-dark-2;
+		}
+	
+		/* width */
+		&::-webkit-scrollbar {
+			width: 1.5rem;
+		}
+		
+		/* Track */
+		&::-webkit-scrollbar-track {
+			box-shadow: inset 0 0 5px $color-grey-dark-1;
+			border-radius: 10px;
+		}
+		
+		/* Handle */
+		&::-webkit-scrollbar-thumb {
+			background: $color-grey-dark-1;
+			border-radius: 10px;
+		}
+	}
+}
