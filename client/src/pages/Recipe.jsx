@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import RecipeHeader from '../components/RecipeHeader';
 import RecipeSteps from '../components/RecipeSteps';
+import Loader from '../components/ui/Loader';
 import Media from '../components/ui/Media';
-import UserCommentItems from '../components/UserCommentItems';
 import { selectRecipe } from '../redux/recipe/recipe-selector';
+
+const UserCommentItems = lazy(() => import('../components/UserCommentItems'));
 
 const Recipe = ({ recipe }) => {
 
@@ -23,12 +25,18 @@ const Recipe = ({ recipe }) => {
             {
                 recipe.comments && recipe.videoUrl ?
 
+
                     <div className="recipe-container">
-                        {recipe.comments ? <UserCommentItems comments={recipe.comments} /> : ''}
+                        {
+                            recipe.comments ?
+                                <Suspense fallback={<Loader />}>
+                                    <UserCommentItems comments={recipe.comments} />
+                                </Suspense>
+                                : ''
+                        }
                         {recipe.videoUrl ? <Media video={recipe.videoUrl} containerClass="video-container" /> : ''}
                     </div> : ''
             }
-
         </React.Fragment>
     );
 }

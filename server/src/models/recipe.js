@@ -35,7 +35,6 @@ const recipeSchema = new mongoose.Schema(
         videoUrl: {
             type: String,
             trim: true,
-
             maxLength: 300,
         },
 
@@ -61,6 +60,11 @@ const recipeSchema = new mongoose.Schema(
             ref: Material
         }],
 
+        user: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
+        },
+
         category: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Category'
@@ -69,6 +73,26 @@ const recipeSchema = new mongoose.Schema(
         dietType: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'DietType'
+        },
+
+        rate: {
+            type: Number,
+            default: 0,
+            validate: value => {
+                if (value < 0 || value > 5) {
+                    throw Error('Rate must be a number between 0 and 5');
+                }
+            }
+        },
+
+        peoplePerServing: {
+            type: Number,
+            default: 1,
+            validate: value => {
+                if (value <= 0) {
+                    throw Error('PeoplePerServing must be a number above 0');
+                }
+            }
         },
     },
 
