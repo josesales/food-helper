@@ -1,0 +1,5 @@
+import { createSelector } from "reselect";
+
+const selectReviewState = state => state.review;
+
+export const selectReviews = createSelector([selectReviewState], reviewState => reviewState.reviews);

@@ -9,7 +9,7 @@ import Rate from './Rate';
 const RecipeItem = ({ recipe, setRecipe }) => {
 
     const IngredientsUi = recipe.ingredients.map(ingredient => <li key={ingredient._id}>{ingredient.name}</li>);
-
+    console.log(recipe.rate);
     const onRecipeClick = () => {
         setRecipe(recipe);
     }
@@ -23,7 +23,7 @@ const RecipeItem = ({ recipe, setRecipe }) => {
 
                 <h2>{recipe.name}</h2>
 
-                <Rate number={5} />
+                <Rate number={recipe.rate} />
 
                 <Media image={recipe.image} />
 

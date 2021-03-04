@@ -1,19 +1,17 @@
 const express = require('express');
-const Recipe = require('../models/recipe');
 const Review = require('../models/review');
 const httpStatus = require('../util/httpStatus');
 
-
 const router = new express.Router();
 
-router.post('/recipes', async (req, res) => {
-    const recipe = new Recipe({
+router.post('/reviews', async (req, res) => {
+    const review = new Review({
         ...req.body,
     });
 
     try {
-        await recipe.save();
-        res.status(httpStatus.created).send(recipe);
+        await review.save();
+        res.status(httpStatus.created).send(review);
     } catch (error) {
         res.status(httpStatus.badRequest).send(error.message);
     }
@@ -22,8 +20,7 @@ router.post('/recipes', async (req, res) => {
 //GET /recipes?completed=true
 //GET /recipes?limit=10&skip=10
 //GET /recipes?sortBy=createdAt_desc
-router.get('/recipes', async (req, res) => {
-
+router.get('/reviews/:recipeId', async (req, res) => {
     const match = {};
     const sort = {};
 
@@ -37,41 +34,41 @@ router.get('/recipes', async (req, res) => {
     }
 
     try {
+        const recipeId = req.params.recipeId;
 
-        let recipes = await Recipe.find(null, null, {
+        const reviews = await Review.find({ recipe: recipeId }, null, {
             limit: parseInt(req.query.limit), //if not provided it will or if its not an int its gonna be ignored by mongoose
             skip: parseInt(req.query.skip),
             sort
-        }).populate('ingredients').populate('user').populate('reviews');
+        }).populate('user');
 
-        recipes = Recipe.getRecipesWithRate(recipes);
-        res.send(recipes);
+        res.status(httpStatus.ok).send(reviews);
     } catch (error) {
         console.log(error)
         res.sendStatus(httpStatus.internalServerError).send(error);
     }
 });
 
-router.get('/recipes/:id', async (req, res) => {
+router.get('/reviews/:id', async (req, res) => {
     try {
-        const recipesId = req.params.id;
-        let recipe = await Recipe.findOne({ _id: recipesId });
-        if (!recipe) {
+        const reviewId = req.params.id;
+        const review = await Review.findOne({ _id: reviewId });
+        if (!review) {
             res.status(httpStatus.notFound).send();
         }
-        res.send(recipes);
+        res.status(httpStatus.ok).send(review);
     } catch (error) {
         res.status(httpStatus.internalServerError).send(error.message);
     };
 });
 
-router.delete('/recipes/:id', async (req, res) => {
+router.delete('/reviews/:id', async (req, res) => {
     try {
-        const recipe = await Recipe.findOneAndDelete({ _id: req.params.id });
-        if (!recipe) {
+        const review = await Review.findOneAndDelete({ _id: req.params.id });
+        if (!review) {
             return res.status(httpStatus.notFound).send();
         }
-        res.send(recipe);
+        res.send(review);
     } catch (error) {
         res.status(httpStatus.internalServerError).send(error.message);
     }

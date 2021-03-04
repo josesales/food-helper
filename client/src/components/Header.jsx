@@ -17,20 +17,22 @@ const Header = () => {
     // <HelperButton displayName={HTML_ENTITIES.add} onHelperButtonClick={onHelperButtonClick} />;
 
     return (
-        <header className="header">
+        <div className="header-container">
+            <header className="header">
 
-            <Navigation />
+                <Navigation />
 
-            <Link className='header__logo' to='/'>
-                <img src={logo} alt="Food Helper Logo" className="header__logo" />
-            </Link>
+                <Link className='header__logo' to='/'>
+                    <img src={logo} alt="Food Helper Logo" className="header__logo" />
+                </Link>
 
-            <Search placeholder={'Add an Ingredient'} onSearchChange={onSearchChange}
-                buttonName={HTML_ENTITIES.add} onButtonClick={onAddButtonClick} />
+                <Search placeholder={'Add an Ingredient'} onSearchChange={onSearchChange}
+                    buttonName={HTML_ENTITIES.add} onButtonClick={onAddButtonClick} />
 
-            <ToggleSwitch name="Filters" isActive={areFiltersActive} onChange={newValue => setAreFiltersActive(newValue)} />
+                <ToggleSwitch name="Filters" isActive={areFiltersActive} onChange={newValue => setAreFiltersActive(newValue)} />
 
-        </header>
+            </header>
+        </div>
     );
 }
 

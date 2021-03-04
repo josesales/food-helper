@@ -13,7 +13,7 @@ const RecipeHeader = ({ recipe }) => {
                 <h1 className="heading-primary">{recipe.name}</h1>
 
                 <div className="recipe-header__rate">
-                    <Rate number={5} />
+                    <Rate number={recipe.rate} />
                 </div>
             </div>
         </React.Fragment>

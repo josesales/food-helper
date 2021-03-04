@@ -56,8 +56,8 @@ userSchema.virtual('recipes', {
     'localField': '_id'
 });
 
-userSchema.virtual('comments', {
-    'ref': 'Comment',
+userSchema.virtual('reviews', {
+    'ref': 'Review',
     'foreignField': 'user',
     'localField': '_id'
 });
@@ -65,7 +65,6 @@ userSchema.virtual('comments', {
 userSchema.methods.generateAuthToken = async function () {
 
     const user = this;
-
     const token = jwt.sign({ _id: user._id.toString() }, process.env.JWT_KEY);
 
     user.tokens = user.tokens.concat({ token });
@@ -82,7 +81,7 @@ userSchema.methods.toJSON = function () {
     //delete the password and tokens from the user object that will be sent to the user in the response
     delete userObject.password;
     delete userObject.tokens;
-    delete userObject.avatar;
+    // delete userObject.avatar;
     return userObject;
 }
 

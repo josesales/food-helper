@@ -1,4 +1,4 @@
-import React, { lazy, Suspense } from 'react';
+import React, { useEffect, lazy, Suspense } from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import RecipeHeader from '../components/RecipeHeader';
@@ -6,10 +6,19 @@ import RecipeSteps from '../components/RecipeSteps';
 import Loader from '../components/ui/Loader';
 import Media from '../components/ui/Media';
 import { selectRecipe } from '../redux/recipe/recipe-selector';
+import { getReviewsByRecipe } from '../redux/review/review-actions';
 
-const UserCommentItems = lazy(() => import('../components/UserCommentItems'));
+const ReviewItems = lazy(() => import('../components/ReviewItems'));
 
-const Recipe = ({ recipe }) => {
+const Recipe = ({ recipe, getReviewsByRecipe }) => {
+
+    useEffect(() => {
+
+        //if the array of review ids is not empty then it fetches the review objects of the recipe
+        if (recipe.reviews.length > 0) {
+            getReviewsByRecipe(recipe._id);
+        }
+    }, []);
 
     return (
         <React.Fragment>
@@ -23,14 +32,13 @@ const Recipe = ({ recipe }) => {
             </div>
 
             {
-                recipe.comments && recipe.videoUrl ?
-
+                recipe.reviews && recipe.videoUrl ?
 
                     <div className="recipe-container">
                         {
-                            recipe.comments ?
+                            recipe.reviews ?
                                 <Suspense fallback={<Loader />}>
-                                    <UserCommentItems comments={recipe.comments} />
+                                    <ReviewItems reviews={recipe.reviews} />
                                 </Suspense>
                                 : ''
                         }
@@ -45,4 +53,8 @@ const mapStateToProps = createStructuredSelector({
     recipe: selectRecipe
 });
 
-export default connect(mapStateToProps)(Recipe);
+const mapDispatchToProps = dispatch => ({
+    getReviewsByRecipe: recipeId => dispatch(getReviewsByRecipe(recipeId))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Recipe);
