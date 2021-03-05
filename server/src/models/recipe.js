@@ -107,7 +107,7 @@ recipeSchema.statics.getRecipesWithRate = recipes => {
         recipes.forEach(recipe => {
             const reviews = recipe.reviews;
             if (reviews.length == 0) {
-                recipe.rate = 1;
+                recipe.rate = 0;
                 return;
             }
 
@@ -127,7 +127,7 @@ recipeSchema.statics.getRecipesWithRate = recipes => {
                     weightedValues[review.rate]++;
                 } else {
                     //lack of rate and other different values are considered weight 1
-                    weightedValues[1]++;
+                    // weightedValues[1]++;
                 }
             });
 

@@ -1,0 +1,41 @@
+.recipe-form {
+
+    &__title {
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .center {
+
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: flex-start;
+        align-items: center;
+        // margin-bottom: 10rem;
+
+        .container {
+            // width: 100%;
+            width: 50%;
+            height: 48vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+    
+        }
+
+        .image-container {
+            width: 35rem;
+            height: 27rem;
+            display: flex;
+            margin-left: auto;
+            box-shadow: $shadow-dark;
+            border-radius: 10px;
+            display: none;
+        }
+    }
+}
+
+

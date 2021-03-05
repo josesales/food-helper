@@ -1,0 +1,63 @@
+.field {
+    width: 100%;
+    height: 30%;
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    &__text,
+    &__select__text {
+        background-color: $color-grey-light-1;
+        font-family: inherit;
+        color: inherit;
+        font-size: $font-size-default;
+        padding: 1.5rem 2rem;
+        border-radius: 10rem;
+        width: 100%;
+        display: block;
+        border: 3px solid transparent; //we also have to define here so elements around don't move during focus due to the 3px border-bottom 
+        transition: all .3s;
+        position: relative;
+
+        &:focus {
+            outline: none; //remove the highlighted border when the element is focused
+            box-shadow: 0 1rem 2rem rgba($color-black, .1);
+            border-bottom: 3px solid $color-primary; 
+        }
+    }
+
+    &__label {
+        color: inherit;
+        position: absolute;
+        top: 0;
+        left: 0;
+        font-size: $font-size-default;
+        font-size: 2rem;
+        font-weight: 700;
+        margin-left: 2rem;
+        margin-top: -1.2rem;
+
+        display: block;
+        transition: all .3s;
+    }
+
+    &__text:placeholder-shown ~ .field__label,
+    &__select__text:placeholder-shown ~ .field__label {
+        opacity: 0; //hides the label when the placeholder is shown which means by default it will be hidden
+        visibility: hidden;
+        // //sets the label up initially so when it gets shown the label goes back to it's original position being moved down by the animation
+        transform: translateY(4rem);
+    }
+
+    &__select {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+
+        &__text {
+            width: 100%;
+            margin-right: -3.25rem;
+        }
+    }
+}
