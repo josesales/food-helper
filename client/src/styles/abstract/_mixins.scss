@@ -1,16 +1,54 @@
-@mixin clearfix {
-    &:after {
-        content: "";
-        display: table;
-        clear: both;
+@mixin primary-gradient {
+    background-image: linear-gradient(to right bottom, $color-grey-dark-1, $color-primary-light);
+}
+
+@mixin input {
+    background-color: $color-grey-light-1;
+    font-family: inherit;
+    color: inherit;
+    font-size: $font-size-default;
+    padding: 1.5rem 2rem;
+    border-radius: 10rem;
+    width: 100%;
+    display: block;
+    border: 3px solid transparent; //we also have to define here so elements around don't move during focus due to the 3px border-bottom 
+}
+
+@mixin base-button {
+    padding: .8rem 2rem;
+    width: 10rem;
+    font-size: $font-size-default;
+    border: 1px solid $color-white;
+    border-radius: 10px;
+    cursor: pointer;
+    text-align: center;
+    
+}
+
+@mixin label-button {
+    
+    @include base-button;
+    margin-bottom: 1rem;
+    padding: .8rem;
+
+    &:hover {
+        background-color: $color-white;
+        color: $color-primary;
     }
 }
 
-@mixin absoluteCenter {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+@mixin button {
+
+    @include base-button;
+    background-color: $color-grey-light-2;
+    color: $color-white;
+    padding: .8rem 2rem;
+    outline: none;
+		
+    &:hover {
+        background-color: $color-primary;
+        color: $color-white;
+    }
 }
 
 //media query manager

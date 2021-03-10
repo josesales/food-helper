@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from "reselect";
 import Rate from './Rate';
-import { selectRecipe } from '../redux/recipe/recipe-selector';
+import { selectCurrentRecipe } from '../redux/recipe/recipe-selector';
 
 const RecipeHeader = ({ recipe }) => {
 
@@ -23,7 +23,7 @@ const RecipeHeader = ({ recipe }) => {
 }
 
 const mapStateToProps = createStructuredSelector({
-    recipe: selectRecipe
+    recipe: selectCurrentRecipe
 });
 
 export default connect(mapStateToProps)(RecipeHeader);

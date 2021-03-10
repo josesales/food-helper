@@ -5,7 +5,7 @@ import RecipeHeader from '../components/RecipeHeader';
 import RecipeSteps from '../components/RecipeSteps';
 import Loader from '../components/ui/Loader';
 import Media from '../components/ui/Media';
-import { selectRecipe } from '../redux/recipe/recipe-selector';
+import { selectCurrentRecipe } from '../redux/recipe/recipe-selector';
 import { getReviewsByRecipe } from '../redux/review/review-actions';
 
 const ReviewItems = lazy(() => import('../components/ReviewItems'));
@@ -50,7 +50,7 @@ const Recipe = ({ recipe, getReviewsByRecipe }) => {
 }
 
 const mapStateToProps = createStructuredSelector({
-    recipe: selectRecipe
+    recipe: selectCurrentRecipe
 });
 
 const mapDispatchToProps = dispatch => ({

@@ -1,6 +1,6 @@
 .review-item {
-
-    background-image: linear-gradient(to right bottom, $color-grey-dark-1, $color-primary-light);
+    
+    @include primary-gradient;
     width: 60rem;
     height: 50%;
     border-radius: 10px;

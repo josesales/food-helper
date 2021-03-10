@@ -1,9 +1,12 @@
 
 .header {
+    // position: fixed;
+    // z-index: 1000;
     height: 10vh;
     display: flex;
     align-items: center;
     margin-bottom: 5rem;
+    background-color: $color-white;
     
     &__logo {
         height: 12rem;

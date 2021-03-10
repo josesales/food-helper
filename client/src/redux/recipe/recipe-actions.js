@@ -19,7 +19,7 @@ export const fetchRecipes = () => {
     };
 };
 
-export const setRecipe = recipe => {
+export const setCurrentRecipe = recipe => {
 
-    return { type: RecipeActionTypes.SET_RECIPE, payload: recipe }
+    return { type: RecipeActionTypes.SET_CURRENT_RECIPE, payload: recipe }
 };

@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { selectRecipe } from '../redux/recipe/recipe-selector';
+import { selectCurrentRecipe } from '../redux/recipe/recipe-selector';
 
 const RecipeSteps = ({ recipe: { steps } = {} }) => {
 
@@ -17,7 +17,7 @@ const RecipeSteps = ({ recipe: { steps } = {} }) => {
 }
 
 const mapStateToProps = createStructuredSelector({
-    recipe: selectRecipe
+    recipe: selectCurrentRecipe
 });
 
 export default connect(mapStateToProps)(RecipeSteps);

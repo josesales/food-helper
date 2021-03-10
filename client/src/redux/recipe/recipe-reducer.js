@@ -2,7 +2,7 @@ import { RecipeActionTypes } from './recipe-types';
 
 const INITIAL_STATE = {
     recipes: [],
-    recipe: null
+    currentRecipe: null
 }
 
 const recipeReducer = (state = INITIAL_STATE, action) => {
@@ -15,10 +15,10 @@ const recipeReducer = (state = INITIAL_STATE, action) => {
                 recipes: action.payload
             };
 
-        case RecipeActionTypes.SET_RECIPE:
+        case RecipeActionTypes.SET_CURRENT_RECIPE:
             return {
                 ...state,
-                recipe: action.payload
+                currentRecipe: action.payload
             };
 
         default:

@@ -1,16 +1,35 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ReactComponent as Upload } from "../assets/upload.svg";
 
-const ImageUpload = () => (
+const ImageUpload = () => {
 
-    <div className="image-upload">
+    const [image, setImage] = useState(null);
 
-        <label for="file-input">
-            <Upload className="image-upload__img" />
-        </label>
+    const onFileUploaded = ({ target }) => {
+        if (target.files && target.files[0]) {
+            var reader = new FileReader();
 
-        <input type="file" accept="image/jpeg, image/png" name="avatar" id="file-input" />
-    </div>
-)
+            reader.onload = function (e) {
+                setImage(e.target.result);
+            };
+
+            reader.readAsDataURL(target.files[0]);
+        }
+    }
+
+    return (
+
+        <div className="image-upload">
+
+            <label htmlFor="file-input">
+                {
+                    image ? <img src={image} className="image-upload__img" /> : <Upload className="image-upload__img" />
+                }
+            </label>
+
+            <input type="file" accept="image/jpeg, image/png" name="avatar" id="file-input" onChange={onFileUploaded} />
+        </div>
+    );
+}
 
 export default ImageUpload;

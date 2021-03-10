@@ -4,4 +4,6 @@ const selectRecipeState = state => state.recipe;
 
 export const selectRecipes = createSelector([selectRecipeState], recipeState => recipeState.recipes);
 
-export const selectRecipe = createSelector([selectRecipeState], recipeState => recipeState.recipe);
+export const selectCurrentRecipe = createSelector([selectRecipeState], recipeState => recipeState.currentRecipe);
+
+export const selectCurrentRecipeSteps = createSelector([selectCurrentRecipe], recipeState => recipeState.currentRecipe.steps);

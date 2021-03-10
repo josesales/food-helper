@@ -1,17 +1,17 @@
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { setRecipe } from '../redux/recipe/recipe-actions';
+import { setCurrentRecipe } from '../redux/recipe/recipe-actions';
 import HTML_ENTITIES from '../util/htmlEntities';
 import Media from './ui/Media';
 import LabelButton from './ui/LabelButton';
 import Rate from './Rate';
 
-const RecipeItem = ({ recipe, setRecipe }) => {
+const RecipeItem = ({ recipe, setCurrentRecipe }) => {
 
     const IngredientsUi = recipe.ingredients.map(ingredient => <li key={ingredient._id}>{ingredient.name}</li>);
-    console.log(recipe.rate);
+
     const onRecipeClick = () => {
-        setRecipe(recipe);
+        setCurrentRecipe(recipe);
     }
 
     return (
@@ -57,7 +57,7 @@ const RecipeItem = ({ recipe, setRecipe }) => {
 }
 
 const mapDispatchToProps = dispatch => ({
-    setRecipe: recipe => dispatch(setRecipe(recipe))
+    setCurrentRecipe: recipe => dispatch(setCurrentRecipe(recipe))
 });
 
 export default connect(null, mapDispatchToProps)(RecipeItem);

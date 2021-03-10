@@ -27,8 +27,7 @@
         transition: transform 1s ease;
 
         &--front {
-            // background-color: $color-grey-dark-1;
-            background-image: linear-gradient(to right bottom, $color-grey-dark-1, $color-primary-light);
+            @include primary-gradient;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
@@ -37,7 +36,7 @@
         }
 
         &--back-button {
-            font-size: 2.5rem;
+            font-size: $arrow-size;
             padding: 0 2rem
         }
 
@@ -50,7 +49,6 @@
             //makes the back part start rotated because when we go to the back part of the card 
             //we want to see the front of the div of the back part
             transform: rotateY(180deg);
-            // background-image: linear-gradient(to right bottom, $color-grey-dark-1, $color-primary-light);
             background-image: linear-gradient(to left bottom, $color-grey-dark-1, $color-primary-light);
             display: flex;
             flex-flow: row wrap;

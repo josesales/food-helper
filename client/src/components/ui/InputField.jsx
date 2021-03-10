@@ -2,22 +2,23 @@ import React from 'react';
 
 const InputField = props => {
 
-    let InputUI = null;
-    let LabelUI = null;
+    let InputUi = null;
+    let LabelUi = null;
     const { type, id, placeholder } = props.children.props;
 
-    if (type === 'text') {
-        InputUI = <input {...props.children.props} className="field__text" />;
-        LabelUI = <label for={id} className="field__label">{placeholder}</label>;
+    if (type === 'text') { //Normal Input Text
+
+        InputUi = <input {...props.children.props} className="field__text" />;
+        if (placeholder) {
+            LabelUi = <label htmlFor={id} className="field__label">{placeholder}</label>;
+        }
     }
 
     return (
-
         <div className="field">
-            {InputUI ? InputUI : props.children}
-            {LabelUI}
+            { InputUi ? InputUi : props.children}
+            { LabelUi}
         </div>
-
     );
 
 }

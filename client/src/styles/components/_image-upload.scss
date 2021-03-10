@@ -1,12 +1,11 @@
 .image-upload {
-  
-  margin-left: auto;
-  background-image: linear-gradient(to right bottom, $color-grey-dark-1, $color-primary-light);
+  position: relative;
+  @include primary-gradient;
   border-radius: 10px;
-  
+
   &:hover {
     background-image: linear-gradient(to right bottom, $color-grey-dark-1, $color-white-2);
-    // background-color: $color-white-2;
+    background-color: $color-white-2;
   }
   
   &__img {
@@ -15,13 +14,15 @@
       height: 27rem;
       fill: $color-white-2;
       display: flex;
-      margin-left: auto;
       box-shadow: $shadow-dark;
       border-radius: 10px; //for the bottom corners
+      transition: all .2s;
 
       &:hover {
-        fill: $color-primary;
-        background-color: $color-white-2;
+        fill:  $color-white-2;
+        background-color: $color-primary;
+        box-shadow: 0 2.5rem 4rem rgba($color-black, .5);
+        transform: scale(1.05) translateY(-.5rem);
       }
   }
 
