@@ -1,5 +1,5 @@
-import React, { useEffect, lazy, Suspense, useState } from 'react';
-import { connect } from 'react-redux';
+import React, { useEffect, lazy, Suspense, useState, useRef } from 'react';
+import { connect, useSelector } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import ImageUpload from '../components/ImageUpload';
 import EditSteps from '../components/EditSteps';
@@ -13,10 +13,11 @@ import { selectCurrentRecipe } from '../redux/recipe/recipe-selector';
 import { getReviewsByRecipe } from '../redux/review/review-actions';
 import HTML_ENTITIES from '../util/htmlEntities';
 import TextArea from '../components/ui/TextArea';
-import { setCurrentRecipe } from '../redux/recipe/recipe-actions';
+import { fetchIngredients } from '../redux/ingredient/ingredient-actions';
+import { fetchMaterials } from '../redux/material/material-actions';
+import { postPatch } from '../util/request-sender';
 
-
-const AddEditRecipe = ({ recipeDB }) => {
+const AddEditRecipe = ({ recipeDB, fetchIngredients, fetchMaterials }) => {
 
     const [recipe, setRecipe] = useState(recipeDB ? recipeDB : {
         name: '',
@@ -31,13 +32,6 @@ const AddEditRecipe = ({ recipeDB }) => {
     const onRecipeChange = e => {
         setRecipe({ ...recipe, [e.target.id]: e.target.value });
     }
-
-    //Search
-    const onSearchChange = () => {
-        console.log(recipe.videoUrl);
-    }
-
-    const onAddButtonClick = () => { }
 
     // New Step
     const [newStep, setNewStep] = useState('');
@@ -75,15 +69,27 @@ const AddEditRecipe = ({ recipeDB }) => {
         }));
     }
 
-    const onSaveRecipeClick = () => { }
+    const onSaveRecipeClick = async () => {
+        try {
+            const savedRecipe = await postPatch('/recipes', 'POST', recipe);
+        } catch (error) {
+            console.log('Error while saving the recipe: ' + error.message);
+        }
+    }
 
-    // useEffect(() => {
+    const ingredients = useSelector(state => state.ingredient.ingredients);
+    const materials = useSelector(state => state.material.materials);
 
-    //if the array of review ids is not empty then it fetches the review objects of the recipe
-    //     if (recipe.reviews.length > 0) {
-    //         getReviewsByRecipe(recipe._id);
-    //     }
-    // }, []);
+    // Get ingredients and materials for search component
+    useEffect(() => {
+        if (ingredients.length == 0) {
+            fetchIngredients();
+        }
+
+        if (materials.length == 0) {
+            fetchMaterials();
+        }
+    }, []);
 
     return (
         <div className="recipe-form">
@@ -96,29 +102,30 @@ const AddEditRecipe = ({ recipeDB }) => {
                 <div className="container">
 
                     <InputField>
-                        <input type="text" id="name" placeholder="Name" required value={recipe.name} onChange={onRecipeChange} />
+                        <input type="text" id="name" placeholder="Name" required value={recipe.name} onChange={onRecipeChange} autoComplete="off" />
                     </InputField>
 
                     <InputField>
-                        <Search id="ingredients" placeholder={'Ingredients'} buttonName={HTML_ENTITIES.add}
-                            containerClass="field__select" inputClass="field__select__text"
-                            onButtonClick={onAddButtonClick} onSearchChange={onSearchChange}>
 
-                            <label htmlFor="ingredients" className="field__label">Ingredients</label>
+                        <Search id="recipe-form_ingredients" placeholder={'Ingredients'} buttonName={HTML_ENTITIES.add}
+                            containerClass="field__select" inputClass="field__select__text" collectionName="ingredients">
+
+                            <label htmlFor="recipe-form_ingredients" className="field__label">Ingredients</label>
                         </Search>
                     </InputField>
 
                     <InputField>
-                        <Search id="materials" placeholder={'Materials'} buttonName={HTML_ENTITIES.add}
-                            containerClass="field__select" inputClass="field__select__text"
-                            onButtonClick={onAddButtonClick} onSearchChange={onSearchChange} >
 
-                            <label htmlFor="materials" className="field__label">Materials</label>
+                        <Search id="recipe-form_materials" placeholder={'Materials'} buttonName={HTML_ENTITIES.add}
+                            containerClass="field__select" inputClass="field__select__text" collectionName="materials">
+
+                            <label htmlFor="recipe-form_materials" className="field__label">Materials</label>
                         </Search>
                     </InputField>
 
                     <InputField>
-                        <input type="text" id="videoUrl" placeholder="Youtube Video Url" required value={recipe.videoUrl} onChange={onRecipeChange} />
+                        <input type="text" id="videoUrl" placeholder="Youtube Video Url" required value={recipe.videoUrl}
+                            onChange={onRecipeChange} autoComplete="off" />
                     </InputField>
                 </div>
 
@@ -153,9 +160,10 @@ const AddEditRecipe = ({ recipeDB }) => {
 //     recipe: selectCurrentRecipe
 // });
 
-// const mapDispatchToProps = dispatch => ({
-//     setCurrentRecipe: recipe => dispatch(setCurrentRecipe(recipe))
-// });
+const mapDispatchToProps = dispatch => ({
+    fetchIngredients: () => dispatch(fetchIngredients()),
+    fetchMaterials: () => dispatch(fetchMaterials())
+});
 
-export default AddEditRecipe;
-// export default connect(null, mapDispatchToProps)(AddEditRecipe);
+// export default AddEditRecipe;
+export default connect(null, mapDispatchToProps)(AddEditRecipe);

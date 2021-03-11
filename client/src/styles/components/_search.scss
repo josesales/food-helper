@@ -25,3 +25,26 @@
         }
     }
 }
+
+.suggestion-container {
+
+    display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+    
+    &__list {
+        font-weight: 600;
+		list-style: none;
+		overflow-y: auto;
+		overflow-x: hidden;
+		max-height: 35rem;
+		padding: 2rem;
+
+		// width: 60%;
+
+        li {
+            cursor: pointer;
+        }
+    }
+}

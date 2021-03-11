@@ -100,6 +100,38 @@ const recipeSchema = new mongoose.Schema(
     }
 );
 
+recipeSchema.pre('save', async function (next) {
+
+    const recipe = this;
+    try {
+
+        //Insert the ingredient on it's document if the ingredient is not in the db
+        recipe.ingredients.forEach(async ingredient => {
+
+            const ingredientDb = await Ingredient.findOne({ name: ingredient.name });
+
+            if (!ingredientDb) {
+                ingredientDb = new Ingredient(ingredient);
+                ingredientDb.save();
+            }
+        });
+
+        //Insert the material on it's document if the ingredient is not in the db
+        recipe.materials.forEach(async material => {
+            const materialDb = await Material.findOne({ name: material.name });
+
+            if (!materialDb) {
+                materialDb = new Material(material);
+                materialDb.save();
+            }
+        });
+
+        next();
+    } catch (error) {
+        console.log('Error while saving the ingredients and materials: ' + error)
+    }
+});
+
 //It calculates the rate of each recipe based on their respective reviews
 recipeSchema.statics.getRecipesWithRate = recipes => {
     try {

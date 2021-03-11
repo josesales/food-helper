@@ -13,6 +13,7 @@ router.post('/recipes', async (req, res) => {
 
     try {
         await recipe.save();
+        console.log(recipe)
         res.status(httpStatus.created).send(recipe);
     } catch (error) {
         res.status(httpStatus.badRequest).send(error.message);

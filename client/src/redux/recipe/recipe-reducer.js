@@ -2,7 +2,13 @@ import { RecipeActionTypes } from './recipe-types';
 
 const INITIAL_STATE = {
     recipes: [],
-    currentRecipe: null
+    currentRecipe: {
+        name: '',
+        videoUrl: '',
+        ingredients: [],
+        materials: [],
+        steps: [],
+    }
 }
 
 const recipeReducer = (state = INITIAL_STATE, action) => {
