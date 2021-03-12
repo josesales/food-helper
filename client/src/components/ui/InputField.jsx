@@ -4,7 +4,7 @@ const InputField = props => {
 
     let InputUi = null;
     let LabelUi = null;
-    const { type, id, placeholder } = props.children.props;
+    const { type, id, placeholder, collectionName } = props.children.props;
 
     if (type === 'text') { //Normal Input Text
 
@@ -15,9 +15,10 @@ const InputField = props => {
     }
 
     return (
-        <div className="field">
-            { InputUi ? InputUi : props.children}
-            { LabelUi}
+        <div className='field'>
+            {/* <div className={collectionName ? "vertical-field" : "field"}> */}
+            {InputUi ? InputUi : props.children}
+            {LabelUi}
         </div>
     );
 

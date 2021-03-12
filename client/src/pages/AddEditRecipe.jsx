@@ -22,8 +22,8 @@ const AddEditRecipe = ({ recipeDB, fetchIngredients, fetchMaterials }) => {
     const [recipe, setRecipe] = useState(recipeDB ? recipeDB : {
         name: '',
         videoUrl: '',
-        ingredients: [],
-        materials: [],
+        // ingredients: [],
+        // materials: [],
         steps: [],
     });
 
@@ -76,6 +76,8 @@ const AddEditRecipe = ({ recipeDB, fetchIngredients, fetchMaterials }) => {
             console.log('Error while saving the recipe: ' + error.message);
         }
     }
+
+    //TODO remove events on the components get unmounted
 
     const ingredients = useSelector(state => state.ingredient.ingredients);
     const materials = useSelector(state => state.material.materials);

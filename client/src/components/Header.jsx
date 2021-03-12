@@ -25,9 +25,11 @@ const Header = () => {
                 <Link className='header__logo' to='/'>
                     <img src={logo} alt="Food Helper Logo" className="header__logo" />
                 </Link>
+                <div className="header__search-container">
 
-                <Search id="header-container_ingredients" placeholder={'Add an Ingredient'} onSearchChange={onSearchChange}
-                    buttonName={HTML_ENTITIES.add} onButtonClick={onAddButtonClick} collectionName="ingredients" />
+                    <Search id="header-container_ingredients" placeholder={'Write an Ingredient'} onSearchChange={onSearchChange}
+                        buttonName={HTML_ENTITIES.add} onButtonClick={onAddButtonClick} collectionName="ingredients" />
+                </div>
 
                 <ToggleSwitch name="Filters" isActive={areFiltersActive} onChange={newValue => setAreFiltersActive(newValue)} />
 

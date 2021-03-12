@@ -1,6 +1,6 @@
 
 .header {
-    // position: fixed;
+    // position: relative;
     // z-index: 1000;
     height: 10vh;
     display: flex;
@@ -13,6 +13,11 @@
         margin-right: 5rem;
         margin-left: 3rem;
         cursor: pointer;
+    }
+
+    &__search-container {
+        width: 50%;
+        position: relative;
     }
     
 }
