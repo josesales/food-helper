@@ -3,6 +3,8 @@
     height: 30%;
     position: relative;
     display: flex;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
 
     &__text,
@@ -21,7 +23,7 @@
     &__label {
         color: inherit;
         position: absolute;
-        top: 0;
+        top: -5%;
         left: 0;
         font-size: $font-size-default;
         font-size: 2rem;
@@ -34,10 +36,7 @@
 
     &__text:placeholder-shown ~ .field__label,
     &__select__text:placeholder-shown ~ .field__label {
-        opacity: 0; //hides the label when the placeholder is shown which means by default it will be hidden
-        visibility: hidden;
-        // //sets the label up initially so when it gets shown the label goes back to it's original position being moved down by the animation
-        transform: translateY(4rem);
+        @include hideLabel;
     }
 
     &__select {
@@ -52,3 +51,10 @@
         }
     }
 }
+
+// .field-vertical {
+//     width: 100%;
+//     height: 30%;
+//     position: relative;
+//     flex-direction: column;
+// }

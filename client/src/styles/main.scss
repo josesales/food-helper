@@ -7,11 +7,13 @@
 @import "base/typography";
 @import "base/utilities";
 
+@import "components/ui/dropdown";
 @import "components/ui/input-field";
 @import "components/ui/label-button";
-@import "components/ui/media";
 @import "components/ui/loader";
+@import "components/ui/media";
 @import "components/ui/navigation-button";
+@import "components/ui/pagination";
 @import "components/ui/text-area";
 
 @import "components/edit-steps";
@@ -25,10 +27,17 @@
 @import "components/rate";
 @import "components/recipe-header";
 @import "components/recipe-steps";
+@import "components/review";
 @import "components/review-items";
 @import "components/review-item";
 @import "components/search";
+@import "components/suggestions-display";
 @import "components/toggle-switch";
 
-@import "pages/recipe";
 @import "pages/add-edit-recipe";
+@import "pages/home";
+@import "pages/login";
+@import "pages/my-recipes";
+@import "pages/my-favorites";
+@import "pages/recipe";
+@import "pages/sign-up";

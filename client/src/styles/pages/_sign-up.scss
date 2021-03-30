@@ -1,0 +1,85 @@
+.sign-up {
+    width: 100%;
+    display: flex;
+    // flex-direction: column;
+	justify-content: center;
+    align-items: center;
+
+    .user-data {
+        width: 50%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        &__container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+    
+        &__title {
+            display: flex;
+            flex-flow: row wrap;
+            justify-content: center;
+            align-items: center;
+        }
+    
+        &__container {
+            width: 100%;
+            height: 40vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            align-items: flex-start;
+        }
+    
+        &__button-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            margin-top: 3rem;
+    
+            button {
+                @include button;
+                width: 20rem;
+                margin-right: 3rem;
+                height:4rem;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+    
+            &--sign-in {
+                @include button;
+                width: 20rem;
+                margin-top: 0 !important;
+                margin-bottom: 0 !important;
+                height: 4rem;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                outline: none;
+                text-decoration: none;
+            }
+        }
+    }
+
+    &__avatar {
+        width: 30%;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        flex-direction: column;
+        margin-bottom: auto;
+
+        .text {
+            cursor: default;
+            margin-bottom: 10px;
+        }
+    }
+}
+
+

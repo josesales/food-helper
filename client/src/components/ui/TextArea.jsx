@@ -8,14 +8,14 @@ const TextArea = props => {
     let LabelUi = null;
 
     if (placeholder) {
-        LabelUi = <label htmlFor={id} className="text-area-container__label-area">{placeholder}</label>;
+        LabelUi = <label htmlFor={id} className="text-area-container__label">{placeholder}</label>;
     }
 
     return (
         <div className="text-area-container">
 
             <textarea {...otherProps} id={id} placeholder={placeholder}
-                className="text-area-container__text-area" rows="4" cols="100"></textarea>
+                className="text-area-container__text" rows="4" cols="100"></textarea>
             {LabelUi}
             {
                 onDelete ?

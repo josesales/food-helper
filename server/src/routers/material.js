@@ -5,6 +5,7 @@ const httpStatus = require('../util/httpStatus');
 const router = new express.Router();
 
 router.post('/materials', async (req, res) => {
+
     const material = new Material({
         ...req.body,
     });

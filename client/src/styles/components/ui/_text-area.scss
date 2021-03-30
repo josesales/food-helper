@@ -5,7 +5,7 @@
     display: flex;
     align-items: center;
 
-    &__text-area {
+    &__text {
         @include input;
 		resize: none;
         height: 15rem;
@@ -21,10 +21,10 @@
         }
     }
 
-    &__label-area {
+    &__label {
         color: inherit;
         position: absolute;
-        top: 0;
+        top: -5%;
         left: 0;
         font-size: 2rem;
         font-weight: 700;
@@ -34,11 +34,8 @@
         transition: all .3s;
     }
 
-    &__text-area:placeholder-shown ~ .text-area-container__label-area {
-        opacity: 0; //hides the label when the placeholder is shown which means by default it will be hidden
-        visibility: hidden;
-        // //sets the label up initially so when it gets shown the label goes back to it's original position being moved down by the animation
-        transform: translateY(4rem);
+    &__text:placeholder-shown ~ .text-area-container__label {
+       @include hideLabel;
     }
 
     &__remove {

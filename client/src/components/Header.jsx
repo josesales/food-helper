@@ -10,12 +10,6 @@ const Header = () => {
 
     const [areFiltersActive, setAreFiltersActive] = useState(false);
 
-    const onSearchChange = () => { }
-
-    const onAddButtonClick = () => { }
-
-    // <HelperButton displayName={HTML_ENTITIES.add} onHelperButtonClick={onHelperButtonClick} />;
-
     return (
         <div className="header-container">
             <header className="header">
@@ -27,8 +21,8 @@ const Header = () => {
                 </Link>
                 <div className="header__search-container">
 
-                    <Search id="header-container_ingredients" placeholder={'Write an Ingredient'} onSearchChange={onSearchChange}
-                        buttonName={HTML_ENTITIES.add} onButtonClick={onAddButtonClick} collectionName="ingredients" />
+                    <Search id="header-container_ingredients" placeholder={'Write an Ingredient'}
+                        buttonName={HTML_ENTITIES.add} collectionName="ingredients" />
                 </div>
 
                 <ToggleSwitch name="Filters" isActive={areFiltersActive} onChange={newValue => setAreFiltersActive(newValue)} />

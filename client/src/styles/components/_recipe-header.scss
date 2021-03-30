@@ -13,3 +13,21 @@
     align-items: center;
     color: $color-primary;
 }
+
+.favorite-icon {
+        margin-top: 1rem;
+        cursor: pointer;
+        width: 3rem;
+        height: 3rem;
+        display: flex;
+        box-shadow: $shadow-dark;
+        border-radius: 10px; //for the bottom corners
+        transition: all .2s;
+        // filter: brightness(0.5);
+        background-color: rgba($color-white-2, 0.5);
+  
+        &:hover {
+            fill: $color-red;
+            transform: scale(1.05) translateY(-.5rem);
+        }
+}

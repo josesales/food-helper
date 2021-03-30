@@ -7,17 +7,16 @@ import Loader from '../components/ui/Loader';
 import Media from '../components/ui/Media';
 import { selectCurrentRecipe } from '../redux/recipe/recipe-selector';
 import { getReviewsByRecipe } from '../redux/review/review-actions';
-
+import { selectReviews } from '../redux/review/review-selector';
+import { selectCurrentUser } from '../redux/user/user-selector';
+// import { ReactComponent as Upload } from "../assets/upload.svg";
 const ReviewItems = lazy(() => import('../components/ReviewItems'));
+const Review = lazy(() => import('../components/Review'));
 
-const Recipe = ({ recipe, getReviewsByRecipe }) => {
+const Recipe = ({ recipe, getReviewsByRecipe, currentUser, reviews }) => {
 
     useEffect(() => {
-
-        //if the array of review ids is not empty then it fetches the review objects of the recipe
-        if (recipe.reviews.length > 0) {
-            getReviewsByRecipe(recipe._id);
-        }
+        getReviewsByRecipe(recipe._id);
     }, []);
 
     return (
@@ -32,25 +31,41 @@ const Recipe = ({ recipe, getReviewsByRecipe }) => {
             </div>
 
             {
-                recipe.reviews && recipe.videoUrl ?
+                (reviews && reviews.length > 0) || recipe.videoUrl ?
 
                     <div className="recipe-container">
                         {
-                            recipe.reviews ?
+                            reviews && reviews.length > 0 ?
                                 <Suspense fallback={<Loader />}>
-                                    <ReviewItems reviews={recipe.reviews} />
+                                    <ReviewItems />
                                 </Suspense>
-                                : ''
+                                : currentUser ?
+                                    <Suspense fallback={<Loader />}>
+                                        <Review />
+                                    </Suspense> : ''
                         }
-                        {recipe.videoUrl ? <Media video={recipe.videoUrl} containerClass="video-container" /> : ''}
+
+                        {
+                            recipe.videoUrl ? <Media video={recipe.videoUrl} containerClass="video-container" /> : ''
+                        }
                     </div> : ''
+            }
+
+            {
+                //if there is current user and also reviews then the review component should be rendered at the bottom
+                currentUser && reviews && reviews.length > 0 ?
+                    <Suspense fallback={<Loader />}>
+                        <Review />
+                    </Suspense> : ''
             }
         </React.Fragment>
     );
 }
 
 const mapStateToProps = createStructuredSelector({
-    recipe: selectCurrentRecipe
+    recipe: selectCurrentRecipe,
+    currentUser: selectCurrentUser,
+    reviews: selectReviews
 });
 
 const mapDispatchToProps = dispatch => ({

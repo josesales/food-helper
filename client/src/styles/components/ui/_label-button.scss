@@ -1,5 +1,6 @@
 .label-button {
     @include label-button;
+    @include notSelectable;
     margin-top: auto;
     
     &:hover {

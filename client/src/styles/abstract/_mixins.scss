@@ -51,6 +51,22 @@
     }
 }
 
+@mixin hideLabel {
+    opacity: 0; //hides the label when the placeholder is shown which means by default it will be hidden
+    visibility: hidden;
+    // //sets the label up initially so when it gets shown the label goes back to it's original position being moved down by the animation
+    transform: translateY(4rem);
+}
+
+@mixin notSelectable {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
 //media query manager
 /*
 0   - 600px:  Phone  

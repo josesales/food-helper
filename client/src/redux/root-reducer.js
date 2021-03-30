@@ -6,6 +6,9 @@ import userReducer from './user/user-reducer';
 import reviewReducer from './review/review-reducer';
 import ingredientReducer from './ingredient/ingredient-reducer';
 import materialReducer from './material/material-reducer';
+import categoryReducer from './category/category-reducer';
+import dietTypeReducer from './diet-type/diet-type-reducer';
+import paginationReducer from './pagination/pagination-reducer';
 
 
 const persistConfig = {
@@ -19,6 +22,9 @@ const rootReducer = combineReducers({
     review: reviewReducer,
     ingredient: ingredientReducer,
     material: materialReducer,
+    category: categoryReducer,
+    dietType: dietTypeReducer,
+    pagination: paginationReducer,
 })
 
 export default persistReducer(persistConfig, rootReducer);

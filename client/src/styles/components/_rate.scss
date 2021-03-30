@@ -1,7 +1,12 @@
 .rate {
   font-size: 2.5rem;
   
-  .no__rate {  
+  .no-rate {  
+    @include notSelectable;
     color: transparent;
+  }
+
+  .give-rate {
+    cursor: pointer;
   }
 }

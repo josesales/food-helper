@@ -1,30 +1,31 @@
-import React, { useEffect, lazy, Suspense, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import ImageUpload from '../components/ImageUpload';
 import EditSteps from '../components/EditSteps';
-import RecipeHeader from '../components/RecipeHeader';
-import RecipeSteps from '../components/RecipeSteps';
 import Search from '../components/Search';
 import InputField from '../components/ui/InputField';
-import Loader from '../components/ui/Loader';
-import Media from '../components/ui/Media';
-import { selectCurrentRecipe } from '../redux/recipe/recipe-selector';
-import { getReviewsByRecipe } from '../redux/review/review-actions';
+import { selectPersistRecipe, selectImage } from '../redux/recipe/recipe-selector';
 import HTML_ENTITIES from '../util/htmlEntities';
 import TextArea from '../components/ui/TextArea';
 import { fetchIngredients } from '../redux/ingredient/ingredient-actions';
 import { fetchMaterials } from '../redux/material/material-actions';
-import { postPatch } from '../util/request-sender';
+import { fetchCategories } from '../redux/category/category-actions';
+import { fetchDietTypes } from '../redux/diet-type/diet-type-actions';
+import { postPatch, upload } from '../util/request-sender';
+import { selectToken } from '../redux/user/user-selector';
 
-const AddEditRecipe = ({ recipeDB, fetchIngredients, fetchMaterials }) => {
+const AddEditRecipe = (props) => {
+
+    const { persistRecipe, image, recipeDB, fetchIngredients, fetchMaterials, fetchCategories, fetchDietTypes, token } = props;
 
     const [recipe, setRecipe] = useState(recipeDB ? recipeDB : {
         name: '',
         videoUrl: '',
-        // ingredients: [],
-        // materials: [],
         steps: [],
+        preparationTime: '',
+        peoplePerServing: '',
+        calories: '',
     });
 
     //Recipe
@@ -71,19 +72,32 @@ const AddEditRecipe = ({ recipeDB, fetchIngredients, fetchMaterials }) => {
 
     const onSaveRecipeClick = async () => {
         try {
-            const savedRecipe = await postPatch('/recipes', 'POST', recipe);
+
+            if (!image || !image.type) {
+                throw new Error('Image is mandatory');
+            }
+
+            const savedRecipe = await postPatch('/recipes', 'POST', recipe, token);
+            await upload('/recipeImage', image, savedRecipe._id, token);
+
+            alert('Recipe Saved Successfully!');
         } catch (error) {
             console.log('Error while saving the recipe: ' + error.message);
+            alert(error.message);
         }
     }
 
-    //TODO remove events on the components get unmounted
 
     const ingredients = useSelector(state => state.ingredient.ingredients);
     const materials = useSelector(state => state.material.materials);
+    const categories = useSelector(state => state.category.categories);
+    const dietTypes = useSelector(state => state.dietType.dietTypes);
 
-    // Get ingredients and materials for search component
+    // Get the collections for the search component
     useEffect(() => {
+
+        //check if the collection are already in the reducer so it doesn't go to the db every time the user access this page
+
         if (ingredients.length == 0) {
             fetchIngredients();
         }
@@ -91,7 +105,20 @@ const AddEditRecipe = ({ recipeDB, fetchIngredients, fetchMaterials }) => {
         if (materials.length == 0) {
             fetchMaterials();
         }
+
+        if (categories.length == 0) {
+            fetchCategories();
+        }
+
+        if (dietTypes.length == 0) {
+            fetchDietTypes();
+        }
     }, []);
+
+    //Keep recipe useState in sync with persistRecipe to get ingredients, materials...
+    useEffect(() => {
+        setRecipe({ ...recipe, ...persistRecipe });
+    }, [persistRecipe]);
 
     return (
         <div className="recipe-form">
@@ -138,6 +165,45 @@ const AddEditRecipe = ({ recipeDB, fetchIngredients, fetchMaterials }) => {
             </div>
 
             <div className="center">
+                <div className="container-2">
+
+                    <InputField>
+
+                        <Search isSelect={true} id="recipe-form_categories" placeholder={'Category'} buttonName={HTML_ENTITIES.search}
+                            containerClass="field__select" inputClass="field__select__text" collectionName="categories">
+
+                            <label htmlFor="recipe-form_categories" className="field__label">Category</label>
+                        </Search>
+                    </InputField>
+
+                    <InputField>
+                        <Search isSelect={true} id="recipe-form_diet-type" placeholder={'Diet Type'} buttonName={HTML_ENTITIES.search}
+                            containerClass="field__select" inputClass="field__select__text" collectionName="dietTypes">
+
+                            <label htmlFor="recipe-form_diet-type" className="field__label">Diet Type</label>
+                        </Search>
+                    </InputField>
+
+                    <InputField>
+                        <input type="text" id="preparationTime" placeholder="Preparation Time" required value={recipe.preparationTime}
+                            onChange={onRecipeChange} autoComplete="off" />
+                    </InputField>
+                </div>
+
+                <div className="container-3">
+                    <InputField>
+                        <input type="number" min="1" id="peoplePerServing" placeholder="People per Serving" value={recipe.peoplePerServing} onChange={onRecipeChange} autoComplete="off" />
+                    </InputField>
+
+                    <InputField>
+                        <input type="number" min="1" id="calories" placeholder="Calories" value={recipe.calories} onChange={onRecipeChange} autoComplete="off" />
+                    </InputField>
+                </div>
+            </div>
+
+
+
+            <div className="center">
 
                 <div className="step-container">
                     <div className="step-container__text-area">
@@ -158,14 +224,17 @@ const AddEditRecipe = ({ recipeDB, fetchIngredients, fetchMaterials }) => {
     );
 }
 
-// const mapStateToProps = createStructuredSelector({
-//     recipe: selectCurrentRecipe
-// });
+const mapStateToProps = createStructuredSelector({
+    persistRecipe: selectPersistRecipe,
+    image: selectImage,
+    token: selectToken
+});
 
 const mapDispatchToProps = dispatch => ({
     fetchIngredients: () => dispatch(fetchIngredients()),
-    fetchMaterials: () => dispatch(fetchMaterials())
+    fetchMaterials: () => dispatch(fetchMaterials()),
+    fetchCategories: () => dispatch(fetchCategories()),
+    fetchDietTypes: () => dispatch(fetchDietTypes()),
 });
 
-// export default AddEditRecipe;
-export default connect(null, mapDispatchToProps)(AddEditRecipe);
+export default connect(mapStateToProps, mapDispatchToProps)(AddEditRecipe);

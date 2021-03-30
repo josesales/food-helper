@@ -1,18 +1,23 @@
-.helper-button-container{
+.helper-button-container,
+.helper-button-select {
     border: none;
     cursor: pointer;
     font-size: 2.5rem;
     color: inherit;
     z-index: 100;
-    // position: absolute;
-    // top: 0;
-    // right: 0;
-    // margin-right: 15px;
-    // margin-top: 15px;
-
+    transition: all .5s;
 
     &:active,
     &:focus {
         outline:none;
     }
+
+    &:hover {
+        color: $color-primary;
+        transform: scale(1.16);
+    }
+}
+
+.helper-button-select {
+    font-size: 1.5rem;
 }

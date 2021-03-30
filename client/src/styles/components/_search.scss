@@ -1,7 +1,4 @@
 .search-container {
-    // flex: 0 0 40%;
-    // width: 50%;
-    
     display: flex;
     align-items: center;
     justify-content: center;
@@ -9,20 +6,21 @@
 
     &__input {
         font-family: inherit;
-        font-size: $font-size-small;
+        font-size: $font-size-default;
         color: inherit;
         background-color: $color-grey-light-1;
         border: none;
         padding: .7rem 2rem;
         border-radius: 10rem;
-        width: 90%;
+        // width: 90%;
+        width: 100%;
         transition: all .2s;
         margin-right: -3.25rem;
 
         &:focus {
             outline: none;
-            background-color: $color-grey-light-1;
-            width: 100%;
+            // background-color: $color-grey-light-1;
+            // width: 100%;
         }
     }
 
@@ -90,5 +88,16 @@
 			background: $color-grey-dark-1;
 			border-radius: 10px;
 		}
+    }
+}
+
+.select {
+    cursor: pointer;
+    //remove the blinking cursor but it preserves the text
+    color: transparent;
+    text-shadow: 0 0 0 $color-grey-dark-1;
+
+    &:focus {
+        outline: none;
     }
 }

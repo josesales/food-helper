@@ -1,0 +1,54 @@
+.pagination {
+    font-size: $font-size-big;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 5rem;
+
+    &__label--arrow {
+        font-size: 3rem;
+        margin: 0;
+        padding: 0;
+    }
+
+    &__list {
+        display: flex;
+        list-style: none;
+        margin-top: 1rem;
+
+        :not(:last-child) {
+            margin-right: 1.5rem;
+        }
+
+        li {
+            display: flex;
+            margin-top: auto;
+        }
+
+    }
+    
+    &__label--number,
+    &__label--selected-number {
+        @include notSelectable;
+        height: 2rem;   
+        width: 2rem;
+        padding: 2.5rem;
+        border-radius: 50%;
+        font-size: $font-size-big;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+
+        &:hover,
+        &:active{
+            background-color: $color-primary;
+            color: $color-white;
+        }
+    }
+
+    &__label--selected-number {
+        background-color: $color-primary;
+        color: $color-white;
+    }
+}

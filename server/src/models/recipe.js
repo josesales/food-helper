@@ -39,9 +39,7 @@ const recipeSchema = new mongoose.Schema(
         },
 
         image: {
-            // type: Buffer
-            type: String,
-            trim: true,
+            type: Buffer
         },
 
         ingredients: [{
@@ -100,37 +98,123 @@ const recipeSchema = new mongoose.Schema(
     }
 );
 
-recipeSchema.pre('save', async function (next) {
+// recipeSchema.pre('save', async function (next) {
 
-    const recipe = this;
-    try {
+//     const recipe = this;
+//     try {
+//         recipe.ingredients.forEach(async ingredient => {
+//             ingredient.recipe = recipe;
+//             // console.log('ingredient: ' + ingredient);
+//             await Ingredient.save(ingredient);
+//         });
 
-        //Insert the ingredient on it's document if the ingredient is not in the db
-        recipe.ingredients.forEach(async ingredient => {
+//         // recipe.materials.forEach(async material => {
+//         //     material.recipe = recipe;
+//         //     console.log('material: ' + material);
+//         //     await Material.save(material);
+//         // });
 
-            const ingredientDb = await Ingredient.findOne({ name: ingredient.name });
+//         next();
+//     } catch (error) {
+//         console.log('Error while saving the ingredients and materials: ' + error)
+//     }
+// });
 
-            if (!ingredientDb) {
-                ingredientDb = new Ingredient(ingredient);
-                ingredientDb.save();
-            }
-        });
+const validate = recipe => {
 
-        //Insert the material on it's document if the ingredient is not in the db
-        recipe.materials.forEach(async material => {
-            const materialDb = await Material.findOne({ name: material.name });
-
-            if (!materialDb) {
-                materialDb = new Material(material);
-                materialDb.save();
-            }
-        });
-
-        next();
-    } catch (error) {
-        console.log('Error while saving the ingredients and materials: ' + error)
+    if (!recipe.name) {
+        throw new Error('Name is mandatory.');
     }
-});
+
+    if (recipe.name.length < 4) {
+        throw new Error('Name must contain at least 5 characters.');
+    }
+
+    if (!recipe.ingredients || recipe.ingredients.length == 0) {
+        throw new Error('Ingredients are mandatory.');
+    }
+
+    if (recipe.peoplePerServing || recipe.peoplePerServing < 1) {
+        delete recipe.peoplePerServing;
+    }
+    if (recipe.calories || recipe.calories < 1) {
+        delete recipe.calories;
+    }
+
+    if (!recipe.dietType || !recipe.dietType._id) {
+        delete recipe.dietType;
+    }
+
+    if (recipe.videoUrl) {
+        const videoId = recipe.videoUrl.slice(recipe.videoUrl.lastIndexOf('v=') + 2, recipe.videoUrl.indexOf('&'));
+        recipe.videoUrl = "https://www.youtube.com/embed/" + videoId;
+    }
+
+    if (!recipe.category || !recipe.category._id) {
+        throw new Error('Category is mandatory');
+    }
+
+    if (!recipe.steps || recipe.steps.length == 0) {
+        throw new Error('Steps are mandatory');
+    } else {
+        recipe.steps.forEach((step, index) => {
+            if (step.trim().length < 4) {
+                throw new Error(`Step number ${index + 1} must contain at least 5 characters.`);
+            }
+        });
+    }
+
+    return recipe;
+}
+
+recipeSchema.statics.saveRecipe = async recipeReq => {
+
+    let recipe = validate(recipeReq);
+    recipe = new Recipe({ ...recipeReq });
+
+    const ingredientsDb = await Ingredient.saveIngredients(recipeReq.ingredients, recipe._id);
+    const materialsDb = await Material.saveMaterials(recipeReq.materials, recipe._id);
+
+    recipe.ingredients = ingredientsDb;
+    recipe.materials = materialsDb;
+
+    recipe = await recipe.save();
+    return recipe;
+}
+
+recipeSchema.statics.transform = async recipeReq => {
+
+    const recipe = { ...recipeReq };
+
+    const saveIngredient = async ingredient => {
+        return await ingredient.save(ingredient);
+    }
+
+    recipe.ingredients = recipeReq.ingredients.map(async ingredient => {
+        // ingredient.recipe = recipe._id;
+        const savedIngredient = new Ingredient(ingredient);
+        savedIngredient.isNew = !ingredient._id ? true : false; //define if the document to update or insert
+        return await saveIngredient(savedIngredient);
+    });
+
+    // Promise.all(recipe.ingredients).then(values => {
+    //     recipe.ingredients = values;
+    // });
+
+    console.log('Recipe Ingredients' + recipe.ingredients);
+
+    // recipe.materials = recipeReq.materials.map(async material => {
+    //     // material.recipe = recipe._id;
+    //     const savedMaterial = new Material(material);
+    //     savedMaterial.isNew = !material._id ? true : false;
+    //     await savedMaterial.save(material);
+
+    //     // console.log('material: ' + savedMaterial);
+    //     return savedMaterial;
+    // });
+
+    return recipe;
+}
 
 //It calculates the rate of each recipe based on their respective reviews
 recipeSchema.statics.getRecipesWithRate = recipes => {
@@ -170,6 +254,15 @@ recipeSchema.statics.getRecipesWithRate = recipes => {
     } catch (error) {
         console.log(error.message)
     }
+}
+
+//In this case toJson converts the image from a buffer to a base 64 underneath the hood
+recipeSchema.methods.toJSON = function () {
+
+    const recipe = this;
+    const recipeObject = recipe.toObject();
+
+    return recipeObject;
 }
 
 const Recipe = mongoose.model('Recipe', recipeSchema);

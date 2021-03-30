@@ -1,7 +1,9 @@
 import { createSelector } from "reselect";
 
-const selectRecipeState = state => state.recipe;
+const selectUserState = state => state.user;
 
-export const selectRecipes = createSelector([selectRecipeState], recipeState => recipeState.recipes);
+export const selectCurrentUser = createSelector([selectUserState], userState => userState.currentUser);
 
-export const selectRecipe = createSelector([selectRecipeState], recipeState => recipeState.recipe);
+export const selectToken = createSelector([selectUserState], userState => userState.token);
+
+export const selectProfilePicture = createSelector([selectUserState], userState => userState.profilePicture);

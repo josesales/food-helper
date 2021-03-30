@@ -17,5 +17,37 @@ const materialSchema = new mongoose.Schema(
     },
 );
 
+materialSchema.statics.saveMaterials = async (materials, recipeId) => {
+
+    if (materials && materials.length > 0) {
+        const materialsDb = await Promise.all(materials.map(async material => {
+
+
+            const materialModel = new Material(material);
+            materialModel.isNew = !material._id ? true : false;
+
+            let materialDb = null;
+
+            if (!materialModel.isNew) {
+                materialDb = await Material.findById(material._id);
+            }
+
+            if (materialDb) { //Make sure the recipe doesn't get duplicated
+                materialModel.recipes = materialDb.recipes.filter(recipe => recipe._id != recipeId);
+            }
+
+            materialModel.recipes.push(recipeId);
+
+            materialDb = await materialModel.save();
+
+            return materialDb;
+        }));
+
+        return materialsDb;
+    }
+
+    return null;
+}
+
 const Material = mongoose.model('Material', materialSchema);
 module.exports = Material;

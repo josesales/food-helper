@@ -33,7 +33,7 @@ router.post('/users/login', async (req, res) => {
 
         res.send({ user, token });
     } catch (error) {
-        res.status(httpStatus.badRequest).send(error.message);
+        res.status(httpStatus.badRequest).send({ error: error.message });
     }
 });
 
@@ -44,8 +44,7 @@ router.post('/users/logout', auth, async (req, res) => {
         //removes the token which the user logged in
         req.user.tokens = req.user.tokens.filter(token => token.token !== req.token);
         await req.user.save();
-
-        res.send('Logged Out');
+        res.status(httpStatus.ok).send({ token: req.token });
     } catch (error) {
         res.status(httpStatus.internalServerError).send(error.message);
     }
@@ -107,25 +106,8 @@ router.delete('/users/me', auth, async (req, res) => {
     }
 });
 
-// const upload = multer({
-
-//     limits: {
-//         fileSize: 1000000 // max size of the file in bytes. 1000000 = 1mb
-//     },
-
-//     //set the type of file which can be uploaded, callback(error, boolean if upload should be accepted or ignored);
-//     fileFilter(req, file, callback) {
-
-//         if (file.originalname.match(/\.(jpg|jpeg|png)$/)) { //regular expression that checks if the extension is either jpg, jpeg or png
-//             callback(undefined, true); //allow file to be uploaded
-//         } else {
-//             return callback(new Error('File must be an image'));
-//         }
-//     }
-// })
-
 //Avatar = User profile picture
-router.post('/users/me/avatar', auth, imageUpload('avatar', 1000000), async (req, res) => {
+router.post('/users/me/avatar', auth, imageUpload.single('file', 1000000), async (req, res) => {
 
     // req.filter.buffer is accessible when we don't set the dest property on multer
     const buffer = await sharp(req.file.buffer).resize({ width: 250, height: 250 }).png().toBuffer();
@@ -133,7 +115,7 @@ router.post('/users/me/avatar', auth, imageUpload('avatar', 1000000), async (req
 
     await req.user.save();
 
-    res.send();
+    res.sendStatus(httpStatus.ok);
 }, (error, req, res, next) => {
     res.status(httpStatus.badRequest).send({ error: error.message });
 });

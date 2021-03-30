@@ -17,7 +17,7 @@ const Media = ({ image, video, containerClass, imageClass, videoClass }) => {
         return (
             <div className={mediaClass}>
                 {
-                    image ? <img className={mediaImgClass} src={image} /> :
+                    image ? <img className={mediaImgClass} src={'data:image/png;base64,' + image} /> :
                         <iframe className={mediaVideoClass} src={video} frameBorder="0" allowFullScreen />
                 }
             </div>

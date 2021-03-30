@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema(
             required: true,
             trim: true
         },
+
         email: {
             type: String,
             required: true,
@@ -28,16 +29,18 @@ const userSchema = new mongoose.Schema(
             type: String,
             required: true,
             trim: true,
-            minlength: 7,
+            minlength: 4,
             validate: value => {
                 if (value.toLowerCase().includes('password')) {
                     throw Error('Password must not contain "password"');
                 }
             }
         },
+
         avatar: {
             type: Buffer
         },
+
         tokens: [{
             token: {
                 type: String,
@@ -88,13 +91,13 @@ userSchema.methods.toJSON = function () {
 userSchema.statics.findByCredentials = async (email, password) => {
     const user = await User.findOne({ email });
     if (!user) {
-        throw new Error('Unable to login');
+        throw new Error('Unable to login. Please check your credentials.');
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-        throw new Error('Unable to login');
+        throw new Error('Unable to login. Please check your credentials.');
     }
 
     return user;

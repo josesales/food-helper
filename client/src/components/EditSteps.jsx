@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { selectCurrentRecipe } from '../redux/recipe/recipe-selector';
 import TextArea from './ui/TextArea';
 import InputField from './ui/InputField';
 

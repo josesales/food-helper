@@ -1,5 +1,6 @@
 const express = require('express');
 const Review = require('../models/review');
+const Recipe = require('../models/recipe');
 const httpStatus = require('../util/httpStatus');
 
 const router = new express.Router();
@@ -10,10 +11,15 @@ router.post('/reviews', async (req, res) => {
     });
 
     try {
+        const recipe = await Recipe.findById(review.recipe);
+        recipe.reviews.push(review._id);
+
+        await recipe.save();
         await review.save();
+
         res.status(httpStatus.created).send(review);
     } catch (error) {
-        res.status(httpStatus.badRequest).send(error.message);
+        res.status(httpStatus.badRequest).send({ error: error.message });
     }
 });
 
@@ -49,29 +55,29 @@ router.get('/reviews/:recipeId', async (req, res) => {
     }
 });
 
-router.get('/reviews/:id', async (req, res) => {
-    try {
-        const reviewId = req.params.id;
-        const review = await Review.findOne({ _id: reviewId });
-        if (!review) {
-            res.status(httpStatus.notFound).send();
-        }
-        res.status(httpStatus.ok).send(review);
-    } catch (error) {
-        res.status(httpStatus.internalServerError).send(error.message);
-    };
-});
+// router.get('/reviews/:id', async (req, res) => {
+//     try {
+//         const reviewId = req.params.id;
+//         const review = await Review.findOne({ _id: reviewId });
+//         if (!review) {
+//             res.status(httpStatus.notFound).send();
+//         }
+//         res.status(httpStatus.ok).send(review);
+//     } catch (error) {
+//         res.status(httpStatus.internalServerError).send(error.message);
+//     };
+// });
 
-router.delete('/reviews/:id', async (req, res) => {
-    try {
-        const review = await Review.findOneAndDelete({ _id: req.params.id });
-        if (!review) {
-            return res.status(httpStatus.notFound).send();
-        }
-        res.send(review);
-    } catch (error) {
-        res.status(httpStatus.internalServerError).send(error.message);
-    }
-});
+// router.delete('/reviews/:id', async (req, res) => {
+//     try {
+//         const review = await Review.findOneAndDelete({ _id: req.params.id });
+//         if (!review) {
+//             return res.status(httpStatus.notFound).send();
+//         }
+//         res.send(review);
+//     } catch (error) {
+//         res.status(httpStatus.internalServerError).send(error.message);
+//     }
+// });
 
 module.exports = router;

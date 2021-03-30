@@ -1,8 +1,10 @@
 import React from 'react';
 
-const HelperButton = ({ name, onButtonClick }) => (
+const HelperButton = ({ name, onButtonClick, inputText, isSelect }) => (
 
-    <button onClick={onButtonClick} className="helper-button-container">{name}</button>
+    <button name={inputText} onClick={onButtonClick} className={isSelect ? "helper-button-select" : "helper-button-container"}>
+        {name}
+    </button>
 )
 
 export default HelperButton;

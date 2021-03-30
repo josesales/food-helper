@@ -27,7 +27,7 @@ const RecipeItem = ({ recipe, setCurrentRecipe }) => {
 
                 <Media image={recipe.image} />
 
-                <LabelButton className="recipe-item__container--details-button" htmlFor={'details-checkbox_' + recipe._id}>
+                <LabelButton htmlFor={'details-checkbox_' + recipe._id}>
                     Details
                 </LabelButton>
             </div>

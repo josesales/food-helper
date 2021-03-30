@@ -1,0 +1,20 @@
+
+.review-container {
+    color: $color-primary;
+    text-align: center;
+    display: inline-block;
+
+    &__rate {
+        align-self: center;
+    }
+
+    .text {
+        color: $color-grey-dark-1;
+        margin-bottom: 2rem;
+    }
+
+    button {
+        @include button;
+        width: 20rem;
+    }
+}

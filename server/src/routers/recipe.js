@@ -1,22 +1,36 @@
 const express = require('express');
 const Recipe = require('../models/recipe');
+const Ingredient = require('../models/ingredient');
 const Review = require('../models/review');
 const httpStatus = require('../util/httpStatus');
-
-
+const auth = require('../middleware/auth');
+const imageUpload = require('../util/imageUpload');
 const router = new express.Router();
+const sharp = require('sharp');
 
-router.post('/recipes', async (req, res) => {
-    const recipe = new Recipe({
-        ...req.body,
-    });
+router.post('/recipeImage', auth, imageUpload.single('file'), async (req, res) => {
+    // req.filter.buffer is accessible when we don't set the dest property on multer
+    const buffer = await sharp(req.file.buffer).resize({ width: 350, height: 350 }).png().toBuffer();
 
+    const recipe = await Recipe.findById(req.body.id);
+    recipe.image = buffer;
+
+    await recipe.save();
+    res.send(httpStatus.ok);
+}, (error, req, res, next) => {
+    res.status(400).send({ error: error.message });
+});
+
+
+router.post('/recipes', auth, async (req, res) => {
     try {
-        await recipe.save();
-        console.log(recipe)
+
+        req.body.user = req.user._id;
+        const recipe = await Recipe.saveRecipe(req.body);
         res.status(httpStatus.created).send(recipe);
     } catch (error) {
-        res.status(httpStatus.badRequest).send(error.message);
+        console.log(error)
+        res.status(httpStatus.badRequest).send({ error: error.message });
     }
 });
 
@@ -25,28 +39,50 @@ router.post('/recipes', async (req, res) => {
 //GET /recipes?sortBy=createdAt_desc
 router.get('/recipes', async (req, res) => {
 
-    const match = {};
+    // const match = {};
     const sort = {};
+    let filters = {};
 
-    if (req.query.completed) {
-        match.completed = req.query.completed === 'true';
-    }
+    let shouldGetTotal = false;
+
+    // if (req.query.completed) {
+    //     match.completed = req.query.completed === 'true';
+    // }
+
+    // if (req.query.completed) {
+    //     match.completed = req.query.completed === 'true';
+    // }
 
     if (req.query.sortBy) {
         const parts = req.query.sortBy.split('_');
         sort[parts[0]] = parts[1] == 'desc' ? -1 : 1; //set the field name on the sort object and assign -1 or 1 for the order value  
     }
 
+    if (req.query.total && req.query.total === 'true') {
+        shouldGetTotal = true;
+    }
+
+    if (req.query.userId && req.query.userId != 'null') {
+        filters = {
+            user: req.query.userId
+        }
+    }
+
     try {
 
-        let recipes = await Recipe.find(null, null, {
-            limit: parseInt(req.query.limit), //if not provided it will or if its not an int its gonna be ignored by mongoose
-            skip: parseInt(req.query.skip),
+        let recipes = await Recipe.find({ ...filters }, null, {
+            limit: parseInt(req.query.limit), //number of documents the query will return
+            skip: parseInt(req.query.skip), //number of documents to slip
             sort
         }).populate('ingredients').populate('user').populate('reviews');
 
+        let total = null
+        if (shouldGetTotal) {
+            total = await Recipe.countDocuments({ ...filters });
+        }
+
         recipes = Recipe.getRecipesWithRate(recipes);
-        res.send(recipes);
+        res.send({ recipes, total });
     } catch (error) {
         console.log(error)
         res.sendStatus(httpStatus.internalServerError).send(error);

@@ -4,9 +4,9 @@ const InputField = props => {
 
     let InputUi = null;
     let LabelUi = null;
-    const { type, id, placeholder, collectionName } = props.children.props;
+    const { type, id, placeholder } = props.children.props;
 
-    if (type === 'text') { //Normal Input Text
+    if (type === 'text' || type === 'number' || type === 'email' || type === 'password') {
 
         InputUi = <input {...props.children.props} className="field__text" />;
         if (placeholder) {
@@ -16,7 +16,6 @@ const InputField = props => {
 
     return (
         <div className='field'>
-            {/* <div className={collectionName ? "vertical-field" : "field"}> */}
             {InputUi ? InputUi : props.children}
             {LabelUi}
         </div>

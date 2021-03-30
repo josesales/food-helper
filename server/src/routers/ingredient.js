@@ -5,7 +5,7 @@ const httpStatus = require('../util/httpStatus');
 const router = new express.Router();
 
 router.post('/ingredients', async (req, res) => {
-    console.log('kkkk')
+
     const ingredient = new Ingredient({
         ...req.body,
     });

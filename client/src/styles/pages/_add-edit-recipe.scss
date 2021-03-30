@@ -16,6 +16,8 @@
         margin-bottom: 5rem;
 
         .container,
+        .container-2,
+        .container-3,
         .step-container {
             width: 45%;
             height: 48vh;
@@ -23,6 +25,15 @@
             flex-direction: column;
             justify-content: center;
             align-items: flex-start;
+        }
+
+        .container-2 {
+            height: 40vh;
+        }
+
+        .container-3 {
+            // justify-content: flex-start;
+            height: 40vh;
         }
         
         .step-container {
