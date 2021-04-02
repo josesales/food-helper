@@ -1,5 +1,5 @@
 import pagination from '../../util/pagination';
-import { get } from '../../util/request-sender';
+import { get, postPatch } from '../../util/request-sender';
 import { RecipeActionTypes } from './recipe-types';
 
 export const fetchRecipes = (currentPage = 0, getTotal = false, userId = null) => {
@@ -15,6 +15,25 @@ export const fetchRecipes = (currentPage = 0, getTotal = false, userId = null) =
             const { recipes, total } = await get(recipeUri);
 
             dispatch({ type: RecipeActionTypes.FETCH_RECIPES, payload: { recipes, total } });
+        } catch (error) {
+            console.log('Error while trying to communicate with the API: ' + error.message);
+        }
+    };
+};
+
+export const fetchRecipesByIngredients = (ingredients, currentPage = 0, getTotal = false) => {
+
+    return async dispatch => {
+
+        try {
+            const recipePagination = pagination(currentPage);
+
+            let recipeUri = `/fetchRecipesByIngredients?limit=${recipePagination.limit}&skip=${recipePagination.skip}`;
+            recipeUri += `&sortBy=${recipePagination.sortBy}&total=${getTotal}`;
+
+            const { recipes, total } = await postPatch(recipeUri, 'POST', { ingredients });
+
+            dispatch({ type: RecipeActionTypes.FETCH_RECIPES_BY_INGREDIENTS, payload: { recipes, total } });
         } catch (error) {
             console.log('Error while trying to communicate with the API: ' + error.message);
         }

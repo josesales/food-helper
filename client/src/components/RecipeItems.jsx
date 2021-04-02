@@ -6,7 +6,7 @@ import { selectRecipes, selectTotal } from '../redux/recipe/recipe-selector';
 import RecipeItem from './RecipeItem';
 
 const RecipeItems = ({ recipes }) => {
-
+    //TODO check why sometimes when we go on page 2 or 3 in home and going to my recipes or favorite the right recipes are not been shown
     return (
         <div className="recipe-items">
             {

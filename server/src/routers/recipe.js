@@ -5,6 +5,7 @@ const Review = require('../models/review');
 const httpStatus = require('../util/httpStatus');
 const auth = require('../middleware/auth');
 const imageUpload = require('../util/imageUpload');
+const array = require('../util/array');
 const router = new express.Router();
 const sharp = require('sharp');
 
@@ -39,19 +40,10 @@ router.post('/recipes', auth, async (req, res) => {
 //GET /recipes?sortBy=createdAt_desc
 router.get('/recipes', async (req, res) => {
 
-    // const match = {};
     const sort = {};
     let filters = {};
 
     let shouldGetTotal = false;
-
-    // if (req.query.completed) {
-    //     match.completed = req.query.completed === 'true';
-    // }
-
-    // if (req.query.completed) {
-    //     match.completed = req.query.completed === 'true';
-    // }
 
     if (req.query.sortBy) {
         const parts = req.query.sortBy.split('_');
@@ -88,6 +80,62 @@ router.get('/recipes', async (req, res) => {
         res.sendStatus(httpStatus.internalServerError).send(error);
     }
 });
+
+
+router.post('/fetchRecipesByIngredients', async (req, res) => {
+
+    const sort = {};
+
+    let shouldGetTotal = false;
+
+    if (req.query.sortBy) {
+        const parts = req.query.sortBy.split('_');
+        sort[parts[0]] = parts[1] == 'desc' ? -1 : 1; //set the field name on the sort object and assign -1 or 1 for the order value  
+    }
+
+    if (req.query.total && req.query.total === 'true') {
+        shouldGetTotal = true;
+    }
+
+
+    try {
+
+        const ingredients = req.body.ingredients;
+
+        //each element of the array is linked with and condition
+        const ingredientFilters = ingredients.map(ingredient => {
+            //the nested object is an array that is an or condition
+            return { "name": { $regex: '.*' + ingredient.name + '.*' } }
+            // return { $or: [{ 'id': ingredient._id }, { 'name': { $regex: '^.*' + ingredient.name + '.*$' } }] }
+        });
+
+        const ingredientsDb = await Ingredient.find({ $or: ingredientFilters });
+
+        const recipeFilters = ingredientsDb.map(ingredient => {
+            return { "ingredients": { $eq: ingredient._id } }
+        });
+
+        let recipes = await Recipe.find({ $and: recipeFilters }, null
+            , {
+                limit: parseInt(req.query.limit), //number of documents the query will return
+                skip: parseInt(req.query.skip), //number of documents to slip
+                sort
+            }
+        ).populate('ingredients').populate('user').populate('reviews');
+
+        let total = null
+        if (shouldGetTotal) {
+            total = await Recipe.countDocuments({ $and: recipeFilters });
+        }
+
+        recipes = Recipe.getRecipesWithRate(recipes);
+        res.send({ recipes, total });
+    } catch (error) {
+        console.log(error)
+        res.sendStatus(httpStatus.internalServerError).send(error);
+    }
+});
+
 
 router.get('/recipes/:id', async (req, res) => {
     try {

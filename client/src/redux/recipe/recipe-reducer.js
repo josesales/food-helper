@@ -13,11 +13,12 @@ const recipeReducer = (state = INITIAL_STATE, action) => {
     switch (action.type) {
 
         case RecipeActionTypes.FETCH_RECIPES:
+        case RecipeActionTypes.FETCH_RECIPES_BY_INGREDIENTS:
         case RecipeActionTypes.FETCH_FAVORITE_RECIPES:
             return {
                 ...state,
                 recipes: action.payload.recipes,
-                total: action.payload.total ? action.payload.total : state.total,
+                total: action.payload.total !== null && action.payload.total !== undefined ? action.payload.total : state.total,
             };
 
         case RecipeActionTypes.SET_RECIPES:

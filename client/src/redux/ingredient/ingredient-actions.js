@@ -15,3 +15,8 @@ export const fetchIngredients = () => {
         }
     };
 };
+
+export const setShowSelectedIngredients = showSelectedIngredients => {
+
+    return { type: IngredientActionTypes.SET_SHOW_SELECTED_INGREDIENTS, payload: showSelectedIngredients };
+};

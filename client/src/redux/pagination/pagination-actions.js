@@ -9,3 +9,8 @@ export const setVisitedPage = visitedPage => {
 
     return { type: PaginationActionTypes.SET_VISITED_PAGE, payload: visitedPage };
 };
+
+export const setCurrentPage = currentPage => {
+
+    return { type: PaginationActionTypes.SET_CURRENT_PAGE, payload: currentPage };
+};

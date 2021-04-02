@@ -12,6 +12,7 @@ export const get = async (route, token = null) => {
         });
 
         let resData = null;
+
         if (res.status != 404) {
             resData = await res.json();
         }

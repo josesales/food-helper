@@ -1,19 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { fetchRecipes, setRecipes } from '../redux/recipe/recipe-actions';
 import RecipeItems from '../components/RecipeItems';
-import { selectRecipes, selectTotal } from '../redux/recipe/recipe-selector';
+import { selectPersistRecipe, selectRecipes, selectTotal } from '../redux/recipe/recipe-selector';
 import Loader from '../components/ui/Loader';
 import Pagination from '../components/ui/Pagination';
 import { createStructuredSelector } from 'reselect';
 import pagination from '../util/pagination';
-import { selectVisitedPage } from '../redux/pagination/pagination-selector';
-import { addVisitedPage, setVisitedPage } from '../redux/pagination/pagination-actions';
+import { selectCurrentPage, selectVisitedPage } from '../redux/pagination/pagination-selector';
+import { addVisitedPage, setCurrentPage, setVisitedPage } from '../redux/pagination/pagination-actions';
 import { selectCurrentUser } from '../redux/user/user-selector';
+import { selectShowSelectedIngredients } from '../redux/ingredient/ingredient-selector';
+import { setShowSelectedIngredients } from '../redux/ingredient/ingredient-actions';
 
 const recipesPagination = pagination(0);
 
-const MyRecipes = ({ recipes, visitedPage, total, fetchRecipes, setRecipes, setVisitedPage, addVisitedPage, currentUser }) => {
+const MyRecipes = ({ recipes, visitedPage, total, fetchRecipes, setRecipes, setVisitedPage,
+    addVisitedPage, currentUser, setCurrentPage, currentPage, setShowSelectedIngredients }) => {
 
     recipesPagination.total = total;
     const [isLoading, setIsLoading] = useState(false);
@@ -22,36 +25,41 @@ const MyRecipes = ({ recipes, visitedPage, total, fetchRecipes, setRecipes, setV
     useEffect(() => {
 
         const getMyRecipesFirstPage = async () => {
-            await fetchRecipes(recipesPagination.currentPage, true, currentUser._id);
+            await fetchRecipes(0, true, currentUser._id);
         }
 
+        setShowSelectedIngredients(false);
+        setVisitedPage({});
+        setCurrentPage(0);
         getMyRecipesFirstPage();
 
-        return () => {
-            setRecipes([]);
-            setVisitedPage({});
-        }
+        // return () => {
+        //     setRecipes([]);
+        //     setVisitedPage({});
+        //     setCurrentPage(0);
+        // }
+
     }, []);
 
 
     //search in the reducer the respective items of the current page and and if they are not there search in the db
-    const fetchMyRecipesByPage = async currentPage => {
+    const fetchMyRecipesByPage = async currentPageProp => {
 
-        recipesPagination.currentPage = currentPage;
+        setCurrentPage(currentPageProp);
 
-        if (visitedPage[currentPage]) {
+        if (visitedPage[currentPageProp]) {
             //set the recipes of the global state with the recipes of the page that was already visited
-            setRecipes(visitedPage[currentPage]);
+            setRecipes(visitedPage[currentPageProp]);
         } else {
             await setIsLoading(true);
-            await fetchRecipes(currentPage, false, currentUser._id);
+            await fetchRecipes(currentPageProp, false, currentUser._id);
             await setIsLoading(false);
         }
 
     }
 
     useEffect(() => {
-        addVisitedPage({ pageNumber: recipesPagination.currentPage, items: recipes });
+        addVisitedPage({ pageNumber: currentPage, items: recipes });
     }, [recipes]);
 
     return (
@@ -75,6 +83,7 @@ const mapStateToProps = createStructuredSelector({
     total: selectTotal,
     visitedPage: selectVisitedPage,
     currentUser: selectCurrentUser,
+    currentPage: selectCurrentPage,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -82,6 +91,8 @@ const mapDispatchToProps = dispatch => ({
     setRecipes: recipes => dispatch(setRecipes(recipes)),
     addVisitedPage: visitedPage => dispatch(addVisitedPage(visitedPage)),
     setVisitedPage: visitedPage => dispatch(setVisitedPage(visitedPage)),
+    setCurrentPage: currentPage => dispatch(setCurrentPage(currentPage)),
+    setShowSelectedIngredients: showSelectedIngredients => dispatch(setShowSelectedIngredients(showSelectedIngredients)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(MyRecipes);

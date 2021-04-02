@@ -1,7 +1,8 @@
 import { PaginationActionTypes } from './pagination-types';
 
 const INITIAL_STATE = {
-    visitedPage: {} //{ [page number] : itemsArray },
+    visitedPage: {}, //{ [page number] : itemsArray }
+    currentPage: 0
 }
 
 const paginationReducer = (state = INITIAL_STATE, action) => {
@@ -18,7 +19,15 @@ const paginationReducer = (state = INITIAL_STATE, action) => {
         case PaginationActionTypes.SET_VISITED_PAGE:
 
             return {
+                ...state,
                 visitedPage: {},
+            };
+
+        case PaginationActionTypes.SET_CURRENT_PAGE:
+
+            return {
+                ...state,
+                currentPage: action.payload,
             };
 
         default:

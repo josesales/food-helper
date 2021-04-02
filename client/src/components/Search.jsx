@@ -4,9 +4,13 @@ import HelperButton from './HelperButton';
 import SuggestionsDisplay from './SuggestionsDisplay';
 import { setPersistRecipe } from '../redux/recipe/recipe-actions';
 import { toSingular } from '../util/string';
+import { selectShowSelectedIngredients } from '../redux/ingredient/ingredient-selector';
+import { createStructuredSelector } from 'reselect';
+
 
 //Id must match with the name of the collection and predeceased by '_'
-const Search = ({ id, collectionName, buttonName, containerClass, inputClass, children, setPersistRecipe, isSelect, ...otherProps }) => {
+const Search = ({ id, collectionName, buttonName, containerClass, inputClass, children,
+    setPersistRecipe, isSelect, onChangeCallback, showSelectedIngredients, ...otherProps }) => {
 
     const searchContainerClass = containerClass ? containerClass : 'search-container';
     const searchInputClass = inputClass ? inputClass : 'search-container__input';
@@ -59,6 +63,10 @@ const Search = ({ id, collectionName, buttonName, containerClass, inputClass, ch
         const value = e.target.value;
         setInput(value);
         filterAndDisplayItems(value);
+
+        if (onChangeCallback) {
+            onChangeCallback();
+        }
     }
 
     //filter the items to show suggestions that are already in the db
@@ -140,12 +148,19 @@ const Search = ({ id, collectionName, buttonName, containerClass, inputClass, ch
     //Keep the recipe reducer update according to the selected suggestions of materials and ingredients
     useEffect(() => {
         setPersistRecipe({ [collectionName]: selectedItems });
+        setInput('');
     }, [selectedItems]);
 
     //Keep the recipe reducer update according to the selected suggestions of category and diet type
     useEffect(() => {
         setPersistRecipe({ [documentName]: selectedItem });
     }, [selectedItem]);
+
+    useEffect(() => {
+        if (!showSelectedIngredients) {
+            setSelectedItems([]);
+        }
+    }, [showSelectedIngredients]);
 
     return (
         <React.Fragment>
@@ -183,8 +198,12 @@ const Search = ({ id, collectionName, buttonName, containerClass, inputClass, ch
     );
 }
 
+const mapStateToProps = createStructuredSelector({
+    showSelectedIngredients: selectShowSelectedIngredients,
+});
+
 const mapDispatchToProps = dispatch => ({
     setPersistRecipe: recipe => dispatch(setPersistRecipe(recipe)),
 });
 
-export default connect(null, mapDispatchToProps)(Search);
+export default connect(mapStateToProps, mapDispatchToProps)(Search);

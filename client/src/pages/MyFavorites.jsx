@@ -7,13 +7,14 @@ import Loader from '../components/ui/Loader';
 import Pagination from '../components/ui/Pagination';
 import { createStructuredSelector } from 'reselect';
 import pagination from '../util/pagination';
-import { selectVisitedPage } from '../redux/pagination/pagination-selector';
-import { addVisitedPage, setVisitedPage } from '../redux/pagination/pagination-actions';
+import { selectCurrentPage, selectVisitedPage } from '../redux/pagination/pagination-selector';
+import { addVisitedPage, setCurrentPage, setVisitedPage } from '../redux/pagination/pagination-actions';
 import { selectCurrentUser } from '../redux/user/user-selector';
 
 const recipesPagination = pagination(0);
 
-const MyFavorites = ({ recipes, visitedPage, total, fetchFavoriteRecipes, setRecipes, setVisitedPage, addVisitedPage, currentUser }) => {
+const MyFavorites = ({ recipes, visitedPage, setVisitedPage, total, fetchFavoriteRecipes, setRecipes,
+    addVisitedPage, currentUser, setCurrentPage, currentPage }) => {
 
     recipesPagination.total = total;
     const [isLoading, setIsLoading] = useState(false);
@@ -22,36 +23,38 @@ const MyFavorites = ({ recipes, visitedPage, total, fetchFavoriteRecipes, setRec
     useEffect(() => {
 
         const getMyFavoritesFirstPage = async () => {
-            await fetchFavoriteRecipes(recipesPagination.currentPage, true, currentUser._id);
+            await fetchFavoriteRecipes(0, true, currentUser._id);
         }
 
+        setVisitedPage({});
+        setCurrentPage(0);
         getMyFavoritesFirstPage();
 
-        return () => {
-            setRecipes([]);
-            setVisitedPage({});
-        }
+        // return () => {
+        //     setRecipes([]);
+        //     setVisitedPage({});
+        //     setCurrentPage(0);
+        // }
     }, []);
 
 
     //search in the reducer the respective items of the current page and and if they are not there search in the db
-    const fetchMyFavoritesByPage = async currentPage => {
+    const fetchMyFavoritesByPage = async currentPageProp => {
 
-        recipesPagination.currentPage = currentPage;
-
-        if (visitedPage[currentPage]) {
+        setCurrentPage(currentPageProp);
+        if (visitedPage[currentPageProp]) {
             //set the recipes of the global state with the recipes of the page that was already visited
-            setRecipes(visitedPage[currentPage]);
+            setRecipes(visitedPage[currentPageProp]);
         } else {
             await setIsLoading(true);
-            await fetchFavoriteRecipes(currentPage, false, currentUser._id);
+            await fetchFavoriteRecipes(currentPageProp, false, currentUser._id);
             await setIsLoading(false);
         }
 
     }
 
     useEffect(() => {
-        addVisitedPage({ pageNumber: recipesPagination.currentPage, items: recipes });
+        addVisitedPage({ pageNumber: currentPage, items: recipes });
     }, [recipes]);
 
     return (
@@ -75,6 +78,7 @@ const mapStateToProps = createStructuredSelector({
     total: selectTotal,
     visitedPage: selectVisitedPage,
     currentUser: selectCurrentUser,
+    currentPage: selectCurrentPage,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -82,6 +86,7 @@ const mapDispatchToProps = dispatch => ({
     setRecipes: recipes => dispatch(setRecipes(recipes)),
     addVisitedPage: visitedPage => dispatch(addVisitedPage(visitedPage)),
     setVisitedPage: visitedPage => dispatch(setVisitedPage(visitedPage)),
+    setCurrentPage: currentPage => dispatch(setCurrentPage(currentPage)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(MyFavorites);
