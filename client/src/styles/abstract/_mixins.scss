@@ -58,6 +58,12 @@
     transform: translateY(4rem);
 }
 
+@mixin hideTitle {
+    margin-bottom: 5rem;
+    @include hideLabel;
+    @include notSelectable;
+}
+
 @mixin notSelectable {
     -webkit-touch-callout: none;
     -webkit-user-select: none;

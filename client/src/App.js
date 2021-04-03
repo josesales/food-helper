@@ -11,11 +11,13 @@ const Recipe = lazy(() => import('./pages/Recipe'));
 const AddEditRecipe = lazy(() => import('./pages/AddEditRecipe'));
 const Login = lazy(() => import('./pages/Login'));
 const SignUp = lazy(() => import('./pages/SignUp'));
+const Filter = lazy(() => import('./pages/Filter'));
 
 const App = () => {
 
   return (
     <div>
+
       <Header />
       <Switch>
         <Suspense fallback={<Loader />}>
@@ -26,6 +28,7 @@ const App = () => {
           <Route path='/addEditRecipe' component={AddEditRecipe} />
           <Route path='/login' component={Login} />
           <Route path='/signUp' component={SignUp} />
+          <Route exact path='/filter' component={Filter} />
         </Suspense>
       </Switch>
     </div>

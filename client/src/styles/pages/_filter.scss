@@ -1,0 +1,20 @@
+.filter {
+    margin-top: $margin-from-header;
+    width: 100%;
+    display: flex;
+	justify-content: center;
+    align-items: center;
+
+    &__container {
+        width: 60%;
+        height: 40vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    // &:not(:last-child) {
+
+    // }
+}

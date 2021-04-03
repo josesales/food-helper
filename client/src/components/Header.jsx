@@ -10,20 +10,23 @@ import { selectPersistRecipe, selectRecipes } from '../redux/recipe/recipe-selec
 import { createStructuredSelector } from 'reselect';
 import { fetchRecipes, fetchRecipesByIngredients, setPersistRecipe, setRecipes } from '../redux/recipe/recipe-actions';
 import { setCurrentPage, setVisitedPage } from '../redux/pagination/pagination-actions';
+import { selectIsActive } from '../redux/filter/filter-selector';
+import { toggleIsActive } from '../redux/filter/filter-actions';
 
-const Header = ({ persistRecipe, fetchRecipes, fetchRecipesByIngredients,
-    setRecipes, setPersistRecipe, setVisitedPage, setCurrentPage }) => {
-
-    const [areFiltersActive, setAreFiltersActive] = useState(false);
+const Header = ({ setRecipes, setPersistRecipe, setVisitedPage, setCurrentPage, areFiltersActive, toggleFilters }) => {
 
     const history = useHistory();
 
-
     const recipesAndPaginationCleanUp = () => {
+        toggleFilters();
         setRecipes([]);
         setPersistRecipe(null);
         setVisitedPage({});
         setCurrentPage(0);
+    }
+
+    const onFilterClick = () => {
+        toggleFilters();
     }
 
     return (
@@ -43,7 +46,7 @@ const Header = ({ persistRecipe, fetchRecipes, fetchRecipesByIngredients,
                         }} />
                 </div>
 
-                <ToggleSwitch name="Filters" isActive={areFiltersActive} onChange={newValue => setAreFiltersActive(newValue)} />
+                <ToggleSwitch name="Filters" onClickHandler={onFilterClick} />
 
             </header>
         </div>
@@ -53,6 +56,7 @@ const Header = ({ persistRecipe, fetchRecipes, fetchRecipesByIngredients,
 const mapStateToProps = createStructuredSelector({
     persistRecipe: selectPersistRecipe,
     recipes: selectRecipes,
+    areFiltersActive: selectIsActive
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -63,6 +67,7 @@ const mapDispatchToProps = dispatch => ({
     setPersistRecipe: recipe => dispatch(setPersistRecipe(recipe)),
     setVisitedPage: visitedPage => dispatch(setVisitedPage(visitedPage)),
     setCurrentPage: currentPage => dispatch(setCurrentPage(currentPage)),
+    toggleFilters: () => dispatch(toggleIsActive()),
 });
 
 

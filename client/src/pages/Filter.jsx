@@ -10,105 +10,74 @@ import pagination from '../util/pagination';
 import { selectCurrentPage, selectVisitedPage } from '../redux/pagination/pagination-selector';
 import { addVisitedPage, setCurrentPage, setVisitedPage } from '../redux/pagination/pagination-actions';
 import { fetchIngredients, setShowSelectedIngredients } from '../redux/ingredient/ingredient-actions';
+import { toggleIsActive } from '../redux/filter/filter-actions';
+import { selectIsActive } from '../redux/filter/filter-selector';
+import InputField from '../components/ui/InputField';
+import Search from '../components/Search';
+import HTML_ENTITIES from '../util/htmlEntities';
 
 export const recipesPagination = pagination(0);
 
 let isSearchActive = false;
 
-const Home = ({ recipes, visitedPage, setVisitedPage, total, fetchRecipes, fetchIngredients,
-    setRecipes, addVisitedPage, persistRecipe, fetchRecipesByIngredients, setShowSelectedIngredients,
-    setCurrentPage, currentPage }) => {
-
+const Filter = ({ isActive, toggleIsActive }) => {
+    //TODO: Adapt either SearchComponent, filterSelector or PersistRecipe for Orders Filter
     const [isLoading, setIsLoading] = useState(false);
-
-    recipesPagination.total = total;
 
     const ingredients = useSelector(state => state.ingredient.ingredients);
 
     //Fetch recipes like componentDidMount style
     useEffect(() => {
 
-        const getRecipesFirstPage = async () => {
-            await fetchRecipes(0, true);
+        if (!isActive) {
+            toggleIsActive();
         }
 
-        getRecipesFirstPage();
-        setShowSelectedIngredients(true);
         if (!ingredients || ingredients.length == 0) {
             fetchIngredients();
         }
 
         //set global store props below to their respective initial state when component umount 
-        return () => {
-            setShowSelectedIngredients(false);
-        }
+        // return () => {
+        // }
     }, []);
 
 
-    //search in the reducer the respective items of the current page and and if they are not there search in the db
-    const fetchRecipesByPage = async currentPageProp => {
-
-        setCurrentPage(currentPageProp);
-        if (visitedPage[currentPageProp]) {
-            //set the recipes of the global state with the recipes of the page that was already visited
-            setRecipes(visitedPage[currentPageProp]);
-        } else {
-            await setIsLoading(true);
-
-            if (isSearchActive) {
-                await fetchRecipesByIngredients(persistRecipe.ingredients, currentPageProp, true);
-            } else {
-                await fetchRecipes(currentPageProp);
-            }
-            await setIsLoading(false);
-        }
-
-    }
-
-    useEffect(() => {
-        addVisitedPage({ pageNumber: currentPage, items: recipes });
-    }, [recipes]);
-
-    //Search for recipes according to the filtered ingredients in the search component from the header
-    useEffect(() => {
-        const fetchRecipesByPage = async () => {
-
-            setCurrentPage(0);
-
-            if (persistRecipe && persistRecipe.ingredients && persistRecipe.ingredients.length > 0) {
-
-                isSearchActive = true;
-                fetchRecipesByIngredients(persistRecipe.ingredients, 0, true);
-            } else {
-
-                isSearchActive = false;
-                fetchRecipes(0, true);
-            }
-
-            setVisitedPage({});
-        }
-
-        fetchRecipesByPage();
-
-    }, [persistRecipe]);
 
     return (
-        <div className="home">
-
+        <div className="filter">
             {
                 isLoading ? <Loader /> :
                     <React.Fragment>
 
-                        <div className="home__hidden-title">
-                            <h2 className="heading-primary">Home</h2>
+                        <div className="filter__container">
+
+                            <InputField>
+
+                                <Search isSelect={true} id="recipe-form_categories" placeholder={'Category'} buttonName={HTML_ENTITIES.search}
+                                    containerClass="field__select" inputClass="field__select__text" collectionName="categories">
+
+                                    <label htmlFor="recipe-form_categories" className="field__label">Category</label>
+                                </Search>
+                            </InputField>
+
+                            <InputField>
+                                <Search isSelect={true} id="recipe-form_diet-type" placeholder={'Diet Type'} buttonName={HTML_ENTITIES.search}
+                                    containerClass="field__select" inputClass="field__select__text" collectionName="dietTypes">
+
+                                    <label htmlFor="recipe-form_diet-type" className="field__label">Diet Type</label>
+                                </Search>
+                            </InputField>
+
+                            <InputField>
+                                <Search isSelect={true} id="recipe-form_diet-type" placeholder={'Order'} buttonName={HTML_ENTITIES.search}
+                                    containerClass="field__select" inputClass="field__select__text" collectionName="dietTypes">
+
+                                    <label htmlFor="recipe-form_diet-type" className="field__label">Order</label>
+                                </Search>
+                            </InputField>
                         </div>
-
-                        <RecipeItems />
                     </React.Fragment>
-            }
-
-            {
-                recipesPagination ? <Pagination paginationObj={recipesPagination} fetchItems={fetchRecipesByPage} /> : ''
             }
         </div>
     );
@@ -120,9 +89,15 @@ const mapStateToProps = createStructuredSelector({
     persistRecipe: selectPersistRecipe,
     total: selectTotal,
     currentPage: selectCurrentPage,
+    isActive: selectIsActive,
 });
 
 const mapDispatchToProps = dispatch => ({
+
+    toggleIsActive: () => dispatch(toggleIsActive()),
+
+
+
     fetchRecipes: (currentPage, getTotal) => dispatch(fetchRecipes(currentPage, getTotal)),
     fetchIngredients: () => dispatch(fetchIngredients()),
     setRecipes: recipes => dispatch(setRecipes(recipes)),
@@ -135,4 +110,4 @@ const mapDispatchToProps = dispatch => ({
     setShowSelectedIngredients: showSelectedIngredients => dispatch(setShowSelectedIngredients(showSelectedIngredients)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
+export default connect(mapStateToProps, mapDispatchToProps)(Filter);

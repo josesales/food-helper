@@ -1,12 +1,15 @@
 
 .header {
-    // position: relative;
-    // z-index: 1000;
-    height: 10vh;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+    height: 15vh;
     display: flex;
     align-items: center;
-    margin-bottom: 5rem;
     background-color: $color-white;
+    border-bottom: 2px solid rgba($color-grey-light-2, 0.5); 
     
     &__logo {
         height: 12rem;
