@@ -10,6 +10,8 @@ import pagination from '../util/pagination';
 import { selectCurrentPage, selectVisitedPage } from '../redux/pagination/pagination-selector';
 import { addVisitedPage, setCurrentPage, setVisitedPage } from '../redux/pagination/pagination-actions';
 import { fetchIngredients, setShowSelectedIngredients } from '../redux/ingredient/ingredient-actions';
+import { selectIsActive } from '../redux/filter/filter-selector';
+import { toggleIsActive } from '../redux/filter/filter-actions';
 
 export const recipesPagination = pagination(0);
 
@@ -17,7 +19,7 @@ let isSearchActive = false;
 
 const Home = ({ recipes, visitedPage, setVisitedPage, total, fetchRecipes, fetchIngredients,
     setRecipes, addVisitedPage, persistRecipe, fetchRecipesByIngredients, setShowSelectedIngredients,
-    setCurrentPage, currentPage }) => {
+    setCurrentPage, currentPage, areFiltersActive, toggleFilters }) => {
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -120,6 +122,7 @@ const mapStateToProps = createStructuredSelector({
     persistRecipe: selectPersistRecipe,
     total: selectTotal,
     currentPage: selectCurrentPage,
+    areFiltersActive: selectIsActive,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -133,6 +136,7 @@ const mapDispatchToProps = dispatch => ({
     fetchRecipesByIngredients: (ingredients, currentPage, getTotal) =>
         dispatch(fetchRecipesByIngredients(ingredients, currentPage, getTotal)),
     setShowSelectedIngredients: showSelectedIngredients => dispatch(setShowSelectedIngredients(showSelectedIngredients)),
+    toggleFilters: () => dispatch(toggleIsActive()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

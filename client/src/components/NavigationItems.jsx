@@ -2,19 +2,25 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
 import { createStructuredSelector } from 'reselect';
+import { toggleIsActive } from '../redux/filter/filter-actions';
+import { selectIsActive } from '../redux/filter/filter-selector';
 import { setCurrentPage, setVisitedPage } from '../redux/pagination/pagination-actions';
 import { setPersistRecipe, setRecipes } from '../redux/recipe/recipe-actions';
 import { selectPersistRecipe } from '../redux/recipe/recipe-selector';
 import { logout } from '../redux/user/user-actions';
 import { selectCurrentUser, selectToken } from '../redux/user/user-selector';
 
-const NavigationItems = ({ currentUser, token, logout, setRecipes, setPersistRecipe, setVisitedPage, setCurrentPage }) => {
+const NavigationItems = ({ currentUser, token, logout, setRecipes, setPersistRecipe,
+    setVisitedPage, setCurrentPage, areFiltersActive, toggleFilters }) => {
 
     const history = useHistory();
 
     //Doing the cleanup here once when going from Home to MyRecipes for example the cleanup of the useEffect(() => {}, [])
     //runs only after MyRecipes returns the JSX
     const recipesAndPaginationCleanUp = () => {
+        if (areFiltersActive) {
+            toggleFilters();
+        }
         setRecipes([]);
         setPersistRecipe(null);
         setVisitedPage({});
@@ -74,7 +80,8 @@ const NavigationItems = ({ currentUser, token, logout, setRecipes, setPersistRec
 const mapStateToProps = createStructuredSelector({
     currentUser: selectCurrentUser,
     persistRecipe: selectPersistRecipe,
-    token: selectToken
+    token: selectToken,
+    areFiltersActive: selectIsActive,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -83,6 +90,7 @@ const mapDispatchToProps = dispatch => ({
     setPersistRecipe: recipe => dispatch(setPersistRecipe(recipe)),
     setVisitedPage: visitedPage => dispatch(setVisitedPage(visitedPage)),
     setCurrentPage: currentPage => dispatch(setCurrentPage(currentPage)),
+    toggleFilters: () => dispatch(toggleIsActive()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NavigationItems);

@@ -2,7 +2,6 @@ const express = require('express');
 const Recipe = require('../models/recipe');
 const Ingredient = require('../models/ingredient');
 const Review = require('../models/review');
-const httpStatus = require('../util/httpStatus');
 const auth = require('../middleware/auth');
 const imageUpload = require('../util/imageUpload');
 const array = require('../util/array');
@@ -60,20 +59,87 @@ router.get('/recipes', async (req, res) => {
         }
     }
 
+    if (req.query.categoryId && req.query.categoryId != 'null') {
+        filters = {
+            ...filters,
+            category: req.query.categoryId
+        }
+    }
+
+    if (req.query.dietTypeId && req.query.dietTypeId != 'null') {
+        filters = {
+            ...filters,
+            dietType: req.query.dietTypeId
+        }
+    }
+
     try {
 
-        let recipes = await Recipe.find({ ...filters }, null, {
-            limit: parseInt(req.query.limit), //number of documents the query will return
-            skip: parseInt(req.query.skip), //number of documents to slip
-            sort
-        }).populate('ingredients').populate('user').populate('reviews');
+        let recipes = null;
+        let total = null;
+        let shouldApplyDefaultSearch = true
 
-        let total = null
-        if (shouldGetTotal) {
-            total = await Recipe.countDocuments({ ...filters });
+        if (req.query.orderName && req.query.orderName != 'null') {
+
+            switch (req.query.orderName) {
+                case 'Most Recent':
+                    sort.createdAt = -1;
+                    break;
+                case 'Most Old':
+                    sort.createdAt = 1;
+                    break;
+                case 'Best Rated':
+
+                    shouldApplyDefaultSearch = false;
+                    recipes = await Recipe.find({ ...filters }).populate('ingredients').populate('user').populate('reviews');
+
+                    bestRatedRecipes = Recipe.orderByBestRated(recipes, req.query.limit, req.query.skip);
+                    recipes = bestRatedRecipes.recipes;
+                    total = bestRatedRecipes.total;
+                    break;
+                case 'Less Ingredients':
+
+                    shouldApplyDefaultSearch = false;
+                    recipes = await Recipe.find({ ...filters }).populate('ingredients').populate('user').populate('reviews');
+                    recipes = Recipe.getRecipesWithRate(recipes);
+
+                    bestRatedRecipes = Recipe.orderByLessIngredients(recipes, req.query.limit, req.query.skip);
+                    recipes = bestRatedRecipes.recipes;
+                    total = bestRatedRecipes.total;
+
+                    break;
+                case 'Less Materials':
+
+                    shouldApplyDefaultSearch = false;
+                    recipes = await Recipe.find({ ...filters }).populate('ingredients').populate('user').populate('reviews');
+                    recipes = Recipe.getRecipesWithRate(recipes);
+
+                    bestRatedRecipes = Recipe.orderByLessMaterials(recipes, req.query.limit, req.query.skip);
+                    recipes = bestRatedRecipes.recipes;
+                    total = bestRatedRecipes.total;
+                    break;
+                default:
+                    break;
+            }
         }
 
-        recipes = Recipe.getRecipesWithRate(recipes);
+        if (shouldApplyDefaultSearch) {
+
+            recipes = await Recipe.find({ ...filters }, null, {
+                limit: parseInt(req.query.limit), //number of documents the query will return
+                skip: parseInt(req.query.skip), //number of documents to slip
+                sort
+            }).populate('ingredients').populate('user').populate('reviews');
+
+            recipes = Recipe.getRecipesWithRate(recipes);
+
+            total = null
+            if (shouldGetTotal) {
+                total = await Recipe.countDocuments({ ...filters });
+            }
+
+        }
+
         res.send({ recipes, total });
     } catch (error) {
         console.log(error)

@@ -2,7 +2,7 @@ import pagination from '../../util/pagination';
 import { get, postPatch } from '../../util/request-sender';
 import { RecipeActionTypes } from './recipe-types';
 
-export const fetchRecipes = (currentPage = 0, getTotal = false, userId = null) => {
+export const fetchRecipes = (currentPage = 0, getTotal = false, userId = null, filters = null) => {
 
     return async dispatch => {
 
@@ -11,6 +11,25 @@ export const fetchRecipes = (currentPage = 0, getTotal = false, userId = null) =
 
             let recipeUri = `/recipes?userId=${userId}&limit=${recipePagination.limit}&skip=${recipePagination.skip}`;
             recipeUri += `&sortBy=${recipePagination.sortBy}&total=${getTotal}`;
+
+            let filtersUri = '';
+
+            if (filters && filters.category && filters.category._id) {
+                filtersUri += `&categoryId=${filters.category._id}`;
+            }
+
+            if (filters && filters.dietType && filters.dietType._id) {
+                filtersUri += `&dietTypeId=${filters.dietType._id}`;
+            }
+
+            if (filters && filters.order && filters.order.name) {
+                filtersUri += `&orderName=${filters.order.name}`;
+            }
+
+            if (filtersUri) {
+                recipeUri += filtersUri;
+            }
+
 
             const { recipes, total } = await get(recipeUri);
 

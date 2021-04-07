@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { useHistory } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 import { createStructuredSelector } from 'reselect';
 import { toggleIsActive } from '../redux/filter/filter-actions';
 import { selectIsActive } from '../redux/filter/filter-selector';
@@ -8,12 +8,14 @@ import { selectIsActive } from '../redux/filter/filter-selector';
 const ToggleSwitch = ({ name, isActive, onClickHandler }) => {
 
     const history = useHistory();
+    const location = useLocation();
 
     // //redirect to filter page in case it's active or to home page is it's not active
     useEffect(() => {
+
         if (isActive) {
-            history.push('/filter');
-        } else {
+            history.push('/filter', {});
+        } else if (location.pathname == '/filter') {
             history.push('/');
         }
     }, [isActive]);

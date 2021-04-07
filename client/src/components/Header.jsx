@@ -13,12 +13,14 @@ import { setCurrentPage, setVisitedPage } from '../redux/pagination/pagination-a
 import { selectIsActive } from '../redux/filter/filter-selector';
 import { toggleIsActive } from '../redux/filter/filter-actions';
 
-const Header = ({ setRecipes, setPersistRecipe, setVisitedPage, setCurrentPage, areFiltersActive, toggleFilters }) => {
+const Header = ({ setRecipes, setPersistRecipe, setVisitedPage, setCurrentPage, toggleFilters, areFiltersActive }) => {
 
     const history = useHistory();
 
     const recipesAndPaginationCleanUp = () => {
-        toggleFilters();
+        if (areFiltersActive) {
+            toggleFilters();
+        }
         setRecipes([]);
         setPersistRecipe(null);
         setVisitedPage({});
@@ -33,7 +35,7 @@ const Header = ({ setRecipes, setPersistRecipe, setVisitedPage, setCurrentPage, 
         <div className="header-container">
             <header className="header">
 
-                <Navigation />
+                <Navigation onMenuClick={recipesAndPaginationCleanUp} />
 
                 <Link onClick={recipesAndPaginationCleanUp} className='header__logo' to='/'>
                     <img src={logo} alt="Food Helper Logo" className="header__logo" />

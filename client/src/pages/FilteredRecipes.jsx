@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { fetchRecipes, setRecipes } from '../redux/recipe/recipe-actions';
 import RecipeItems from '../components/RecipeItems';
-import { selectRecipes, selectTotal } from '../redux/recipe/recipe-selector';
+import { selectPersistRecipe, selectRecipes, selectTotal } from '../redux/recipe/recipe-selector';
 import Loader from '../components/ui/Loader';
 import Pagination from '../components/ui/Pagination';
 import { createStructuredSelector } from 'reselect';
@@ -11,26 +11,28 @@ import { selectCurrentPage, selectVisitedPage } from '../redux/pagination/pagina
 import { addVisitedPage, setCurrentPage, setVisitedPage } from '../redux/pagination/pagination-actions';
 import { selectCurrentUser } from '../redux/user/user-selector';
 import { setShowSelectedIngredients } from '../redux/ingredient/ingredient-actions';
+import { useLocation } from 'react-router';
 
 const recipesPagination = pagination(0);
 
-const MyRecipes = ({ recipes, visitedPage, total, fetchRecipes, setRecipes, setVisitedPage,
+const FilteredRecipes = ({ recipes, visitedPage, total, fetchRecipes, setRecipes, setVisitedPage,
     addVisitedPage, currentUser, setCurrentPage, currentPage, setShowSelectedIngredients }) => {
-    //TODO Check for this and my favorites why loader been shown a bit lower than in the home page 
+
     recipesPagination.total = total;
     const [isLoading, setIsLoading] = useState(false);
-
+    const location = useLocation();
+    const filters = location.state.filters;
     //Fetch recipes like componentDidMount style
     useEffect(() => {
 
-        const getMyRecipesFirstPage = async () => {
-            await fetchRecipes(0, true, currentUser._id);
+        const getFilteredRecipesFirstPage = async () => {
+            await fetchRecipes(0, true, null, filters);
         }
 
         setShowSelectedIngredients(false);
         setVisitedPage({});
         setCurrentPage(0);
-        getMyRecipesFirstPage();
+        getFilteredRecipesFirstPage();
 
         // return () => {
         //     setRecipes([]);
@@ -42,7 +44,7 @@ const MyRecipes = ({ recipes, visitedPage, total, fetchRecipes, setRecipes, setV
 
 
     //search in the reducer the respective items of the current page and and if they are not there search in the db
-    const fetchMyRecipesByPage = async currentPageProp => {
+    const fetchFilteredRecipesByPage = async currentPageProp => {
 
         setCurrentPage(currentPageProp);
 
@@ -51,7 +53,7 @@ const MyRecipes = ({ recipes, visitedPage, total, fetchRecipes, setRecipes, setV
             setRecipes(visitedPage[currentPageProp]);
         } else {
             await setIsLoading(true);
-            await fetchRecipes(currentPageProp, false, currentUser._id);
+            await fetchRecipes(currentPageProp, false, null, filters);
             await setIsLoading(false);
         }
 
@@ -62,17 +64,17 @@ const MyRecipes = ({ recipes, visitedPage, total, fetchRecipes, setRecipes, setV
     }, [recipes]);
 
     return (
-        <div className="my-recipes">
+        <div className="filtered-recipes">
 
-            <div className="my-recipes__title">
-                <h2 className="heading-primary">My Recipes</h2>
+            <div className="filtered-recipes__title">
+                <h2 className="heading-primary">Filtered Recipes</h2>
             </div>
 
             {
                 isLoading ? <Loader /> : <RecipeItems />
             }
 
-            <Pagination paginationObj={recipesPagination} fetchItems={fetchMyRecipesByPage} />
+            <Pagination paginationObj={recipesPagination} fetchItems={fetchFilteredRecipesByPage} />
         </div>
     );
 };
@@ -86,7 +88,7 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const mapDispatchToProps = dispatch => ({
-    fetchRecipes: (currentPage, getTotal, userId) => dispatch(fetchRecipes(currentPage, getTotal, userId)),
+    fetchRecipes: (currentPage, getTotal, userId, filters) => dispatch(fetchRecipes(currentPage, getTotal, userId, filters)),
     setRecipes: recipes => dispatch(setRecipes(recipes)),
     addVisitedPage: visitedPage => dispatch(addVisitedPage(visitedPage)),
     setVisitedPage: visitedPage => dispatch(setVisitedPage(visitedPage)),
@@ -94,4 +96,4 @@ const mapDispatchToProps = dispatch => ({
     setShowSelectedIngredients: showSelectedIngredients => dispatch(setShowSelectedIngredients(showSelectedIngredients)),
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(MyRecipes);
+export default connect(mapStateToProps, mapDispatchToProps)(FilteredRecipes);

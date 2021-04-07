@@ -14,7 +14,8 @@
         align-items: center;
     }
 
-    // &:not(:last-child) {
-
-    // }
+    &__apply-btn {
+        @include button;
+        margin-top: 2rem;
+    }
 }

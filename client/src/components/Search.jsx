@@ -9,19 +9,19 @@ import { createStructuredSelector } from 'reselect';
 
 
 //Id must match with the name of the collection and predeceased by '_'
-const Search = ({ id, collectionName, buttonName, containerClass, inputClass, children,
+const Search = ({ id, documentName, collectionName, buttonName, containerClass, inputClass, children,
     setPersistRecipe, isSelect, onChangeCallback, showSelectedIngredients, ...otherProps }) => {
 
     const searchContainerClass = containerClass ? containerClass : 'search-container';
     const searchInputClass = inputClass ? inputClass : 'search-container__input';
     const displaySuggestionsOrigin = searchContainerClass == 'search-container' ? 'search' : 'form';
 
-    //convert to the singular to match the document name
-    const documentName = toSingular(collectionName);
+    //if documentName is not passed then it converts the collectionName to the singular
+    const documentNameTemp = !documentName || !documentName.trim() ? toSingular(collectionName) : documentName;
 
     const [input, setInput] = useState('');
 
-    const items = useSelector(state => state[documentName][collectionName]);
+    const items = useSelector(state => state[documentNameTemp][collectionName]);
 
     const [ItemsUi, setItemsUi] = useState(null);
 
@@ -153,7 +153,7 @@ const Search = ({ id, collectionName, buttonName, containerClass, inputClass, ch
 
     //Keep the recipe reducer update according to the selected suggestions of category and diet type
     useEffect(() => {
-        setPersistRecipe({ [documentName]: selectedItem });
+        setPersistRecipe({ [documentNameTemp]: selectedItem });
     }, [selectedItem]);
 
     useEffect(() => {

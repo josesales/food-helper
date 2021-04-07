@@ -10,3 +10,5 @@ export const selectSelectedDietType = createSelector([selectFilterState], filter
 
 export const selectSelectedOrder = createSelector([selectFilterState], filterState => filterState.selectedOrder);
 
+export const selectOrder = createSelector([selectFilterState], filterState => filterState.order);
+

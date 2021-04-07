@@ -18,7 +18,7 @@ router.post('/favorites', auth, async (req, res) => {
 
 router.delete('/favorites/:recipeId', auth, async (req, res) => {
     try {
-
+        //check if it's working properly
         const recipe = await Favorite.removeFavorite({ user: req.user._id, recipe: req.params.recipeId });
         res.status(httpStatus.ok).send({ recipe });
     } catch (error) {

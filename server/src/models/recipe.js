@@ -256,6 +256,70 @@ recipeSchema.statics.getRecipesWithRate = recipes => {
     }
 }
 
+recipeSchema.statics.orderByBestRated = (recipes, limit = null, skip = null) => {
+
+    total = recipes.length;
+    recipes = Recipe.getRecipesWithRate(recipes);
+    recipes.sort((recipeA, recipeB) => recipeA.rate >= recipeB.rate ? -1 : 1);
+
+    //handle the pagination
+    if (limit && skip) {
+
+        limit = Number.parseInt(limit);
+        skip = Number.parseInt(skip);
+
+        //it returns a portion of the recipes from the index which is the skip parameter 
+        //until skip + limit(number of recipes per page)
+        recipes = recipes.slice(skip, skip + limit);
+    }
+
+    return { recipes, total };
+}
+
+recipeSchema.statics.orderByLessIngredients = (recipes, limit = null, skip = null) => {
+
+    total = recipes.length;
+    recipes.sort((recipeA, recipeB) => recipeA.ingredients.length <= recipeB.ingredients.length ? -1 : 1);
+
+    //handle the pagination
+    if (limit && skip) {
+
+        limit = Number.parseInt(limit);
+        skip = Number.parseInt(skip);
+
+        //it returns a portion of the recipes from the index which is the skip parameter 
+        //until skip + limit(number of recipes per page)
+        recipes = recipes.slice(skip, skip + limit);
+    }
+
+    return { recipes, total };
+}
+
+recipeSchema.statics.orderByLessMaterials = (recipes, limit = null, skip = null) => {
+
+    total = recipes.length;
+    recipes.sort((recipeA, recipeB) => {
+        if (recipeA.materials && recipeA.materials.length <= recipeB.materials && recipeB.materials.length) {
+            return -1; //RecipeA is takes the precedence
+        } else {
+            return 1 //RecipeB is takes the precedence;
+        }
+    });
+
+    //handle the pagination
+    if (limit && skip) {
+
+        limit = Number.parseInt(limit);
+        skip = Number.parseInt(skip);
+
+        //it returns a portion of the recipes from the index which is the skip parameter 
+        //until skip + limit(number of recipes per page)
+        recipes = recipes.slice(skip, skip + limit);
+    }
+
+    return { recipes, total };
+}
+
 //In this case toJson converts the image from a buffer to a base 64 underneath the hood
 recipeSchema.methods.toJSON = function () {
 

@@ -6,7 +6,23 @@ const INITIAL_STATE = {
     selectedCategory: null,
     dietTypes: [],
     selectedDietType: null,
-    order: ['Best Rated', 'Most Recent', 'Most Old', 'Less Ingredients', 'Less Materials'],
+    order: [
+        {
+            _id: 1, name: 'Best Rated'
+        },
+        {
+            _id: 2, name: 'Most Recent'
+        },
+        {
+            _id: 3, name: 'Most Old'
+        },
+        {
+            _id: 4, name: 'Less Ingredients'
+        },
+        {
+            _id: 5, name: 'Less Materials'
+        },
+    ],
     selectedOrder: null,
 }
 
