@@ -20,9 +20,7 @@ export const recipesPagination = pagination(0);
 
 const Filter = ({ isActive, toggleIsActive, fetchCategories, fetchDietTypes, categories, dietTypes,
     persistRecipe, setPersistRecipe }) => {
-    //TODO: Adapt either SearchComponent, filterSelector or PersistRecipe for Orders Filter
-    //TODO: Create Button to apply filters
-    //TODO: Create structure like MyRecipes and FavoriteRecipes but for Filtered Recipes
+
     const [isLoading, setIsLoading] = useState(false);
     const [filters, setFilters] = useState(null);
     const history = useHistory();

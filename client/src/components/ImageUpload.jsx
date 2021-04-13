@@ -1,18 +1,25 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
 import { ReactComponent as Upload } from "../assets/upload.svg";
-import { setImage } from '../redux/recipe/recipe-actions';
+import { setImage, setBase64Image } from '../redux/recipe/recipe-actions';
+import { selectBase64Image } from '../redux/recipe/recipe-selector';
 
-const ImageUpload = ({ setImage }) => {
+const ImageUpload = ({ setImage, image, setBase64Image }) => {
 
-    const [base64Image, setBase64Image] = useState(null);
+    const [base64ImageState, setBase64ImageState] = useState(image ? image : null);
+
 
     const onFileUploaded = ({ target }) => {
         if (target.files && target.files[0]) {
             var reader = new FileReader();
 
             reader.onload = function (e) {
-                setBase64Image(e.target.result);
+                const setImg = async () => {
+                    await setBase64ImageState(e.target.result);
+                    await setBase64Image(e.target.result);
+                }
+                setImg();
             };
 
             setImage(target.files[0]);
@@ -26,9 +33,9 @@ const ImageUpload = ({ setImage }) => {
 
             <label htmlFor="file-input">
                 {
-                    base64Image ?
+                    base64ImageState ?
                         <form encType="multipart/form-data">
-                            <img src={base64Image} className="image-upload__img" />
+                            <img src={base64ImageState} className="image-upload__img" />
                         </form> :
 
                         <Upload className="image-upload__img" />
@@ -42,6 +49,7 @@ const ImageUpload = ({ setImage }) => {
 
 const mapDispatchToProps = dispatch => ({
     setImage: image => dispatch(setImage(image)),
+    setBase64Image: base64Image => dispatch(setBase64Image(base64Image)),
 });
 
 export default connect(null, mapDispatchToProps)(ImageUpload);

@@ -48,8 +48,8 @@
         &--back {
             //makes the back part start rotated because when we go to the back part of the card 
             //we want to see the front of the div of the back part
+            @include secondary-gradient;
             transform: rotateY(180deg);
-            background-image: linear-gradient(to left bottom, $color-grey-dark-1, $color-primary-light);
             display: flex;
             flex-flow: row wrap;
             flex-direction: column;
@@ -109,6 +109,26 @@
         width: 100%;
         justify-content: space-evenly;
         margin-top: auto;
+    }
+    
+    .front-button-container {
+        display: flex;
+        width: 100%;
+        justify-content: space-evenly;
+        margin-top: auto;
+
+        &__edit {
+            @include label-button;
+            @include notSelectable;
+            margin-top: auto;
+            text-decoration: none;
+            color: $color-white;
+            
+            &:hover {
+                background-color: $color-white;
+                color: $color-primary;
+            }
+        }
     }
 } 
 

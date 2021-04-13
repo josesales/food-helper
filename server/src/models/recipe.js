@@ -98,28 +98,6 @@ const recipeSchema = new mongoose.Schema(
     }
 );
 
-// recipeSchema.pre('save', async function (next) {
-
-//     const recipe = this;
-//     try {
-//         recipe.ingredients.forEach(async ingredient => {
-//             ingredient.recipe = recipe;
-//             // console.log('ingredient: ' + ingredient);
-//             await Ingredient.save(ingredient);
-//         });
-
-//         // recipe.materials.forEach(async material => {
-//         //     material.recipe = recipe;
-//         //     console.log('material: ' + material);
-//         //     await Material.save(material);
-//         // });
-
-//         next();
-//     } catch (error) {
-//         console.log('Error while saving the ingredients and materials: ' + error)
-//     }
-// });
-
 const validate = recipe => {
 
     if (!recipe.name) {
@@ -146,8 +124,20 @@ const validate = recipe => {
     }
 
     if (recipe.videoUrl) {
-        const videoId = recipe.videoUrl.slice(recipe.videoUrl.lastIndexOf('v=') + 2, recipe.videoUrl.indexOf('&'));
-        recipe.videoUrl = "https://www.youtube.com/embed/" + videoId;
+
+        if (!recipe.videoUrl.includes('https://www.youtube.com/embed/')) {
+
+            //it works to get the id of a video from a playlist on youtube  
+            if (recipe.videoUrl.includes('&')) {
+                const videoId = recipe.videoUrl.slice(recipe.videoUrl.lastIndexOf('v=') + 2, recipe.videoUrl.indexOf('&'));
+                recipe.videoUrl = "https://www.youtube.com/embed/" + videoId;
+
+            } else {
+                //if link is not from a playlist but from an isolated video
+                const videoId = recipe.videoUrl.slice(recipe.videoUrl.lastIndexOf('v=') + 2, recipe.videoUrl.length);
+                recipe.videoUrl = "https://www.youtube.com/embed/" + videoId;
+            }
+        }
     }
 
     if (!recipe.category || !recipe.category._id) {
@@ -178,7 +168,18 @@ recipeSchema.statics.saveRecipe = async recipeReq => {
     recipe.ingredients = ingredientsDb;
     recipe.materials = materialsDb;
 
-    recipe = await recipe.save();
+    if (recipeReq._id) {
+        //update
+        recipe = await Recipe.findByIdAndUpdate(recipeReq._id, { ...recipe });
+        recipe.ingredients = ingredientsDb;
+        recipe.materials = materialsDb;
+    } else {
+        recipe = await recipe.save();
+    }
+
+    recipe.ingredients = ingredientsDb;
+    recipe.materials = materialsDb;
+
     return recipe;
 }
 
@@ -196,22 +197,6 @@ recipeSchema.statics.transform = async recipeReq => {
         savedIngredient.isNew = !ingredient._id ? true : false; //define if the document to update or insert
         return await saveIngredient(savedIngredient);
     });
-
-    // Promise.all(recipe.ingredients).then(values => {
-    //     recipe.ingredients = values;
-    // });
-
-    console.log('Recipe Ingredients' + recipe.ingredients);
-
-    // recipe.materials = recipeReq.materials.map(async material => {
-    //     // material.recipe = recipe._id;
-    //     const savedMaterial = new Material(material);
-    //     savedMaterial.isNew = !material._id ? true : false;
-    //     await savedMaterial.save(material);
-
-    //     // console.log('material: ' + savedMaterial);
-    //     return savedMaterial;
-    // });
 
     return recipe;
 }

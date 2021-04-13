@@ -21,7 +21,7 @@ const ToggleSwitch = ({ name, isActive, onClickHandler }) => {
     }, [isActive]);
 
     return (
-        <div className="switch-container">
+        <div title="Search Recipes by Filters" className="switch-container">
 
             <div className="toggle-switch">
                 <input

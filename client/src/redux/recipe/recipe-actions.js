@@ -33,7 +33,13 @@ export const fetchRecipes = (currentPage = 0, getTotal = false, userId = null, f
 
             const { recipes, total } = await get(recipeUri);
 
-            dispatch({ type: RecipeActionTypes.FETCH_RECIPES, payload: { recipes, total } });
+            //if userId is sent dispatch to FETCH_USER_RECIPES
+            if (userId) {
+                dispatch({ type: RecipeActionTypes.FETCH_MY_RECIPES, payload: { recipes, total } });
+            } else {
+                dispatch({ type: RecipeActionTypes.FETCH_RECIPES, payload: { recipes, total } });
+            }
+
         } catch (error) {
             console.log('Error while trying to communicate with the API: ' + error.message);
         }
@@ -71,7 +77,7 @@ export const fetchFavoriteRecipes = (currentPage = 0, getTotal = false, userId =
 
             const { recipes, total } = await get(recipeUri);
 
-            dispatch({ type: RecipeActionTypes.FETCH_RECIPES, payload: { recipes, total } });
+            dispatch({ type: RecipeActionTypes.FETCH_FAVORITE_RECIPES, payload: { recipes, total } });
         } catch (error) {
             console.log('Error while trying to communicate with the API: ' + error.message);
         }
@@ -83,9 +89,24 @@ export const setRecipes = recipes => {
     return { type: RecipeActionTypes.SET_RECIPES, payload: recipes };
 };
 
+export const setMyRecipes = recipes => {
+
+    return { type: RecipeActionTypes.SET_MY_RECIPES, payload: recipes };
+};
+
+export const setFavoriteRecipes = recipes => {
+
+    return { type: RecipeActionTypes.SET_FAVORITE_RECIPES, payload: recipes };
+};
+
 export const setImage = image => {
 
     return { type: RecipeActionTypes.SET_IMAGE, payload: image }
+};
+
+export const setBase64Image = base64Image => {
+
+    return { type: RecipeActionTypes.SET_BASE64_IMAGE, payload: base64Image }
 };
 
 export const setCurrentRecipe = recipe => {

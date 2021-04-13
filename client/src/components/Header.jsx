@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import logo from "../assets/logo-200x200.png";
 import Navigation from './Navigation';
 import Search from './Search';
@@ -13,19 +13,9 @@ import { setCurrentPage, setVisitedPage } from '../redux/pagination/pagination-a
 import { selectIsActive } from '../redux/filter/filter-selector';
 import { toggleIsActive } from '../redux/filter/filter-actions';
 
-const Header = ({ setRecipes, setPersistRecipe, setVisitedPage, setCurrentPage, toggleFilters, areFiltersActive }) => {
+const Header = ({ toggleFilters }) => {
 
     const history = useHistory();
-
-    const recipesAndPaginationCleanUp = () => {
-        if (areFiltersActive) {
-            toggleFilters();
-        }
-        setRecipes([]);
-        setPersistRecipe(null);
-        setVisitedPage({});
-        setCurrentPage(0);
-    }
 
     const onFilterClick = () => {
         toggleFilters();
@@ -35,12 +25,12 @@ const Header = ({ setRecipes, setPersistRecipe, setVisitedPage, setCurrentPage, 
         <div className="header-container">
             <header className="header">
 
-                <Navigation onMenuClick={recipesAndPaginationCleanUp} />
+                <Navigation />
 
-                <Link onClick={recipesAndPaginationCleanUp} className='header__logo' to='/'>
-                    <img src={logo} alt="Food Helper Logo" className="header__logo" />
+                <Link className='header__logo' to='/'>
+                    <img title="Home" src={logo} alt="Food Helper Logo" className="header__logo" />
                 </Link>
-                <div className="header__search-container">
+                <div title="Search Recipes by Ingredients" className="header__search-container">
 
                     <Search id="header-container_ingredients" placeholder={'Write an Ingredient'}
                         buttonName={HTML_ENTITIES.add} collectionName="ingredients" onChangeCallback={() => {

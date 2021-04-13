@@ -5,7 +5,7 @@ import ImageUpload from '../components/ImageUpload';
 import EditSteps from '../components/EditSteps';
 import Search from '../components/Search';
 import InputField from '../components/ui/InputField';
-import { selectPersistRecipe, selectImage } from '../redux/recipe/recipe-selector';
+import { selectPersistRecipe, selectImage, selectBase64Image } from '../redux/recipe/recipe-selector';
 import HTML_ENTITIES from '../util/htmlEntities';
 import TextArea from '../components/ui/TextArea';
 import { fetchIngredients } from '../redux/ingredient/ingredient-actions';
@@ -13,13 +13,37 @@ import { fetchMaterials } from '../redux/material/material-actions';
 import { fetchCategories } from '../redux/category/category-actions';
 import { fetchDietTypes } from '../redux/diet-type/diet-type-actions';
 import { postPatch, upload } from '../util/request-sender';
-import { selectToken } from '../redux/user/user-selector';
+import { selectCurrentUser, selectToken } from '../redux/user/user-selector';
+import { useLocation } from 'react-router';
+import { setImage } from '../redux/recipe/recipe-actions';
+import { setCurrentUser } from '../redux/user/user-actions';
+
+let shouldPersistIngredient = true;
+let localBase64Image = null;
 
 const AddEditRecipe = (props) => {
 
-    const { persistRecipe, image, recipeDB, fetchIngredients, fetchMaterials, fetchCategories, fetchDietTypes, token } = props;
+    const { persistRecipe, image, base64Image, fetchIngredients, fetchMaterials, fetchCategories, fetchDietTypes,
+        setImage, token, currentUser, setCurrentUser } = props;
 
-    const [recipe, setRecipe] = useState(recipeDB ? recipeDB : {
+    const location = useLocation();
+
+    let recipeDb = location && location.state && location.state.recipe && location.state.recipe._id ?
+        location.state.recipe : null;
+    recipeDb = Object.assign({}, recipeDb);
+
+    //set image in case user is editing an existing recipe
+    let imageDb = null;
+    if (recipeDb && recipeDb.image) {
+        imageDb = recipeDb.image;
+        // setImage(imageDb);
+        //delete image from recipe recipeDb to avoid the entity is too large error
+        delete recipeDb.image;
+    }
+
+    // const [localBase64Image, setLocalBase64Image] = useState(null);
+
+    const [recipe, setRecipe] = useState(recipeDb ? recipeDb : {
         name: '',
         videoUrl: '',
         steps: [],
@@ -29,7 +53,6 @@ const AddEditRecipe = (props) => {
     });
 
     //Recipe
-
     const onRecipeChange = e => {
         setRecipe({ ...recipe, [e.target.id]: e.target.value });
     }
@@ -73,12 +96,47 @@ const AddEditRecipe = (props) => {
     const onSaveRecipeClick = async () => {
         try {
 
-            if (!image || !image.type) {
+            //In case user is editing a recipe the image will be already loaded by default 
+            //so the user does not need necessarily to choose a new one
+            if ((!image || !image.type) && !recipeDb) {
                 throw new Error('Image is mandatory');
             }
 
             const savedRecipe = await postPatch('/recipes', 'POST', recipe, token);
-            await upload('/recipeImage', image, savedRecipe._id, token);
+
+            if (image) {
+                await upload('/recipeImage', image, savedRecipe._id, token);
+            }
+
+            //clone the recipe to assign the image and avoid the Entity is too large error
+            const recipeWithImage = Object.assign({}, recipe);
+            recipeWithImage.image = imageDb;
+
+            if (savedRecipe.videoUrl) {
+                //set videoUrl with embedded url
+                recipeWithImage.videoUrl = savedRecipe.videoUrl
+            }
+
+            if (currentUser.recipes && currentUser.recipes.length > 0) {
+                //update currentUser state with the changes in the recipe
+                const userRecipes = currentUser.recipes.map(userRecipe => {
+                    if (userRecipe._id == recipeWithImage._id) {
+                        if (image) {
+                            // set chosen image if there is one
+                            recipeWithImage.image = localBase64Image.split(',')[1];
+                        } else {
+                            // set current image from the db in case user does not choose a new one
+                            // recipeWithImage.image = imageDb;
+                        }
+                        return recipeWithImage;
+                    } else {
+                        return userRecipe
+                    }
+                });
+                setCurrentUser({ ...currentUser, recipes: userRecipes });
+            } else {
+                setCurrentUser({ ...currentUser, recipes: [].concat(recipeWithImage) });
+            }
 
             alert('Recipe Saved Successfully!');
         } catch (error) {
@@ -96,8 +154,9 @@ const AddEditRecipe = (props) => {
     // Get the collections for the search component
     useEffect(() => {
 
-        //check if the collection are already in the reducer so it doesn't go to the db every time the user access this page
+        shouldPersistIngredient = false;
 
+        //check if the collection are already in the reducer so it doesn't go to the db every time the user access this page
         if (ingredients.length == 0) {
             fetchIngredients();
         }
@@ -113,12 +172,24 @@ const AddEditRecipe = (props) => {
         if (dietTypes.length == 0) {
             fetchDietTypes();
         }
+
+        setImage(null);
     }, []);
 
     //Keep recipe useState in sync with persistRecipe to get ingredients, materials...
     useEffect(() => {
-        setRecipe({ ...recipe, ...persistRecipe });
+        //use this flag once the ingredients don't get set to empty by the search in the header which sets the ingredients
+        //on the persist recipe to empty during the first render of the AddEditRecipe page 
+        if (shouldPersistIngredient || !persistRecipe.ingredients) {
+            setRecipe({ ...recipe, ...persistRecipe });
+        } else {
+            shouldPersistIngredient = true;
+        }
     }, [persistRecipe]);
+
+    useEffect(() => {
+        localBase64Image = base64Image;
+    }, [base64Image]);
 
     return (
         <div className="recipe-form">
@@ -137,7 +208,8 @@ const AddEditRecipe = (props) => {
                     <InputField>
 
                         <Search id="recipe-form_ingredients" placeholder={'Ingredients'} buttonName={HTML_ENTITIES.add}
-                            containerClass="field__select" inputClass="field__select__text" collectionName="ingredients">
+                            containerClass="field__select" inputClass="field__select__text" collectionName="ingredients"
+                            collectionDb={recipeDb && recipeDb.ingredients ? recipeDb.ingredients : null}>
 
                             <label htmlFor="recipe-form_ingredients" className="field__label">Ingredients</label>
                         </Search>
@@ -146,7 +218,8 @@ const AddEditRecipe = (props) => {
                     <InputField>
 
                         <Search id="recipe-form_materials" placeholder={'Materials'} buttonName={HTML_ENTITIES.add}
-                            containerClass="field__select" inputClass="field__select__text" collectionName="materials">
+                            containerClass="field__select" inputClass="field__select__text" collectionName="materials"
+                            collectionDb={recipeDb && recipeDb.materials ? recipeDb.materials : null}>
 
                             <label htmlFor="recipe-form_materials" className="field__label">Materials</label>
                         </Search>
@@ -160,7 +233,7 @@ const AddEditRecipe = (props) => {
 
                 <div className="image-container">
                     <h2 className="heading-secondary text">Picture</h2>
-                    <ImageUpload />
+                    <ImageUpload image={imageDb ? 'data:image/png;base64,' + imageDb : null} />
                 </div>
             </div>
 
@@ -169,16 +242,19 @@ const AddEditRecipe = (props) => {
 
                     <InputField>
 
-                        <Search isSelect={true} id="recipe-form_categories" placeholder={'Category'} buttonName={HTML_ENTITIES.search}
-                            containerClass="field__select" inputClass="field__select__text" collectionName="categories">
+                        <Search isSelect={true} id="recipe-form_categories" placeholder={'Category'}
+                            buttonName={HTML_ENTITIES.search} containerClass="field__select" inputClass="field__select__text"
+                            collectionName="categories" documentDb={recipeDb && recipeDb.category ? recipeDb.category : null}>
 
                             <label htmlFor="recipe-form_categories" className="field__label">Category</label>
                         </Search>
                     </InputField>
 
                     <InputField>
-                        <Search isSelect={true} id="recipe-form_diet-type" placeholder={'Diet Type'} buttonName={HTML_ENTITIES.search}
-                            containerClass="field__select" inputClass="field__select__text" collectionName="dietTypes">
+                        <Search isSelect={true} id="recipe-form_diet-type" placeholder={'Diet Type'}
+                            buttonName={HTML_ENTITIES.search} containerClass="field__select"
+                            inputClass="field__select__text" collectionName="dietTypes"
+                            documentDb={recipeDb && recipeDb.dietType ? recipeDb.dietType : null}>
 
                             <label htmlFor="recipe-form_diet-type" className="field__label">Diet Type</label>
                         </Search>
@@ -227,7 +303,9 @@ const AddEditRecipe = (props) => {
 const mapStateToProps = createStructuredSelector({
     persistRecipe: selectPersistRecipe,
     image: selectImage,
-    token: selectToken
+    base64Image: selectBase64Image,
+    token: selectToken,
+    currentUser: selectCurrentUser,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -235,6 +313,8 @@ const mapDispatchToProps = dispatch => ({
     fetchMaterials: () => dispatch(fetchMaterials()),
     fetchCategories: () => dispatch(fetchCategories()),
     fetchDietTypes: () => dispatch(fetchDietTypes()),
+    setImage: image => dispatch(setImage(image)),
+    setCurrentUser: user => dispatch(setCurrentUser(user)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddEditRecipe);

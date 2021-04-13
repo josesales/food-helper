@@ -4,6 +4,7 @@ const Ingredient = require('../models/ingredient');
 const Review = require('../models/review');
 const auth = require('../middleware/auth');
 const imageUpload = require('../util/imageUpload');
+const httpStatus = require('../util/httpStatus');
 const array = require('../util/array');
 const router = new express.Router();
 const sharp = require('sharp');

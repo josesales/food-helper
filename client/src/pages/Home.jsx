@@ -10,8 +10,6 @@ import pagination from '../util/pagination';
 import { selectCurrentPage, selectVisitedPage } from '../redux/pagination/pagination-selector';
 import { addVisitedPage, setCurrentPage, setVisitedPage } from '../redux/pagination/pagination-actions';
 import { fetchIngredients, setShowSelectedIngredients } from '../redux/ingredient/ingredient-actions';
-import { selectIsActive } from '../redux/filter/filter-selector';
-import { toggleIsActive } from '../redux/filter/filter-actions';
 
 export const recipesPagination = pagination(0);
 
@@ -19,8 +17,9 @@ let isSearchActive = false;
 
 const Home = ({ recipes, visitedPage, setVisitedPage, total, fetchRecipes, fetchIngredients,
     setRecipes, addVisitedPage, persistRecipe, fetchRecipesByIngredients, setShowSelectedIngredients,
-    setCurrentPage, currentPage, areFiltersActive, toggleFilters }) => {
+    setCurrentPage, currentPage }) => {
 
+    const [isComponentMounting, setIsComponentMounting] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
     recipesPagination.total = total;
@@ -31,8 +30,14 @@ const Home = ({ recipes, visitedPage, setVisitedPage, total, fetchRecipes, fetch
     useEffect(() => {
 
         const getRecipesFirstPage = async () => {
+            await setIsComponentMounting(true);
             await fetchRecipes(0, true);
+            await setIsComponentMounting(false);
         }
+
+        setShowSelectedIngredients(false);
+        setVisitedPage({});
+        setCurrentPage(0);
 
         getRecipesFirstPage();
         setShowSelectedIngredients(true);
@@ -51,7 +56,7 @@ const Home = ({ recipes, visitedPage, setVisitedPage, total, fetchRecipes, fetch
     const fetchRecipesByPage = async currentPageProp => {
 
         setCurrentPage(currentPageProp);
-        if (visitedPage[currentPageProp]) {
+        if (visitedPage[currentPageProp] && visitedPage[currentPageProp].length > 0) {
             //set the recipes of the global state with the recipes of the page that was already visited
             setRecipes(visitedPage[currentPageProp]);
         } else {
@@ -96,21 +101,21 @@ const Home = ({ recipes, visitedPage, setVisitedPage, total, fetchRecipes, fetch
 
     return (
         <div className="home">
-
             {
-                isLoading ? <Loader /> :
+                isComponentMounting ? <Loader /> :
                     <React.Fragment>
 
                         <div className="home__hidden-title">
                             <h2 className="heading-primary">Home</h2>
                         </div>
 
-                        <RecipeItems />
-                    </React.Fragment>
-            }
+                        {
+                            isLoading ? <Loader /> : <RecipeItems recipes={recipes} />
+                        }
 
-            {
-                recipesPagination ? <Pagination paginationObj={recipesPagination} fetchItems={fetchRecipesByPage} /> : ''
+                        <Pagination paginationObj={recipesPagination} fetchItems={fetchRecipesByPage} />
+                    </React.Fragment>
+
             }
         </div>
     );
@@ -122,7 +127,6 @@ const mapStateToProps = createStructuredSelector({
     persistRecipe: selectPersistRecipe,
     total: selectTotal,
     currentPage: selectCurrentPage,
-    areFiltersActive: selectIsActive,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -136,7 +140,6 @@ const mapDispatchToProps = dispatch => ({
     fetchRecipesByIngredients: (ingredients, currentPage, getTotal) =>
         dispatch(fetchRecipesByIngredients(ingredients, currentPage, getTotal)),
     setShowSelectedIngredients: showSelectedIngredients => dispatch(setShowSelectedIngredients(showSelectedIngredients)),
-    toggleFilters: () => dispatch(toggleIsActive()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

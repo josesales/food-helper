@@ -89,7 +89,30 @@ userSchema.methods.toJSON = function () {
 }
 
 userSchema.statics.findByCredentials = async (email, password) => {
-    const user = await User.findOne({ email });
+
+    const user = await User.findOne({ email }).populate({
+        path: 'recipes',
+        populate: [
+            {
+                path: 'ingredients',
+                model: 'Ingredient',
+            },
+            {
+                path: 'materials',
+                model: 'Material',
+            },
+            {
+                path: 'category',
+                model: 'Category',
+            },
+            {
+                path: 'dietType',
+                model: 'DietType',
+            }
+        ]
+    })
+    user._doc.recipes = user.$$populatedVirtuals.recipes;
+
     if (!user) {
         throw new Error('Unable to login. Please check your credentials.');
     }

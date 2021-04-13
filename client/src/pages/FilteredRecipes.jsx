@@ -71,7 +71,7 @@ const FilteredRecipes = ({ recipes, visitedPage, total, fetchRecipes, setRecipes
             </div>
 
             {
-                isLoading ? <Loader /> : <RecipeItems />
+                isLoading ? <Loader /> : <RecipeItems recipes={recipes} />
             }
 
             <Pagination paginationObj={recipesPagination} fetchItems={fetchFilteredRecipesByPage} />

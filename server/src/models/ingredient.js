@@ -38,7 +38,12 @@ ingredientSchema.statics.saveIngredients = async (ingredients, recipeId) => {
 
             ingredientModel.recipes.push(recipeId);
 
-            ingredientDb = await ingredientModel.save();
+            if (!ingredientModel.isNew) {
+                ingredientDb.recipes = ingredientModel.recipes;
+                ingredientDb = await ingredientDb.save();
+            } else {
+                ingredientDb = await ingredientModel.save();
+            }
 
             return ingredientDb;
         }));

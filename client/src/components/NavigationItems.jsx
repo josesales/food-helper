@@ -21,10 +21,12 @@ const NavigationItems = ({ currentUser, token, logout, setRecipes, setPersistRec
         if (areFiltersActive) {
             toggleFilters();
         }
-        setRecipes([]);
-        setPersistRecipe(null);
-        setVisitedPage({});
-        setCurrentPage(0);
+        //TODO when going to another page and clicking in the menu item or in the logo
+        //recipes get empty but the component does not run the use effect for componentDidMount. Find how to fix it
+        // setRecipes([]);
+        // setPersistRecipe(null);
+        // setVisitedPage({});
+        // setCurrentPage(0);
     }
 
     return (
@@ -33,6 +35,11 @@ const NavigationItems = ({ currentUser, token, logout, setRecipes, setPersistRec
             <nav className="navigation__nav">
                 <ul className="navigation__list">
 
+                    <li className="navigation__item">
+                        <Link className="navigation__link" to='/' onClick={recipesAndPaginationCleanUp}>
+                            Home
+                        </Link>
+                    </li>
                     {
                         !currentUser ?
                             <li className="navigation__item">
@@ -67,7 +74,8 @@ const NavigationItems = ({ currentUser, token, logout, setRecipes, setPersistRec
                     {
                         currentUser ?
                             <li className="navigation__item">
-                                <Link className="navigation__link" to='/addEditRecipe'>
+                                <Link onClick={recipesAndPaginationCleanUp} className="navigation__link"
+                                    to='/addEditRecipe'>
                                     Add Recipe
                                 </Link>
                             </li> : ''

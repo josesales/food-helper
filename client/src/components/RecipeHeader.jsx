@@ -40,16 +40,22 @@ const RecipeHeader = ({ recipe, token, currentUser }) => {
                 <h1 className="heading-primary">{recipe.name}</h1>
 
 
-                <div className="recipe-header__rate">
+                <div title="Rating Given by the Users" className="recipe-header__rate">
                     <Rate number={recipe.rate} />
                 </div>
 
                 {
-                    token && isFavorite === false ? <AddFavorites onClick={onAddToMyFavoritesClick} className="favorite-icon" /> : ''
+                    token && isFavorite === false ?
+                        <div title="Add this Recipe to your Favorites">
+                            <AddFavorites onClick={onAddToMyFavoritesClick} className="favorite-icon" />
+                        </div> : ''
                 }
 
                 {
-                    token && isFavorite === true ? <RemoveFavorites onClick={onRemoveFromMyFavoritesClick} className="favorite-icon" /> : ''
+                    token && isFavorite === true ?
+                        <div title="Remove this Recipe from your Favorites">
+                            <RemoveFavorites onClick={onRemoveFromMyFavoritesClick} className="favorite-icon" />
+                        </div> : ''
                 }
             </div>
         </React.Fragment>

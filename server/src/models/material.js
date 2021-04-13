@@ -38,7 +38,12 @@ materialSchema.statics.saveMaterials = async (materials, recipeId) => {
 
             materialModel.recipes.push(recipeId);
 
-            materialDb = await materialModel.save();
+            if (!materialModel.isNew) {
+                materialDb.recipes = materialModel.recipes;
+                materialDb = await materialDb.save();
+            } else {
+                ingredientDb = await materialModel.save();
+            }
 
             return materialDb;
         }));

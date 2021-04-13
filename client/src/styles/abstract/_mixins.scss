@@ -2,6 +2,14 @@
     background-image: linear-gradient(to right bottom, $color-grey-dark-1, $color-primary-light);
 }
 
+@mixin secondary-gradient {
+    background-image: linear-gradient(to left bottom, $color-grey-dark-1, $color-primary-light);
+}
+
+@mixin tertiary-gradient {
+    background-image: linear-gradient(to left top, $color-grey-dark-1, $color-primary-light);
+}
+
 @mixin input {
     background-color: $color-grey-light-1;
     font-family: inherit;
@@ -60,7 +68,8 @@
 
 @mixin hideTitle {
     margin-bottom: 5rem;
-    @include hideLabel;
+    opacity: 0; //hides the label when the placeholder is shown which means by default it will be hidden
+    visibility: hidden;
     @include notSelectable;
 }
 

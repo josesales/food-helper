@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { fetchRecipes, setRecipes } from '../redux/recipe/recipe-actions';
+import { fetchRecipes, setMyRecipes } from '../redux/recipe/recipe-actions';
 import RecipeItems from '../components/RecipeItems';
-import { selectRecipes, selectTotal } from '../redux/recipe/recipe-selector';
+import { selectMyRecipes, selectTotal } from '../redux/recipe/recipe-selector';
 import Loader from '../components/ui/Loader';
 import Pagination from '../components/ui/Pagination';
 import { createStructuredSelector } from 'reselect';
@@ -14,29 +14,26 @@ import { setShowSelectedIngredients } from '../redux/ingredient/ingredient-actio
 
 const recipesPagination = pagination(0);
 
-const MyRecipes = ({ recipes, visitedPage, total, fetchRecipes, setRecipes, setVisitedPage,
+const MyRecipes = ({ myRecipes, visitedPage, total, fetchRecipes, setMyRecipes, setVisitedPage,
     addVisitedPage, currentUser, setCurrentPage, currentPage, setShowSelectedIngredients }) => {
-    //TODO Check for this and my favorites why loader been shown a bit lower than in the home page 
+
     recipesPagination.total = total;
+    const [isComponentMounting, setIsComponentMounting] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
     //Fetch recipes like componentDidMount style
     useEffect(() => {
 
         const getMyRecipesFirstPage = async () => {
+            await setIsComponentMounting(true);
             await fetchRecipes(0, true, currentUser._id);
+            await setIsComponentMounting(false);
         }
 
         setShowSelectedIngredients(false);
         setVisitedPage({});
         setCurrentPage(0);
         getMyRecipesFirstPage();
-
-        // return () => {
-        //     setRecipes([]);
-        //     setVisitedPage({});
-        //     setCurrentPage(0);
-        // }
 
     }, []);
 
@@ -46,9 +43,9 @@ const MyRecipes = ({ recipes, visitedPage, total, fetchRecipes, setRecipes, setV
 
         setCurrentPage(currentPageProp);
 
-        if (visitedPage[currentPageProp]) {
-            //set the recipes of the global state with the recipes of the page that was already visited
-            setRecipes(visitedPage[currentPageProp]);
+        if (visitedPage[currentPageProp] && visitedPage[currentPageProp].length > 0) {
+            //set myRecipes of the global state with the recipes of the page that was already visited
+            setMyRecipes(visitedPage[currentPageProp]);
         } else {
             await setIsLoading(true);
             await fetchRecipes(currentPageProp, false, currentUser._id);
@@ -58,27 +55,34 @@ const MyRecipes = ({ recipes, visitedPage, total, fetchRecipes, setRecipes, setV
     }
 
     useEffect(() => {
-        addVisitedPage({ pageNumber: currentPage, items: recipes });
-    }, [recipes]);
+        addVisitedPage({ pageNumber: currentPage, items: myRecipes });
+    }, [myRecipes]);
 
     return (
         <div className="my-recipes">
-
-            <div className="my-recipes__title">
-                <h2 className="heading-primary">My Recipes</h2>
-            </div>
-
             {
-                isLoading ? <Loader /> : <RecipeItems />
+                isComponentMounting ? <Loader /> :
+
+                    <React.Fragment>
+
+                        <div className="my-recipes__title">
+                            <h2 className="heading-primary">My Recipes</h2>
+                        </div>
+
+                        {
+                            isLoading ? <Loader /> : <RecipeItems recipes={myRecipes} />
+                        }
+
+                        <Pagination paginationObj={recipesPagination} fetchItems={fetchMyRecipesByPage} />
+                    </React.Fragment>
             }
 
-            <Pagination paginationObj={recipesPagination} fetchItems={fetchMyRecipesByPage} />
         </div>
     );
 };
 
 const mapStateToProps = createStructuredSelector({
-    recipes: selectRecipes,
+    myRecipes: selectMyRecipes,
     total: selectTotal,
     visitedPage: selectVisitedPage,
     currentUser: selectCurrentUser,
@@ -87,7 +91,7 @@ const mapStateToProps = createStructuredSelector({
 
 const mapDispatchToProps = dispatch => ({
     fetchRecipes: (currentPage, getTotal, userId) => dispatch(fetchRecipes(currentPage, getTotal, userId)),
-    setRecipes: recipes => dispatch(setRecipes(recipes)),
+    setMyRecipes: recipes => dispatch(setMyRecipes(recipes)),
     addVisitedPage: visitedPage => dispatch(addVisitedPage(visitedPage)),
     setVisitedPage: visitedPage => dispatch(setVisitedPage(visitedPage)),
     setCurrentPage: currentPage => dispatch(setCurrentPage(currentPage)),

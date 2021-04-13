@@ -10,7 +10,8 @@ import { createStructuredSelector } from 'reselect';
 
 //Id must match with the name of the collection and predeceased by '_'
 const Search = ({ id, documentName, collectionName, buttonName, containerClass, inputClass, children,
-    setPersistRecipe, isSelect, onChangeCallback, showSelectedIngredients, ...otherProps }) => {
+    setPersistRecipe, isSelect, onChangeCallback, showSelectedIngredients, collectionDb,
+    documentDb, ...otherProps }) => {
 
     const searchContainerClass = containerClass ? containerClass : 'search-container';
     const searchInputClass = inputClass ? inputClass : 'search-container__input';
@@ -26,10 +27,10 @@ const Search = ({ id, documentName, collectionName, buttonName, containerClass, 
     const [ItemsUi, setItemsUi] = useState(null);
 
     //for the search (ingredients, materials...)
-    const [selectedItems, setSelectedItems] = useState([]);
+    const [selectedItems, setSelectedItems] = useState(collectionDb && collectionDb.length > 0 ? collectionDb : []);
 
     //for the dropdown(categories, dietType...)
-    const [selectedItem, setSelectedItem] = useState(
+    const [selectedItem, setSelectedItem] = useState(documentDb && documentDb._id ? documentDb :
         {
             _id: '',
             name: ''
@@ -157,7 +158,7 @@ const Search = ({ id, documentName, collectionName, buttonName, containerClass, 
     }, [selectedItem]);
 
     useEffect(() => {
-        if (!showSelectedIngredients) {
+        if (!showSelectedIngredients && !collectionDb) {
             setSelectedItems([]);
         }
     }, [showSelectedIngredients]);

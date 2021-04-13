@@ -1,17 +1,43 @@
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { setCurrentRecipe } from '../redux/recipe/recipe-actions';
 import HTML_ENTITIES from '../util/htmlEntities';
 import Media from './ui/Media';
 import LabelButton from './ui/LabelButton';
 import Rate from './Rate';
+import { createStructuredSelector } from 'reselect';
+import { selectCurrentUser } from '../redux/user/user-selector';
 
-const RecipeItem = ({ recipe, setCurrentRecipe }) => {
+const RecipeItem = ({ recipe, currentUser, setCurrentRecipe }) => {
 
     const IngredientsUi = recipe.ingredients.map(ingredient => <li key={ingredient._id}>{ingredient.name}</li>);
 
+    const history = useHistory();
+    let userRecipe = null;
+
     const onRecipeClick = () => {
         setCurrentRecipe(recipe);
+    }
+
+    const isRecipeOfLoggedUser = () => {
+
+
+        if (!currentUser || !currentUser.recipes || currentUser.recipes.length == 0) {
+            return false;
+        }
+
+        const userRecipes = currentUser.recipes.filter(userRecipe => userRecipe._id == recipe._id);
+
+        if (userRecipes && userRecipes.length > 0) {
+            userRecipe = userRecipes[0];
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    const onEditClick = () => {
+        history.push('/addEditRecipe', { state: { recipeDb: recipe } });
     }
 
     return (
@@ -27,9 +53,20 @@ const RecipeItem = ({ recipe, setCurrentRecipe }) => {
 
                 <Media image={recipe.image} />
 
-                <LabelButton htmlFor={'details-checkbox_' + recipe._id}>
-                    Details
-                </LabelButton>
+                <div className="front-button-container">
+
+                    <LabelButton htmlFor={'details-checkbox_' + recipe._id}>
+                        Details
+                    </LabelButton>
+
+                    {
+                        isRecipeOfLoggedUser() ?
+                            <Link className="front-button-container__edit"
+                                to={{ pathname: '/addEditRecipe', state: { recipe: userRecipe } }}>
+                                Edit
+                            </Link> : ''
+                    }
+                </div>
             </div>
 
             <div className="recipe-item__container recipe-item__container--back">
@@ -56,8 +93,12 @@ const RecipeItem = ({ recipe, setCurrentRecipe }) => {
     );
 }
 
+const mapStateToProps = createStructuredSelector({
+    currentUser: selectCurrentUser,
+});
+
 const mapDispatchToProps = dispatch => ({
     setCurrentRecipe: recipe => dispatch(setCurrentRecipe(recipe))
 });
 
-export default connect(null, mapDispatchToProps)(RecipeItem);
+export default connect(mapStateToProps, mapDispatchToProps)(RecipeItem);
