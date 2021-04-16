@@ -7,6 +7,10 @@
 	max-width: 65rem;
 	overflow-y: auto;
 
+    @include respond(phone) {
+        max-width: 40rem;
+    }
+
 	/* width */
     &::-webkit-scrollbar {
         width: 1.5rem;

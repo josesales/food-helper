@@ -2,18 +2,28 @@
     display: flex;
     align-items: center;
     justify-content: space-around;
-    position: relative;
     width: 10%;
+    
+    @include respond(phone) {
+      position: absolute;
+      right: 15%;
+      bottom: 0;
+      margin-bottom: 1.5rem;
+    }
+   
 }
 
 .switch-label {
-    position: relative;
-    margin-left: 150px;
-    top: 6;
-    left: 10;
+    margin-left: 130px;
     font-family: inherit;
     font-size: $font-size-small;
     display: inline-block;
+    
+    label {
+      @include respond(phone) {
+        display: none;
+      }
+    }
 }
 
 .toggle-switch {

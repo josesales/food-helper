@@ -59,25 +59,28 @@ const MyRecipes = ({ myRecipes, visitedPage, total, fetchRecipes, setMyRecipes, 
     }, [myRecipes]);
 
     return (
-        <div className="my-recipes">
+        <React.Fragment>
             {
                 isComponentMounting ? <Loader /> :
 
                     <React.Fragment>
+                        <div className="my-recipes">
 
-                        <div className="my-recipes__title">
-                            <h2 className="heading-primary">My Recipes</h2>
+                            <div className="my-recipes__title">
+                                <h2 className="heading-primary">My Recipes</h2>
+                            </div>
+
+                            {
+                                isLoading ? <Loader /> : <RecipeItems recipes={myRecipes} />
+                            }
+
                         </div>
-
-                        {
-                            isLoading ? <Loader /> : <RecipeItems recipes={myRecipes} />
-                        }
 
                         <Pagination paginationObj={recipesPagination} fetchItems={fetchMyRecipesByPage} />
                     </React.Fragment>
             }
 
-        </div>
+        </React.Fragment>
     );
 };
 

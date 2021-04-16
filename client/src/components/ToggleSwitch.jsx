@@ -36,8 +36,10 @@ const ToggleSwitch = ({ name, isActive, onClickHandler }) => {
                     <span className="toggle-switch-switch" />
                 </label>
             </div>
+            <div className="switch-label">
+                <label className="">{name}</label>
+            </div>
 
-            <label className="switch-label">{name}</label>
         </div>
     );
 }

@@ -8,8 +8,8 @@ const EditSteps = ({ steps, onChange, onDelete }) => {
 
     let StepsUi = null;
     let NoStepsUi = null;
-
-    if (steps.length == 0) {
+    //TODO check why steps are coming undefined when user tries to add a new recipe
+    if (!steps || steps.length == 0) {
         NoStepsUi = <li className="no-steps" key={0}><h3>Currently there are no steps added</h3></li>;
     }
     else {

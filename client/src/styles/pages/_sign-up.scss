@@ -1,9 +1,14 @@
 .sign-up {
-    margin-top: $margin-from-header;
+    margin-top: 20rem;
     width: 100%;
     display: flex;
 	justify-content: center;
     align-items: center;
+
+    @include respond(phone) {
+        margin-top: $margin-from-header-phone;
+        flex-direction: column;
+    }
 
     .user-data {
         width: 50%;
@@ -11,6 +16,10 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
+
+        @include respond(phone) {
+            order: 1;
+        }
 
         &__title {
             display: flex;
@@ -67,6 +76,12 @@
         align-items: center;
         flex-direction: column;
         margin-bottom: auto;
+
+        @include respond(phone) {
+            order: 0;
+            margin-top: $margin-from-header-phone;
+            margin-bottom: 3rem;
+        }
 
         .text {
             cursor: default;

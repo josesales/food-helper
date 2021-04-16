@@ -5,6 +5,10 @@
 	justify-content: center;
     align-items: center;
 
+    @include respond(phone) {
+        margin-top: $margin-from-header-phone
+    }
+
     &__container {
         width: 60%;
         height: 40vh;

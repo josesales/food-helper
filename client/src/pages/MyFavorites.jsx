@@ -56,25 +56,26 @@ const MyFavorites = ({ favoriteRecipes, visitedPage, setVisitedPage, total, fetc
     }, [favoriteRecipes]);
 
     return (
-        <div className="my-favorites">
-
+        <React.Fragment>
             {
                 isComponentMounting ? <Loader /> :
 
                     <React.Fragment>
+                        <div className="my-favorites">
+                            <div className="my-favorites__title">
+                                <h2 className="heading-primary">My Favorites</h2>
+                            </div>
 
-                        <div className="my-favorites__title">
-                            <h2 className="heading-primary">My Favorites</h2>
+                            {
+                                isLoading ? <Loader /> : <RecipeItems recipes={favoriteRecipes} />
+                            }
                         </div>
-
-                        {
-                            isLoading ? <Loader /> : <RecipeItems recipes={favoriteRecipes} />
-                        }
 
                         <Pagination paginationObj={recipesPagination} fetchItems={fetchMyFavoritesByPage} />
                     </React.Fragment>
             }
-        </div>
+        </React.Fragment>
+
     );
 };
 

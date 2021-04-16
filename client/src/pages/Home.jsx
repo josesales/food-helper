@@ -100,24 +100,26 @@ const Home = ({ recipes, visitedPage, setVisitedPage, total, fetchRecipes, fetch
     }, [persistRecipe]);
 
     return (
-        <div className="home">
+        <React.Fragment>
             {
                 isComponentMounting ? <Loader /> :
                     <React.Fragment>
 
-                        <div className="home__hidden-title">
-                            <h2 className="heading-primary">Home</h2>
-                        </div>
+                        <div className="home">
 
-                        {
-                            isLoading ? <Loader /> : <RecipeItems recipes={recipes} />
-                        }
+                            <div className="home__hidden-title">
+                                <h2 className="heading-primary">Home</h2>
+                            </div>
+
+                            {
+                                isLoading ? <Loader /> : <RecipeItems recipes={recipes} />
+                            }
+                        </div>
 
                         <Pagination paginationObj={recipesPagination} fetchItems={fetchRecipesByPage} />
                     </React.Fragment>
-
             }
-        </div>
+        </React.Fragment>
     );
 };
 

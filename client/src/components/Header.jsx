@@ -3,7 +3,7 @@ import logo from "../assets/logo-200x200.png";
 import Navigation from './Navigation';
 import Search from './Search';
 import ToggleSwitch from './ToggleSwitch';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import HTML_ENTITIES from '../util/htmlEntities';
 import { connect } from 'react-redux';
 import { selectPersistRecipe, selectRecipes } from '../redux/recipe/recipe-selector';
@@ -13,42 +13,64 @@ import { setCurrentPage, setVisitedPage } from '../redux/pagination/pagination-a
 import { selectIsActive } from '../redux/filter/filter-selector';
 import { toggleIsActive } from '../redux/filter/filter-actions';
 
-const Header = ({ toggleFilters }) => {
+const Header = ({ toggleFilters, isActive }) => {
 
     const history = useHistory();
+    const location = useLocation();
 
     const onFilterClick = () => {
         toggleFilters();
     }
 
+    const onChangeHandler = () => {
+
+        if (location.pathname != '/') {
+
+            if (isActive) {
+                toggleFilters();
+            }
+            history.push('/');
+        }
+
+    }
+
     return (
-        <div className="header-container">
-            <header className="header">
+        <React.Fragment>
 
-                <Navigation />
+            <div className="header-container">
+                <header className="header">
 
-                <Link className='header__logo' to='/'>
-                    <img title="Home" src={logo} alt="Food Helper Logo" className="header__logo" />
-                </Link>
-                <div title="Search Recipes by Ingredients" className="header__search-container">
+                    <Navigation />
 
-                    <Search id="header-container_ingredients" placeholder={'Write an Ingredient'}
-                        buttonName={HTML_ENTITIES.add} collectionName="ingredients" onChangeCallback={() => {
-                            history.push('/');
-                        }} />
-                </div>
+                    {/* <Link className='header__logo' to='/'>
+                        <img title="Home" src={logo} alt="Food Helper Logo" className="header__logo" />
+                    </Link> */}
 
-                <ToggleSwitch name="Filters" onClickHandler={onFilterClick} />
+                    <div title="Search Recipes by Ingredients" className="header__search-container">
+                        <Search id="header-container_ingredients" placeholder={'Write an Ingredient'}
+                            buttonName={HTML_ENTITIES.add} collectionName="ingredients" onChangeCallback={onChangeHandler} />
+                    </div>
 
-            </header>
-        </div>
+                    <ToggleSwitch name="Filters" onClickHandler={onFilterClick} />
+
+                    <Link className='header__logo' to='/'>
+                        <img title="Home" src={logo} alt="Food Helper Logo" className="header__logo" />
+                    </Link>
+
+                </header>
+            </div>
+
+            <div className="header-margin"></div>
+
+        </React.Fragment>
     );
 }
 
 const mapStateToProps = createStructuredSelector({
     persistRecipe: selectPersistRecipe,
     recipes: selectRecipes,
-    areFiltersActive: selectIsActive
+    areFiltersActive: selectIsActive,
+    isActive: selectIsActive,
 });
 
 const mapDispatchToProps = dispatch => ({

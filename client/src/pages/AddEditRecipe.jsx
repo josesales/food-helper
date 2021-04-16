@@ -28,15 +28,18 @@ const AddEditRecipe = (props) => {
 
     const location = useLocation();
 
+
     let recipeDb = location && location.state && location.state.recipe && location.state.recipe._id ?
         location.state.recipe : null;
-    recipeDb = Object.assign({}, recipeDb);
+
+    if (recipeDb) {
+        recipeDb = Object.assign({}, recipeDb);
+    }
 
     //set image in case user is editing an existing recipe
     let imageDb = null;
     if (recipeDb && recipeDb.image) {
         imageDb = recipeDb.image;
-        // setImage(imageDb);
         //delete image from recipe recipeDb to avoid the entity is too large error
         delete recipeDb.image;
     }

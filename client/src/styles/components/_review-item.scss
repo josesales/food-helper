@@ -5,6 +5,10 @@
     height: 50%;
     border-radius: 10px;
     
+    @include respond(phone) {
+        width: 30rem;
+    }
+    
     &:not(:last-child) {
         margin-bottom: 3.5rem;
     }

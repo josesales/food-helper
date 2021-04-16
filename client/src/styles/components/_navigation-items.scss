@@ -5,9 +5,9 @@
         top: 0;
         left: -100%;
         z-index: 150;
-        //hide the links
-        opacity: 0;
+        opacity: 0; //hide the links
         width: 100%;
+        height: 100%;
         transition: all .5s cubic-bezier(0, 0, 0.58, 1);
         
         @supports (-webkit-backdrop-filter: blur(10px)) or (background-color: rgba($color-black, .3)) {
@@ -20,8 +20,8 @@
     &__list {
         @include tertiary-gradient;
 		list-style: none;
-        width: 20vw;
-        height: 100vh;
+        width: 26rem;
+        height: 100%;
         z-index: 1000;
         display: flex;
         flex-direction: column;

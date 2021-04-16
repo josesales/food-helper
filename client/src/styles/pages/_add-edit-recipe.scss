@@ -2,6 +2,10 @@
     
     margin-top: $margin-from-header;
 
+    @include respond(phone) {
+        margin-top: $margin-from-header-phone
+    }
+
     &__title {
         display: flex;
         flex-flow: row wrap;

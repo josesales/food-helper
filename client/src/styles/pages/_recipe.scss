@@ -1,9 +1,12 @@
 .recipe-container {
 	display: flex;
-	flex-flow: row wrap;
 	justify-content: flex-start;
     align-items: center;
     margin-bottom: 10rem;
+
+    @include respond(phone) {
+        flex-direction: column;
+    }
 
     .image-container,
     .video-container{
@@ -13,6 +16,10 @@
         margin-left: auto;
         box-shadow: $shadow-dark;
         border-radius: 10px;
+        
+        @include respond(phone) {
+            margin-top: 5rem;
+        }
     }
 }
 

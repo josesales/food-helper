@@ -6,6 +6,10 @@
     align-items: center;
     justify-content: center;
 
+    @include respond(phone) {
+        margin-top: $margin-from-header-phone
+    }
+
     &__title {
         margin-bottom: 5rem;
     }

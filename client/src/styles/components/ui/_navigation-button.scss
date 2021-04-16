@@ -4,80 +4,24 @@
         display: none;
     }
     
+    &__button-container {
+        height: 3rem;
+        width: 4rem;
+        z-index: 1500;
+        cursor: pointer;
+        
+        @include respond(phone) {
+            position: absolute;
+            left: 0;
+            top: 1rem;
+        }
+    }
+
     &__button {
         height: 3rem;
         width: 3rem;
-        margin-left: 2rem;
-        // border-radius: 50%;
-        z-index: 200;
+        margin-left: 1rem;
+        z-index: 1100;
         text-align: center; //centers the 3 lines icon
-        cursor: pointer;
-        
-        @include respond(tab-port) {
-            top: 3.5rem;
-            right: 3.5rem;
-        }
-        @include respond(phone) {
-            top: 3rem;
-            right: 3rem;
-        }
     }
-
-    &__checkbox:checked ~ &__button {
-        fill: $color-white;
-    }
-
-    //icon
-    // &__icon {
-
-    //     position: relative;
-    //     margin-top: 3.5rem;
-
-    //     //create the 3 lines as sudo elements
-    //     &,
-    //     &::before,
-    //     &::after {
-    //         width: 3rem;
-    //         height: 2px;
-    //         background-color: $color-grey-dark-2;
-    //         display: inline-block;
-    //         transition: all .2s;
-    //     }
-
-    //     &::before,
-    //     &::after {
-    //         content: "";
-    //         position: absolute;
-    //         left: 0;
-    //     }
-
-    //     &::before {
-    //         top: -.8rem;
-    //     }
-    //     &::after {
-    //         top: .8rem;
-    //     }
-    // }
-
-    // &__button:hover &__icon::before {
-    //     top: -1rem;
-    // }
-    // &__button:hover &__icon::after {
-    //     top: 1rem;
-    // }
-
-    //make the line in the meddle transparent
-    // &__checkbox:checked + &__button &__icon {
-    //     background-color: transparent;
-    // }
-   
-    //rotate the before and after lines to make an x
-    // &__checkbox:checked + &__button &__icon::before {
-    //     top: 0;
-    //     transform: rotate(135deg);
-    // }
-    // &__checkbox:checked + &__button &__icon::after {
-    //     top: 0;
-    //     transform: rotate(-135deg);
-    // }
 }

@@ -3,7 +3,7 @@ import { ReactComponent as Menu } from "../../assets/menu.svg";
 
 const NavigationButton = () => {
 
-    const [isMenuActive, setMenuActive] = useState(false);
+    const [isMenuActive, setIsMenuActive] = useState(false);
 
     useEffect(() => {
         //Add the event so the function handleOutsideSuggestionsClick can be called whenever there is a click on the mouse
@@ -17,26 +17,22 @@ const NavigationButton = () => {
 
     const handleOutsideMenuClick = e => {
 
-        if (e.target.className && e.target.className != 'navigation__list' && !e.target.className.baseVal &&
-            e.target.className != 'navigation__icon') {
-            setMenuActive(false);
+        if (e.target.className && e.target.className != 'navigation__list' &&
+            e.target.className != 'navigation__icon' && e.target.className != 'navigation__button-container'
+            && !e.target.className.baseVal) {
+            setIsMenuActive(false);
         }
     };
 
     return (
-
         <React.Fragment>
-            <Menu onClick={() => {
-                return setMenuActive(!isMenuActive)
-            }} className='navigation__button' />
-
             <input type="checkbox" checked={isMenuActive} id="nav-toggle" className="navigation__checkbox" />
+            <div className="navigation__button-container" onClick={() => {
+                setIsMenuActive(!isMenuActive)
+            }}>
 
-            <label htmlFor="nav-toggle" className="navigation__button">
-                <span className="navigation__icon" onClick={() => {
-                    return setMenuActive(!isMenuActive)
-                }}></span>
-            </label>
+                <Menu className="navigation__button" />
+            </div>
         </React.Fragment>
     );
 }
