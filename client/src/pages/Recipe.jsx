@@ -9,7 +9,6 @@ import { selectCurrentRecipe } from '../redux/recipe/recipe-selector';
 import { getReviewsByRecipe } from '../redux/review/review-actions';
 import { selectReviews } from '../redux/review/review-selector';
 import { selectCurrentUser } from '../redux/user/user-selector';
-// import { ReactComponent as Upload } from "../assets/upload.svg";
 const ReviewItems = lazy(() => import('../components/ReviewItems'));
 const Review = lazy(() => import('../components/Review'));
 

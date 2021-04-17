@@ -1,13 +1,10 @@
 .filter {
-    margin-top: $margin-from-header;
+    // margin-top: $margin-from-header;
     width: 100%;
     display: flex;
 	justify-content: center;
     align-items: center;
 
-    @include respond(phone) {
-        margin-top: $margin-from-header-phone
-    }
 
     &__container {
         width: 60%;
@@ -16,6 +13,11 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
+
+        @include respond(phone) {
+            width: 90%;
+            height: 55vh;
+        }
     }
 
     &__apply-btn {

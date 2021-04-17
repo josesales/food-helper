@@ -6,6 +6,10 @@
 	max-width: 60%;
 	cursor: default;
 	
+	@include respond(phone) {
+		max-width: 100%;
+	}
+	
 	&__list {
 		display: flex;
 		flex-direction: column;

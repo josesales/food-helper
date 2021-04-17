@@ -2,43 +2,40 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { fetchRecipes, setRecipes } from '../redux/recipe/recipe-actions';
 import RecipeItems from '../components/RecipeItems';
-import { selectPersistRecipe, selectRecipes, selectTotal } from '../redux/recipe/recipe-selector';
+import { selectRecipes, selectTotal } from '../redux/recipe/recipe-selector';
 import Loader from '../components/ui/Loader';
 import Pagination from '../components/ui/Pagination';
 import { createStructuredSelector } from 'reselect';
 import pagination from '../util/pagination';
 import { selectCurrentPage, selectVisitedPage } from '../redux/pagination/pagination-selector';
 import { addVisitedPage, setCurrentPage, setVisitedPage } from '../redux/pagination/pagination-actions';
-import { selectCurrentUser } from '../redux/user/user-selector';
 import { setShowSelectedIngredients } from '../redux/ingredient/ingredient-actions';
 import { useLocation } from 'react-router';
 
 const recipesPagination = pagination(0);
 
 const FilteredRecipes = ({ recipes, visitedPage, total, fetchRecipes, setRecipes, setVisitedPage,
-    addVisitedPage, currentUser, setCurrentPage, currentPage, setShowSelectedIngredients }) => {
+    addVisitedPage, setCurrentPage, currentPage, setShowSelectedIngredients }) => {
 
     recipesPagination.total = total;
+    const [isComponentMounting, setIsComponentMounting] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const location = useLocation();
     const filters = location.state.filters;
+
     //Fetch recipes like componentDidMount style
     useEffect(() => {
 
         const getFilteredRecipesFirstPage = async () => {
+            await setIsComponentMounting(true);
             await fetchRecipes(0, true, null, filters);
+            await setIsComponentMounting(false);
         }
 
         setShowSelectedIngredients(false);
         setVisitedPage({});
         setCurrentPage(0);
         getFilteredRecipesFirstPage();
-
-        // return () => {
-        //     setRecipes([]);
-        //     setVisitedPage({});
-        //     setCurrentPage(0);
-        // }
 
     }, []);
 
@@ -64,18 +61,25 @@ const FilteredRecipes = ({ recipes, visitedPage, total, fetchRecipes, setRecipes
     }, [recipes]);
 
     return (
-        <div className="filtered-recipes">
 
-            <div className="filtered-recipes__title">
-                <h2 className="heading-primary">Filtered Recipes</h2>
-            </div>
-
+        <React.Fragment>
             {
-                isLoading ? <Loader /> : <RecipeItems recipes={recipes} />
-            }
+                isComponentMounting ? <Loader /> :
+                    <React.Fragment>
+                        <div className="filtered-recipes">
 
-            <Pagination paginationObj={recipesPagination} fetchItems={fetchFilteredRecipesByPage} />
-        </div>
+                            <div className="filtered-recipes__title">
+                                <h2 className="heading-primary">Found Recipes</h2>
+                            </div>
+
+                            {
+                                isLoading ? <Loader /> : <RecipeItems recipes={recipes} />
+                            }
+                        </div>
+                        <Pagination paginationObj={recipesPagination} fetchItems={fetchFilteredRecipesByPage} />
+                    </React.Fragment>
+            }
+        </React.Fragment>
     );
 };
 
@@ -83,7 +87,6 @@ const mapStateToProps = createStructuredSelector({
     recipes: selectRecipes,
     total: selectTotal,
     visitedPage: selectVisitedPage,
-    currentUser: selectCurrentUser,
     currentPage: selectCurrentPage,
 });
 

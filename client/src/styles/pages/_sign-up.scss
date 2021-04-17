@@ -1,13 +1,12 @@
 .sign-up {
-    margin-top: 20rem;
     width: 100%;
     display: flex;
 	justify-content: center;
     align-items: center;
 
     @include respond(phone) {
-        margin-top: $margin-from-header-phone;
         flex-direction: column;
+        position: relative;
     }
 
     .user-data {
@@ -18,14 +17,17 @@
         align-items: center;
 
         @include respond(phone) {
-            order: 1;
+            width: 90%;
         }
 
         &__title {
             display: flex;
-            flex-flow: row wrap;
             justify-content: center;
             align-items: center;
+
+            @include respond(phone) {
+                margin-bottom: 2rem;
+            }
         }
     
         &__container {
@@ -35,6 +37,10 @@
             flex-direction: column;
             justify-content: space-evenly;
             align-items: flex-start;
+
+            @include respond(phone) {
+                height: 50vh;
+            }
         }
     
         &__button-container {
@@ -43,15 +49,28 @@
             align-items: center;
             width: 100%;
             margin-top: 3rem;
+
+            @include respond(phone) {
+                position: absolute;
+                bottom: -15%;
+                left: 0;
+                flex-direction: column;
+                align-items: center;
+            }
     
             button {
                 @include button;
                 width: 20rem;
                 margin-right: 3rem;
-                height:4rem;
+                height: 4rem;
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                
+                @include respond(phone) {
+                    margin-right: 0;
+                    margin-bottom: 1rem !important;
+                }
             }
     
             &--sign-in {
@@ -65,6 +84,10 @@
                 align-items: center;
                 outline: none;
                 text-decoration: none;
+
+                @include respond(phone) {
+                    margin-bottom: 2rem !important;
+                }
             }
         }
     }
@@ -78,8 +101,6 @@
         margin-bottom: auto;
 
         @include respond(phone) {
-            order: 0;
-            margin-top: $margin-from-header-phone;
             margin-bottom: 3rem;
         }
 

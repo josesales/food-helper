@@ -18,6 +18,11 @@
       border-radius: 10px; //for the bottom corners
       transition: all .2s;
 
+      @include respond(phone) {
+        width: 25rem;
+        height: 17rem;
+    }
+
       &:hover {
       
         fill:  $color-white-2;

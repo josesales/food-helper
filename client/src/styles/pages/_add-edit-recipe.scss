@@ -1,45 +1,62 @@
 .recipe-form {
     
-    margin-top: $margin-from-header;
+    // margin-top: $margin-from-header;
 
-    @include respond(phone) {
-        margin-top: $margin-from-header-phone
-    }
+    // @include respond(phone) {
+    //     margin-top: $margin-from-header-phone
+    // }
 
     &__title {
         display: flex;
-        flex-flow: row wrap;
         justify-content: center;
         align-items: center;
-        margin-bottom: 5rem;
+        
+        @include respond(phone) {
+            margin-bottom: 2rem;
+        }
     }
     
     .center {
         display: flex;
-        flex-flow: row wrap;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 5rem;
+
+        @include respond(phone) {
+            flex-direction: column;
+        }
 
         .container,
         .container-2,
         .container-3,
         .step-container {
             width: 45%;
-            height: 48vh;
+            height: 35vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: flex-start;
+
+            @include respond(phone) {
+                height: 60vh;
+                width: 90%;
+            }
         }
 
         .container-2 {
-            height: 40vh;
+            height: 30vh;
+
+            @include respond(phone) {
+                height: 50vh;
+            }
         }
 
         .container-3 {
-            // justify-content: flex-start;
-            height: 40vh;
+            height: 30vh;
+
+            @include respond(phone) {
+                height: 50vh;
+            }
         }
         
         .step-container {
@@ -48,7 +65,11 @@
             align-items: center;
 
             &__text-area {
-                width: 60%
+                width: 60%;
+
+                @include respond(phone) {
+                    width: 99%;
+                }
             }
 
             &__button{

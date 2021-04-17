@@ -68,7 +68,7 @@ const SignUp = ({ image, currentUser, setCurrentUser, setToken }) => {
 
 
               <div className="user-data__title">
-                <h2 className="heading-primary">Create Account</h2>
+                <h2 className="heading-primary">Sign Up</h2>
               </div>
 
               <div className="user-data__container">

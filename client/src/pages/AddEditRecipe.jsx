@@ -44,8 +44,6 @@ const AddEditRecipe = (props) => {
         delete recipeDb.image;
     }
 
-    // const [localBase64Image, setLocalBase64Image] = useState(null);
-
     const [recipe, setRecipe] = useState(recipeDb ? recipeDb : {
         name: '',
         videoUrl: '',
@@ -65,7 +63,6 @@ const AddEditRecipe = (props) => {
 
     const onAddNewStepClick = async () => {
         await setRecipe(prevRecipe => ({ ...prevRecipe, steps: prevRecipe.steps.concat([newStep]) }));
-        window.scrollTo(0, window.innerHeight);
         setNewStep('');
     }
 
@@ -136,7 +133,25 @@ const AddEditRecipe = (props) => {
                         return userRecipe
                     }
                 });
-                setCurrentUser({ ...currentUser, recipes: userRecipes });
+
+                if (recipeWithImage._id) {
+                    //Update current user state with updated recipe
+                    setCurrentUser({ ...currentUser, recipes: userRecipes });
+                } else {
+                    //Update current user state with new recipe
+                    recipeWithImage.image = localBase64Image.split(',')[1];
+                    let newUserRecipe = Object.assign({}, savedRecipe);
+                    newUserRecipe = Object.assign(newUserRecipe, recipeWithImage);
+
+                    if (userRecipes && userRecipes.length > 0) {
+                        //concat current recipes of the user with new one
+                        setCurrentUser({ ...currentUser, recipes: [].concat(userRecipes).concat([newUserRecipe]) });
+                    } else {
+                        //in case it's the first recipe user created
+                        setCurrentUser({ ...currentUser, recipes: [].concat([newUserRecipe]) });
+                    }
+                }
+
             } else {
                 setCurrentUser({ ...currentUser, recipes: [].concat(recipeWithImage) });
             }
