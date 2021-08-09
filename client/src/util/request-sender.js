@@ -1,10 +1,10 @@
 
- const baseUrl = process.env.NODE_ENV == 'development' ?  'http://localhost:5000' : process.env.API_URL;
+ const baseUrl = process.env.NODE_ENV == 'development' ?  'http://localhost:5000' : 'http://food-helper.com/api';
 
 export const get = async (route, token = null) => {
 
     try {
-        
+
         const res = await fetch(baseUrl + route, {
             method: 'GET',
             headers: {
