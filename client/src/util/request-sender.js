@@ -4,7 +4,7 @@
 export const get = async (route, token = null) => {
 
     try {
-
+        console.log(baseUrl);
         const res = await fetch(baseUrl + route, {
             method: 'GET',
             headers: {
