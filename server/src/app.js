@@ -12,8 +12,16 @@ const favoriteRouter = require('./routers/favorite');
 
 const app = express();
 
+app.use(compression);
 app.use(express.json());
 app.use(allowClientRequests);
+
+if (process.env.NODE_ENV == 'production') {
+    app.use(express.static(path.join(__dirname, 'client/build')))
+    app.get('*', function (req, res) {
+        res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+    });
+}
 
 app.use(recipeRouter);
 app.use(userRouter);
