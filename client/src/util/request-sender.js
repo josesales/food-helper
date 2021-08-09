@@ -1,9 +1,11 @@
 
+ const baseUrl = process.env.NODE_ENV == 'development' ?  'http://localhost:5000' : process.env.API_URL;
+
 export const get = async (route, token = null) => {
 
     try {
 
-        const res = await fetch(`http://localhost:5000${route}`, {
+        const res = await fetch(baseUrl + route, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -31,7 +33,7 @@ export const postPatch = async (route, method = 'POST', body, token = null, cont
 
     try {
 
-        const res = await fetch(`http://localhost:5000${route}`, {
+        const res = await fetch(baseUrl + route, {
             method,
             headers: {
                 'Content-Type': contentType,
@@ -56,7 +58,7 @@ export const remove = async (route, token = null, contentType = 'application/jso
 
     try {
 
-        const res = await fetch(`http://localhost:5000${route}`, {
+        const res = await fetch(baseUrl + route, {
             method: 'DELETE',
             headers: {
                 'Content-Type': contentType,
@@ -83,7 +85,7 @@ export const upload = async (route, file, id, token = null) => {
         form.append('file', file);
         form.append('id', id);
 
-        const res = await fetch(`http://localhost:5000${route}`, {
+        const res = await fetch(baseUrl + route, {
             method: 'POST',
             headers: {
                 Authorization: token ? `Bearer ${token}` : '',
