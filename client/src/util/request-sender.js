@@ -1,5 +1,5 @@
 
- const baseUrl = process.env.NODE_ENV == 'development' ?  'http://localhost:5000' : 'http://food-helper.com/api';
+ const baseUrl = process.env.NODE_ENV == 'development' ?  'http://localhost:5000' : 'https://food-helper-cbp6m.ondigitalocean.app/api';
 
 export const get = async (route, token = null) => {
 
