@@ -1,6 +1,7 @@
 const express = require('express');
 require('./db/mongoose');
 const allowClientRequests = require('./middleware/allowClientRequests');
+const path = require('path');
 const recipeRouter = require('./routers/recipe');
 const userRouter = require('./routers/user');
 const reviewRouter = require('./routers/review');
@@ -17,9 +18,9 @@ app.use(allowClientRequests);
 
 if (process.env.NODE_ENV == 'production') {
     app.use(express.static(path.join(__dirname, 'client/build')))
-    app.get('*', function (req, res) {
+    app.get('/*', function (req, res) {
         res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
-    });
+      });
 }
 
 app.use(recipeRouter);
