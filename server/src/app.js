@@ -9,12 +9,9 @@ const materialRouter = require('./routers/material');
 const categoryRouter = require('./routers/category');
 const dietTypeRouter = require('./routers/dietType');
 const favoriteRouter = require('./routers/favorite');
-const enforce = require('express-sslify');
 
 const app = express();
 
-app.use(compression);
-app.use(enforce.HTTPS({ trustProtoHeader: true }));
 app.use(express.json());
 app.use(allowClientRequests);
 
