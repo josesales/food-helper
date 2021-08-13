@@ -36,18 +36,18 @@ const Login = ({ currentUser, setCurrentUser, setToken }) => {
                     <div className='login'>
 
                         <div className="login__title">
-                            <h2 className="heading-primary">Login</h2>
+                            <h2 className="heading-primary input-margin">Login</h2>
                         </div>
 
                         <div className="login__container">
 
                             <InputField>
-                                <input type="email" name="email" id="login-email" placeholder="Email" required value={credentials.email}
+                                <input className="input-margin" type="email" name="email" id="login-email" placeholder="Email" required value={credentials.email}
                                     onChange={onUserChange} />
                             </InputField>
 
                             <InputField>
-                                <input type="password" name="password" id="login-password" placeholder="Password" required value={credentials.password}
+                                <input className="input-margin" type="password" name="password" id="login-password" placeholder="Password" required value={credentials.password}
                                     onChange={onUserChange} />
                             </InputField>
                         </div>

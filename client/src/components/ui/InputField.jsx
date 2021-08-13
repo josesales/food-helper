@@ -8,7 +8,7 @@ const InputField = props => {
 
     if (type === 'text' || type === 'number' || type === 'email' || type === 'password') {
 
-        InputUi = <input {...props.children.props} className="field__text" />;
+        InputUi = <input {...props.children.props} className={ props.children.props.className ? "field__text " + props.children.props.className  : "field__text"} />;
         if (placeholder) {
             LabelUi = <label htmlFor={id} className="field__label">{placeholder}</label>;
         }

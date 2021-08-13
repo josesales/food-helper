@@ -35,7 +35,7 @@ const Review = ({ currentUser, currentRecipe, reviews, currentReview, setReviews
             }
 
             if (review.rate == 0) {
-                alert('Please give your Rate to this Recipe.')
+                alert('Please give your Rate to this Recipe.');
                 return;
             }
             
