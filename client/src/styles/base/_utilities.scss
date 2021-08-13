@@ -1,5 +1,9 @@
 .header-margin {
     margin-top: 18rem;
+    
+    @include respond(phone) {
+        margin-top: 21rem;
+    }
 }
 
 .title-margin {

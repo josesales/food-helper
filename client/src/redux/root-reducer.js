@@ -10,6 +10,7 @@ import categoryReducer from './category/category-reducer';
 import dietTypeReducer from './diet-type/diet-type-reducer';
 import paginationReducer from './pagination/pagination-reducer';
 import filterReducer from './filter/filter-reducer';
+import messageReducer from './message/message-reducer';
 
 
 const persistConfig = {
@@ -27,6 +28,7 @@ const rootReducer = combineReducers({
     dietType: dietTypeReducer,
     pagination: paginationReducer,
     filter: filterReducer,
+    message: messageReducer,
 })
 
 export default persistReducer(persistConfig, rootReducer);
