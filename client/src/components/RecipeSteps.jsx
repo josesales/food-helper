@@ -5,13 +5,13 @@ import { selectCurrentRecipe } from '../redux/recipe/recipe-selector';
 
 const RecipeSteps = ({ recipe: { steps } = {} }) => {
 
-    const StepsUi = steps.map((step, index) => <li key={index}><p className="paragraph">{step}</p></li>);
+    const StepsUi = steps.map((step, index) => <li key={index}><p className="paragraph">{(index + 1) + ". " + step}</p></li>);
 
     return (
         <div title="Steps for Preparation" className="recipe-steps">
-            <ol className="recipe-steps__list" type='1'>
+            <ul className="recipe-steps__list" type='1'>
                 {StepsUi}
-            </ol>
+            </ul>
         </div>
     );
 }

@@ -12,13 +12,15 @@ import { setReviews } from '../redux/review/review-actions';
 
 
 const Review = ({ currentUser, currentRecipe, reviews, currentReview, setReviews, setCurrentRecipe }) => {
-
-    const [review, setReview] = useState({
+    
+    const reviewInitialState = {
         message: '',
         rate: 0,
         user: currentUser._id,
         recipe: currentRecipe._id
-    });
+    }
+
+    const [review, setReview] = useState(reviewInitialState);
 
     const onMessageChange = e => {
         setReview({ ...review, message: e.target.value });
@@ -36,14 +38,25 @@ const Review = ({ currentUser, currentRecipe, reviews, currentReview, setReviews
                 alert('Please give your Rate to this Recipe.')
                 return;
             }
+            
+            const didUserGiveReview = reviews.filter(review => review.user._id === currentUser._id);
+
+            if(didUserGiveReview) {
+                alert('You already gave a review to this recipe.')
+                return;
+            }
 
             const savedReview = await postPatch('/reviews', 'POST', review, currentUser.token);
             savedReview.user = currentUser;
+
 
             let recipeReviews = null;
 
             recipeReviews = [].concat([savedReview]).concat(reviews);
             setReviews(recipeReviews);
+
+            alert("Review added successfully!");
+            setReview(reviewInitialState);
         } catch (e) {
             alert(e.message);
         }

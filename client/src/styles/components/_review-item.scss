@@ -1,13 +1,9 @@
 .review-item {
     
     @include primary-gradient;
-    width: 60rem;
+    width: 99%;
     height: 50%;
     border-radius: 10px;
-    
-    @include respond(phone) {
-        width: 30rem;
-    }
     
     &:not(:last-child) {
         margin-bottom: 3.5rem;

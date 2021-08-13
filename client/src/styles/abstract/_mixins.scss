@@ -116,7 +116,19 @@
         //@if: an if statement like a normal programming language
         //@content: allows to pass a block of code into a mixin
 
+        @if $breakpoint == mini-phone {
+            @media only screen and (max-width:28.5em) { @content }; //300px
+        }
         @if $breakpoint == phone {
-            @media only screen and (max-width: 45em) { @content }; //around 600px 
+            @media only screen and (max-width:37.5em) { @content }; //600px
+        }
+        @if $breakpoint == tab-port {
+            @media only screen and (max-width:56.25em) { @content }; //900px
+        }
+        @if $breakpoint == tab-land {
+            @media only screen and (max-width:75em) { @content }; //1200px
+        }
+        @if $breakpoint == big-desktop {
+            @media only screen and (min-width:112.5em) { @content }; //1800px
         }
 }

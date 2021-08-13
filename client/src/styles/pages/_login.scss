@@ -14,11 +14,20 @@
 
     &__container {
         width: 40%;
-        height: 32vh;
+        height: 40vh;
         display: flex;
         flex-direction: column;
-        justify-content: space-evenly;
-        align-items: flex-start;
+        justify-content: center;
+        align-items: center;
+
+        @include respond(tab-land) {
+            width: 50%;
+         }
+
+        @include respond(tab-port) {
+           width: 60%;
+            height: 40vh;
+        }
 
         @include respond(phone) {
             width: 90%;

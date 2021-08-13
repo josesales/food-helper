@@ -3,24 +3,28 @@
     align-items: center;
     justify-content: space-around;
     width: 10%;
+
+    @include respond(tab-land) {
+      margin-left: 2.5rem;
+    }
     
-    @include respond(phone) {
+    @include respond(mini-phone) {
+      margin-left: 0;
       position: absolute;
-      right: 15%;
-      bottom: 0;
-      margin-bottom: 1.5rem;
+      left: 18%;
+      bottom: -7%;
     }
    
 }
 
 .switch-label {
-    margin-left: 130px;
+    margin-bottom: 60px;
     font-family: inherit;
     font-size: $font-size-small;
     display: inline-block;
     
     label {
-      @include respond(phone) {
+      @include respond(mini-phone) {
         display: none;
       }
     }

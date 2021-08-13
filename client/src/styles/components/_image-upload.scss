@@ -18,10 +18,17 @@
       border-radius: 10px; //for the bottom corners
       transition: all .2s;
 
+      @include respond(tab-port) {
+        width: 25rem;
+        height: 17rem;
+        // width: 30rem;
+        // height: 22rem;
+      }
+
       @include respond(phone) {
         width: 25rem;
         height: 17rem;
-    }
+      }
 
       &:hover {
       

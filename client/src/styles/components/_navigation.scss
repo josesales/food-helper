@@ -1,7 +1,3 @@
 .navigation {
     display: flex;
-
-    @include respond(phone) {
-        // display: inline-block;
-    }
 }

@@ -7,6 +7,12 @@
     perspective: 150rem;
     -moz-perspective: 150rem;
     cursor: default;
+    flex-shrink: 2;
+
+    // @include respond(tab-land) {
+    //     width: 25rem;
+    //     height: 29rem;
+    // }
 
     .details-checkbox {
         display: none;

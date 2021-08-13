@@ -6,7 +6,7 @@ import { selectTotal } from '../redux/recipe/recipe-selector';
 import RecipeItem from './RecipeItem';
 
 const RecipeItems = ({ recipes }) => {
-    //TODO: Check why card rotation is not working on firefox
+    
     return (
         <div className="recipe-items">
             {

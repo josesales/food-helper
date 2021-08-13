@@ -6,11 +6,12 @@
 	max-width: 60%;
 	cursor: default;
 	
-	@include respond(phone) {
+	@include respond(tab-port) {
 		max-width: 100%;
 	}
 	
 	&__list {
+		list-style: none;
 		display: flex;
 		flex-direction: column;
 		justify-content: center;

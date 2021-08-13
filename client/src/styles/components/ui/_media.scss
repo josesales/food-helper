@@ -3,7 +3,12 @@
     height: 10rem;
     display: flex;
     align-items: flex-start;
-    
+
+    // @include respond(tab-land) {
+    //     width: 15rem;
+    //     height: 7rem;
+    // }
+
     &__img,
     &__video {
         border-radius: 10px;

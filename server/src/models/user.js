@@ -111,11 +111,12 @@ userSchema.statics.findByCredentials = async (email, password) => {
             }
         ]
     })
-    user._doc.recipes = user.$$populatedVirtuals.recipes;
-
+    
     if (!user) {
         throw new Error('Unable to login. Please check your credentials.');
     }
+    
+    user._doc.recipes = user.$$populatedVirtuals.recipes;
 
     const isMatch = await bcrypt.compare(password, user.password);
 

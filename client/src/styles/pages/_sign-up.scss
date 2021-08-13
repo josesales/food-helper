@@ -1,7 +1,7 @@
 .sign-up {
     width: 100%;
     display: flex;
-	justify-content: center;
+	justify-content: space-around;
     align-items: center;
 
     @include respond(phone) {
@@ -31,15 +31,15 @@
         }
     
         &__container {
-            width: 100%;
+            width: 90%;
             height: 40vh;
             display: flex;
             flex-direction: column;
             justify-content: space-evenly;
             align-items: flex-start;
 
-            @include respond(phone) {
-                height: 50vh;
+            @include respond(tab-port) {
+                width: 100%;
             }
         }
     

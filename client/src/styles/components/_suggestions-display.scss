@@ -3,7 +3,7 @@
     color: inherit;
     display: flex;
     position: absolute;
-    top: -110%;
+    top: -140%;
     left: 20%;
     width: 60%;
     overflow-x: auto;
@@ -16,6 +16,7 @@
         background-color: $color-grey-light-1;
         font-size: 1.4rem;
         font-weight: 700;
+        margin-bottom: .5rem;
         // cursor: pointer;
 
         &:hover {
@@ -48,7 +49,7 @@
     	/* width */
 		&::-webkit-scrollbar {
 			width: 1.5rem;
-            height: .8rem;
+            height: 1.5rem;
 		}
 		
 		/* Track */

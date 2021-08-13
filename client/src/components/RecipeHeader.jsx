@@ -37,7 +37,7 @@ const RecipeHeader = ({ recipe, token, currentUser }) => {
     return (
         <React.Fragment>
             <div className="recipe-header">
-                <h1 className="heading-primary">{recipe.name}</h1>
+                <h1 className="heading-primary recipe-header__title">{recipe.name}</h1>
 
 
                 <div title="Rating Given by the Users" className="recipe-header__rate">

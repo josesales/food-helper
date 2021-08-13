@@ -37,14 +37,9 @@ const Header = ({ toggleFilters, isActive }) => {
     return (
         <React.Fragment>
 
-            <div className="header-container">
                 <header className="header">
 
                     <Navigation />
-
-                    {/* <Link className='header__logo' to='/'>
-                        <img title="Home" src={logo} alt="Food Helper Logo" className="header__logo" />
-                    </Link> */}
 
                     <div title="Search Recipes by Ingredients" className="header__search-container">
                         <Search id="header-container_ingredients" placeholder={'Write an Ingredient'}
@@ -56,9 +51,7 @@ const Header = ({ toggleFilters, isActive }) => {
                     <Link className='header__logo' to='/'>
                         <img title="Home" src={logo} alt="Food Helper Logo" className="header__logo" />
                     </Link>
-
                 </header>
-            </div>
 
             <div className="header-margin"></div>
 

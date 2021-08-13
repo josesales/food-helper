@@ -1,4 +1,3 @@
-
 .recipe-header {
     display: flex;
     flex-direction: column;
@@ -6,6 +5,11 @@
     align-items: center;
     margin-bottom: 5rem;
 
+        &__title {
+            @include respond(phone) {
+                font-size: 3rem;
+            }
+        }
 }
 
 .recipe-header__rate {

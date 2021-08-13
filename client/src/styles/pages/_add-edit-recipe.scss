@@ -1,11 +1,5 @@
 .recipe-form {
     
-    // margin-top: $margin-from-header;
-
-    // @include respond(phone) {
-    //     margin-top: $margin-from-header-phone
-    // }
-
     &__title {
         display: flex;
         justify-content: center;
@@ -31,12 +25,16 @@
         .container-3,
         .step-container {
             width: 45%;
-            height: 35vh;
+            height: 60vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: flex-start;
 
+            @include respond(tab-port) {
+                height: 60vh;
+                width: 55%;
+            }
             @include respond(phone) {
                 height: 60vh;
                 width: 90%;
@@ -44,18 +42,24 @@
         }
 
         .container-2 {
-            height: 30vh;
+            height: 50vh;
 
             @include respond(phone) {
-                height: 50vh;
+                height: 30vh;
             }
         }
 
         .container-3 {
-            height: 30vh;
+            height: 45vh;
 
+            @include respond(tab-port) {
+                width: 35%;
+            }
+            
             @include respond(phone) {
-                height: 50vh;
+                width: 90%;
+                justify-content: center;
+                height: 30vh;
             }
         }
         

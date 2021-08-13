@@ -9,12 +9,6 @@
         width: 4rem;
         z-index: 1500;
         cursor: pointer;
-        
-        @include respond(phone) {
-            position: absolute;
-            left: 0;
-            top: 1rem;
-        }
     }
 
     &__button {
