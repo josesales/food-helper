@@ -128,7 +128,7 @@ const Search = ({ id, documentName, collectionName, buttonName, containerClass, 
 
     //Add to the displayed suggestions
     const onAddButtonClick = e => {
-        const inputText = e.target.attributes.name.nodeValue;
+        const inputText = e.target.defaultValue ? e.target.defaultValue : e.target.attributes.name.nodeValue;
         if (inputText && inputText.trim()) {
             setInput(inputText);
             setSelectedItems(prevItems => {
