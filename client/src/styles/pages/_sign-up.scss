@@ -25,14 +25,13 @@
             justify-content: center;
             align-items: center;
 
-            @include respond(phone) {
-                margin-bottom: 2rem;
-            }
+            // @include respond(phone) {
+            //     margin-bottom: 2rem;
+            // }
         }
     
         &__container {
             width: 90%;
-            height: 40vh;
             display: flex;
             flex-direction: column;
             justify-content: space-evenly;
@@ -48,7 +47,6 @@
             justify-content: center;
             align-items: center;
             width: 100%;
-            margin-top: 3rem;
 
             @include respond(phone) {
                 position: absolute;

@@ -67,29 +67,29 @@ const SignUp = ({ image, currentUser, setCurrentUser, setToken }) => {
             <div className="user-data">
 
 
-              <div className="user-data__title">
+              <div className="user-data__title title-margin">
                 <h2 className="heading-primary">Sign Up</h2>
               </div>
 
               <div className="user-data__container">
 
                 <InputField>
-                  <input type="text" name="name" id="user-data-user-name" placeholder="User Name" required value={userState.name}
+                  <input type="text" name="name" id="user-data-user-name" className="input-margin" placeholder="User Name" required value={userState.name}
                     onChange={onUserChange} />
                 </InputField>
 
                 <InputField>
-                  <input type="email" name="email" id="user-data-email" placeholder="Email" required value={userState.email}
+                  <input type="email" name="email" id="user-data-email" className="input-margin" placeholder="Email" required value={userState.email}
                     onChange={onUserChange} />
                 </InputField>
 
                 <InputField>
-                  <input type="password" name="password" id="user-data-password" placeholder="Password" required value={userState.password}
+                  <input type="password" name="password" id="user-data-password" className="input-margin" placeholder="Password" required value={userState.password}
                     onChange={onUserChange} />
                 </InputField>
 
                 <InputField>
-                  <input type="password" name="confirmPassword" id="user-data-confirm-password" placeholder="Confirm Password" required
+                  <input type="password" name="confirmPassword" id="user-data-confirm-password" className="input-margin" placeholder="Confirm Password" required
                     value={userState.confirmPassword} onChange={onUserChange} />
                 </InputField>
               </div>
@@ -106,7 +106,7 @@ const SignUp = ({ image, currentUser, setCurrentUser, setToken }) => {
             </div>
 
             <div className="sign-up__avatar">
-              <h2 className="heading-secondary text">Avatar</h2>
+              <h2 className="heading-primary title-margin">Avatar</h2>
               <ImageUpload />
             </div>
           </div>

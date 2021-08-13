@@ -4,17 +4,12 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        
-        @include respond(phone) {
-            margin-bottom: 2rem;
-        }
     }
     
     .center {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 5rem;
 
         @include respond(phone) {
             flex-direction: column;
@@ -25,32 +20,20 @@
         .container-3,
         .step-container {
             width: 45%;
-            height: 60vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: flex-start;
 
             @include respond(tab-port) {
-                height: 60vh;
                 width: 55%;
             }
             @include respond(phone) {
-                height: 60vh;
                 width: 90%;
             }
         }
 
-        .container-2 {
-            height: 50vh;
-
-            @include respond(phone) {
-                height: 30vh;
-            }
-        }
-
         .container-3 {
-            height: 45vh;
 
             @include respond(tab-port) {
                 width: 35%;
@@ -59,7 +42,6 @@
             @include respond(phone) {
                 width: 90%;
                 justify-content: center;
-                height: 30vh;
             }
         }
         
@@ -86,9 +68,14 @@
         .image-container {
             width: 40%;
             display: flex;
-            justify-content: center;
+            justify-content: flex-start;
             align-items: center;
             flex-direction: column;
+            margin-bottom: 8rem;
+
+            @include respond(phone) {
+                margin-bottom: 5rem;
+            }
 
             .text {
                 cursor: default;

@@ -212,7 +212,7 @@ const AddEditRecipe = (props) => {
     return (
         <div className="recipe-form">
 
-            <div className="recipe-form__title">
+            <div className="recipe-form__title title-margin">
                 <h2 className="heading-primary">{recipe.name ? recipe.name : "New Recipe"}</h2>
             </div>
 
@@ -220,13 +220,13 @@ const AddEditRecipe = (props) => {
                 <div className="container">
 
                     <InputField>
-                        <input type="text" id="name" placeholder="Name" required value={recipe.name} onChange={onRecipeChange} autoComplete="off" />
+                        <input type="text" id="name" className="input-margin" placeholder="Name" required value={recipe.name} onChange={onRecipeChange} autoComplete="off" />
                     </InputField>
 
                     <InputField>
 
                         <Search id="recipe-form_ingredients" placeholder={'Ingredients'} buttonName={HTML_ENTITIES.add}
-                            containerClass="field__select" inputClass="field__select__text" collectionName="ingredients"
+                            containerClass="field__select input-margin" inputClass="field__select__text" collectionName="ingredients"
                             collectionDb={recipeDb && recipeDb.ingredients ? recipeDb.ingredients : null}>
 
                             <label htmlFor="recipe-form_ingredients" className="field__label">Ingredients</label>
@@ -236,7 +236,7 @@ const AddEditRecipe = (props) => {
                     <InputField>
 
                         <Search id="recipe-form_materials" placeholder={'Materials'} buttonName={HTML_ENTITIES.add}
-                            containerClass="field__select" inputClass="field__select__text" collectionName="materials"
+                            containerClass="field__select input-margin" inputClass="field__select__text" collectionName="materials"
                             collectionDb={recipeDb && recipeDb.materials ? recipeDb.materials : null}>
 
                             <label htmlFor="recipe-form_materials" className="field__label">Materials</label>
@@ -245,7 +245,7 @@ const AddEditRecipe = (props) => {
 
                     <InputField>
                         <input type="text" id="videoUrl" placeholder="Youtube Video Url" required value={recipe.videoUrl}
-                            onChange={onRecipeChange} autoComplete="off" />
+                            onChange={onRecipeChange} className="input-margin" autoComplete="off" />
                     </InputField>
                 </div>
 
@@ -261,7 +261,7 @@ const AddEditRecipe = (props) => {
                     <InputField>
 
                         <Search isSelect={true} id="recipe-form_categories" placeholder={'Category'}
-                            buttonName={HTML_ENTITIES.search} containerClass="field__select" inputClass="field__select__text"
+                            buttonName={HTML_ENTITIES.search} containerClass="field__select input-margin" inputClass="field__select__text"
                             collectionName="categories" documentDb={recipeDb && recipeDb.category ? recipeDb.category : null}>
 
                             <label htmlFor="recipe-form_categories" className="field__label">Category</label>
@@ -270,7 +270,7 @@ const AddEditRecipe = (props) => {
 
                     <InputField>
                         <Search isSelect={true} id="recipe-form_diet-type" placeholder={'Diet Type'}
-                            buttonName={HTML_ENTITIES.search} containerClass="field__select"
+                            buttonName={HTML_ENTITIES.search} containerClass="field__select input-margin"
                             inputClass="field__select__text" collectionName="dietTypes"
                             documentDb={recipeDb && recipeDb.dietType ? recipeDb.dietType : null}>
 
@@ -279,18 +279,20 @@ const AddEditRecipe = (props) => {
                     </InputField>
 
                     <InputField>
-                        <input type="text" id="preparationTime" placeholder="Preparation Time" required value={recipe.preparationTime}
+                        <input type="text" id="preparationTime" placeholder="Preparation Time" className="input-margin" required value={recipe.preparationTime}
                             onChange={onRecipeChange} autoComplete="off" />
                     </InputField>
                 </div>
 
                 <div className="container-3">
                     <InputField>
-                        <input type="number" min="1" id="peoplePerServing" placeholder="People per Serving" value={recipe.peoplePerServing} onChange={onRecipeChange} autoComplete="off" />
+                        <input type="number" min="1" id="peoplePerServing" placeholder="People per Serving" value={recipe.peoplePerServing} onChange={onRecipeChange} 
+                            className="input-margin" autoComplete="off" />
                     </InputField>
 
                     <InputField>
-                        <input type="number" min="1" id="calories" placeholder="Calories" value={recipe.calories} onChange={onRecipeChange} autoComplete="off" />
+                        <input type="number" min="1" id="calories" placeholder="Calories" value={recipe.calories} onChange={onRecipeChange} 
+                            className="input-margin" autoComplete="off" />
                     </InputField>
                 </div>
             </div>
