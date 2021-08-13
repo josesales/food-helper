@@ -36,7 +36,7 @@ const Login = ({ currentUser, setCurrentUser, setToken }) => {
                     <div className='login'>
 
                         <div className="login__title">
-                            <h2 className="heading-primary input-margin">Login</h2>
+                            <h2 className="heading-primary">Login</h2>
                         </div>
 
                         <div className="login__container">
