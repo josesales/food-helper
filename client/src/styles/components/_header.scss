@@ -12,16 +12,15 @@
     border-bottom: 2px solid rgba($color-grey-light-2, 0.5);
     padding-top: 2rem;  
     
-    @include respond(phone) {
-        height: 20vh;
-        width: 100%;
+    @include respond(tab-port) {
+        height: 24vh;
     }
     
     &__logo {
         height: 90%;
         cursor: pointer;
 
-        @include respond(mini-phone) {
+        @include respond(phone) {
             height: 55%;
         }
     }
@@ -42,7 +41,7 @@
         }
         
         @include respond(phone) {
-            width: 80%;
+            width: 70%;
             margin-left: 0;
         }
         @include respond(mini-phone) {

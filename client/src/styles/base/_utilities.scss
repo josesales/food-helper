@@ -1,8 +1,8 @@
 .header-margin {
     margin-top: 18rem;
     
-    @include respond(phone) {
-        margin-top: 21rem;
+    @include respond(tab-port) {
+        margin-top: 25rem;
     }
 }
 
