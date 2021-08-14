@@ -327,7 +327,7 @@ const AddEditRecipe = (props) => {
                 <EditSteps steps={recipe.steps} onChange={onStepsChange} onDelete={onDeleteStepClick} />
 
                 <div className="center">
-                    <div className="save-button-container">
+                    <div className="save-button-container input-margin">
                         <button onClick={onSaveRecipeClick}>Save Recipe</button>
                     </div>
                 </div>

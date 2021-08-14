@@ -83,7 +83,7 @@ const Review = ({ currentUser, currentRecipe, reviews, currentReview, setReviews
                 <TextArea id="new-review" placeholder="Write a Comment" value={review.message} onChange={onMessageChange} />
             </div>
 
-            <button onClick={onAddReviewClick}>Add Your Comment</button>
+            <button className="input-margin" onClick={onAddReviewClick}>Add Your Comment</button>
         </div>
     );
 }

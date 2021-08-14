@@ -1,9 +1,6 @@
 .header-margin {
     margin-top: 18rem;
     
-    @include respond(tab-port) {
-        margin-top: 25rem;
-    }
 }
 
 .title-margin {

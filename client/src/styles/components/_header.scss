@@ -3,18 +3,13 @@
     position: fixed;
     top: 0;
     left: 0;
-    height: 17vh;
+    height: 18rem;
     z-index: 1000;
     display: flex;
     justify-content: space-between;
     align-items: center;
     background-color: $color-white;
     border-bottom: 2px solid rgba($color-grey-light-2, 0.5);
-    padding-top: 2rem;  
-    
-    @include respond(tab-port) {
-        height: 24vh;
-    }
     
     &__logo {
         height: 90%;

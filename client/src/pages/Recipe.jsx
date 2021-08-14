@@ -6,7 +6,6 @@ import RecipeSteps from '../components/RecipeSteps';
 import DisplayMessage from '../components/ui/DisplayMessage';
 import Loader from '../components/ui/Loader';
 import Media from '../components/ui/Media';
-import { displayMessage } from '../redux/message/message-actions';
 import { selectCurrentRecipe } from '../redux/recipe/recipe-selector';
 import { getReviewsByRecipe } from '../redux/review/review-actions';
 import { selectReviews } from '../redux/review/review-selector';
