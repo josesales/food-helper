@@ -17,6 +17,9 @@ import { selectCurrentUser, selectToken } from '../redux/user/user-selector';
 import { useLocation } from 'react-router';
 import { setImage } from '../redux/recipe/recipe-actions';
 import { setCurrentUser } from '../redux/user/user-actions';
+import { displayMessage } from '../redux/message/message-actions';
+import DisplayMessage from '../components/ui/DisplayMessage';
+import { useHistory } from 'react-router-dom';
 
 let shouldPersistIngredient = true;
 let localBase64Image = null;
@@ -24,13 +27,16 @@ let localBase64Image = null;
 const AddEditRecipe = (props) => {
 
     const { persistRecipe, image, base64Image, fetchIngredients, fetchMaterials, fetchCategories, fetchDietTypes,
-        setImage, token, currentUser, setCurrentUser } = props;
+        setImage, token, currentUser, setCurrentUser, displayMessage } = props;
 
     const location = useLocation();
+    const history = useHistory();
 
 
     let recipeDb = location && location.state && location.state.recipe && location.state.recipe._id ?
         location.state.recipe : null;
+
+    const { type, message } = useSelector(state => state.message);
 
     if (recipeDb) {
         recipeDb = Object.assign({}, recipeDb);
@@ -156,10 +162,13 @@ const AddEditRecipe = (props) => {
                 setCurrentUser({ ...currentUser, recipes: [].concat(recipeWithImage) });
             }
 
-            alert('Recipe Saved Successfully!');
+            window.scrollTo(0, 0);
+            displayMessage({type:'success', message: 'Your Recipe has been saved.'});
+            history.push('/');
         } catch (error) {
             console.log('Error while saving the recipe: ' + error.message);
-            alert(error.message);
+            window.scrollTo(0, 0);
+            displayMessage({type:'error', message: error.message});
         }
     }
 
@@ -210,113 +219,120 @@ const AddEditRecipe = (props) => {
     }, [base64Image]);
 
     return (
-        <div className="recipe-form">
 
-            <div className="recipe-form__title title-margin">
-                <h2 className="heading-primary">{recipe.name ? recipe.name : "New Recipe"}</h2>
-            </div>
+        <React.Fragment>
+            {
+                type && message ? <DisplayMessage type={type} message={message} /> : null
+            }
 
-            <div className="center">
-                <div className="container">
+            <div className="recipe-form">
 
-                    <InputField>
-                        <input type="text" id="name" className="input-margin" placeholder="Name" required value={recipe.name} onChange={onRecipeChange} autoComplete="off" />
-                    </InputField>
-
-                    <InputField>
-
-                        <Search id="recipe-form_ingredients" placeholder={'Ingredients'} buttonName={HTML_ENTITIES.add}
-                            containerClass="field__select input-margin" inputClass="field__select__text" collectionName="ingredients"
-                            collectionDb={recipeDb && recipeDb.ingredients ? recipeDb.ingredients : null}>
-
-                            <label htmlFor="recipe-form_ingredients" className="field__label">Ingredients</label>
-                        </Search>
-                    </InputField>
-
-                    <InputField>
-
-                        <Search id="recipe-form_materials" placeholder={'Materials'} buttonName={HTML_ENTITIES.add}
-                            containerClass="field__select input-margin" inputClass="field__select__text" collectionName="materials"
-                            collectionDb={recipeDb && recipeDb.materials ? recipeDb.materials : null}>
-
-                            <label htmlFor="recipe-form_materials" className="field__label">Materials</label>
-                        </Search>
-                    </InputField>
-
-                    <InputField>
-                        <input type="text" id="videoUrl" placeholder="Youtube Video Url" required value={recipe.videoUrl}
-                            onChange={onRecipeChange} className="input-margin" autoComplete="off" />
-                    </InputField>
+                <div className="recipe-form__title title-margin">
+                    <h2 className="heading-primary">{recipe.name ? recipe.name : "New Recipe"}</h2>
                 </div>
 
-                <div className="image-container">
-                    <h2 className="heading-secondary text">Picture</h2>
-                    <ImageUpload image={imageDb ? 'data:image/png;base64,' + imageDb : null} />
-                </div>
-            </div>
+                <div className="center">
+                    <div className="container">
 
-            <div className="center">
-                <div className="container-2">
+                        <InputField>
+                            <input type="text" id="name" className="input-margin" placeholder="Name" required value={recipe.name} onChange={onRecipeChange} autoComplete="off" />
+                        </InputField>
 
-                    <InputField>
+                        <InputField>
 
-                        <Search isSelect={true} id="recipe-form_categories" placeholder={'Category'}
-                            buttonName={HTML_ENTITIES.search} containerClass="field__select input-margin" inputClass="field__select__text"
-                            collectionName="categories" documentDb={recipeDb && recipeDb.category ? recipeDb.category : null}>
+                            <Search id="recipe-form_ingredients" placeholder={'Ingredients'} buttonName={HTML_ENTITIES.add}
+                                containerClass="field__select input-margin" inputClass="field__select__text" collectionName="ingredients"
+                                collectionDb={recipeDb && recipeDb.ingredients ? recipeDb.ingredients : null}>
 
-                            <label htmlFor="recipe-form_categories" className="field__label">Category</label>
-                        </Search>
-                    </InputField>
+                                <label htmlFor="recipe-form_ingredients" className="field__label">Ingredients</label>
+                            </Search>
+                        </InputField>
 
-                    <InputField>
-                        <Search isSelect={true} id="recipe-form_diet-type" placeholder={'Diet Type'}
-                            buttonName={HTML_ENTITIES.search} containerClass="field__select input-margin"
-                            inputClass="field__select__text" collectionName="dietTypes"
-                            documentDb={recipeDb && recipeDb.dietType ? recipeDb.dietType : null}>
+                        <InputField>
 
-                            <label htmlFor="recipe-form_diet-type" className="field__label">Diet Type</label>
-                        </Search>
-                    </InputField>
+                            <Search id="recipe-form_materials" placeholder={'Materials'} buttonName={HTML_ENTITIES.add}
+                                containerClass="field__select input-margin" inputClass="field__select__text" collectionName="materials"
+                                collectionDb={recipeDb && recipeDb.materials ? recipeDb.materials : null}>
 
-                    <InputField>
-                        <input type="text" id="preparationTime" placeholder="Preparation Time" className="input-margin" required value={recipe.preparationTime}
-                            onChange={onRecipeChange} autoComplete="off" />
-                    </InputField>
-                </div>
+                                <label htmlFor="recipe-form_materials" className="field__label">Materials</label>
+                            </Search>
+                        </InputField>
 
-                <div className="container-3">
-                    <InputField>
-                        <input type="number" min="1" id="peoplePerServing" placeholder="People per Serving" value={recipe.peoplePerServing} onChange={onRecipeChange} 
-                            className="input-margin" autoComplete="off" />
-                    </InputField>
-
-                    <InputField>
-                        <input type="number" min="1" id="calories" placeholder="Calories" value={recipe.calories} onChange={onRecipeChange} 
-                            className="input-margin" autoComplete="off" />
-                    </InputField>
-                </div>
-            </div>
-
-
-
-            <div className="center">
-
-                <div className="step-container">
-                    <div className="step-container__text-area">
-                        <TextArea id="new-step" placeholder="New Step" value={newStep} onChange={onNewStepChange} />
+                        <InputField>
+                            <input type="text" id="videoUrl" placeholder="Youtube Video Url" required value={recipe.videoUrl}
+                                onChange={onRecipeChange} className="input-margin" autoComplete="off" />
+                        </InputField>
                     </div>
-                    <button className="step-container__button" onClick={onAddNewStepClick}>Add Step</button>
+
+                    <div className="image-container">
+                        <h2 className="heading-secondary text">Picture</h2>
+                        <ImageUpload image={imageDb ? 'data:image/png;base64,' + imageDb : null} />
+                    </div>
+                </div>
+
+                <div className="center">
+                    <div className="container-2">
+
+                        <InputField>
+
+                            <Search isSelect={true} id="recipe-form_categories" placeholder={'Category'}
+                                buttonName={HTML_ENTITIES.search} containerClass="field__select input-margin" inputClass="field__select__text"
+                                collectionName="categories" documentDb={recipeDb && recipeDb.category ? recipeDb.category : null}>
+
+                                <label htmlFor="recipe-form_categories" className="field__label">Category</label>
+                            </Search>
+                        </InputField>
+
+                        <InputField>
+                            <Search isSelect={true} id="recipe-form_diet-type" placeholder={'Diet Type'}
+                                buttonName={HTML_ENTITIES.search} containerClass="field__select input-margin"
+                                inputClass="field__select__text" collectionName="dietTypes"
+                                documentDb={recipeDb && recipeDb.dietType ? recipeDb.dietType : null}>
+
+                                <label htmlFor="recipe-form_diet-type" className="field__label">Diet Type</label>
+                            </Search>
+                        </InputField>
+
+                        <InputField>
+                            <input type="text" id="preparationTime" placeholder="Preparation Time" className="input-margin" required value={recipe.preparationTime}
+                                onChange={onRecipeChange} autoComplete="off" />
+                        </InputField>
+                    </div>
+
+                    <div className="container-3">
+                        <InputField>
+                            <input type="number" min="1" id="peoplePerServing" placeholder="People per Serving" value={recipe.peoplePerServing} onChange={onRecipeChange} 
+                                className="input-margin" autoComplete="off" />
+                        </InputField>
+
+                        <InputField>
+                            <input type="number" min="1" id="calories" placeholder="Calories" value={recipe.calories} onChange={onRecipeChange} 
+                                className="input-margin" autoComplete="off" />
+                        </InputField>
+                    </div>
+                </div>
+
+
+
+                <div className="center">
+
+                    <div className="step-container">
+                        <div className="step-container__text-area">
+                            <TextArea id="new-step" placeholder="New Step" value={newStep} onChange={onNewStepChange} />
+                        </div>
+                        <button className="step-container__button" onClick={onAddNewStepClick}>Add Step</button>
+                    </div>
+                </div>
+
+                <EditSteps steps={recipe.steps} onChange={onStepsChange} onDelete={onDeleteStepClick} />
+
+                <div className="center">
+                    <div className="save-button-container">
+                        <button onClick={onSaveRecipeClick}>Save Recipe</button>
+                    </div>
                 </div>
             </div>
-
-            <EditSteps steps={recipe.steps} onChange={onStepsChange} onDelete={onDeleteStepClick} />
-
-            <div className="center">
-                <div className="save-button-container">
-                    <button onClick={onSaveRecipeClick}>Save Recipe</button>
-                </div>
-            </div>
-        </div>
+        </React.Fragment>
     );
 }
 
@@ -335,6 +351,7 @@ const mapDispatchToProps = dispatch => ({
     fetchDietTypes: () => dispatch(fetchDietTypes()),
     setImage: image => dispatch(setImage(image)),
     setCurrentUser: user => dispatch(setCurrentUser(user)),
+    displayMessage: msgObj => dispatch(displayMessage(msgObj)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddEditRecipe);

@@ -3,26 +3,33 @@ import InputField from '../components/ui/InputField';
 import { Link, Redirect } from 'react-router-dom';
 import ImageUpload from '../components/ImageUpload';
 import { selectImage } from '../redux/recipe/recipe-selector';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { postPatch, upload } from '../util/request-sender';
 import { selectCurrentUser } from '../redux/user/user-selector';
 import { setCurrentUser, setToken } from '../redux/user/user-actions';
+import { displayMessage } from '../redux/message/message-actions';
+import DisplayMessage from '../components/ui/DisplayMessage';
 
-const SignUp = ({ image, currentUser, setCurrentUser, setToken }) => {
+const SignUp = ({ image, currentUser, setCurrentUser, setToken, displayMessage }) => {
 
   const [userState, setUserState] = useState({ name: '', username: '', email: '', password: '', confirmPassword: '' });
+
+  const { type, message } = useSelector(state => state.message);
 
   const validateUser = () => {
 
     if (!userState.name.trim()) {
-      throw new Error('Name is mandatory.');
+      throw new Error('User Name is mandatory.');
     }
     if (!userState.email.trim()) {
       throw new Error('Email is mandatory.');
     }
     if (!userState.password.trim()) {
       throw new Error('Password is mandatory.');
+    }
+    if (userState.password.length < 4 ) {
+      throw new Error('Password has to contain at least 4 characters.');
     }
     if (!userState.confirmPassword.trim()) {
       throw new Error('Confirm Password is mandatory.');
@@ -47,7 +54,7 @@ const SignUp = ({ image, currentUser, setCurrentUser, setToken }) => {
       setToken(token);
     } catch (error) {
       console.log(error);
-      alert(error.message);
+      displayMessage({type:'error', message: error.message});
     }
   };
 
@@ -60,9 +67,15 @@ const SignUp = ({ image, currentUser, setCurrentUser, setToken }) => {
   return (
     <React.Fragment>
       {
+          type && message ? <DisplayMessage type={type} message={message} /> : null
+      }
+
+      {
         currentUser ? <Redirect to="/" /> :
 
+
           <div className='sign-up'>
+
 
             <div className="user-data">
 
@@ -123,6 +136,7 @@ const mapStateToProps = createStructuredSelector({
 const mapDispatchToProps = dispatch => ({
   setCurrentUser: user => dispatch(setCurrentUser(user)),
   setToken: token => dispatch(setToken(token)),
+  displayMessage: msgObj => dispatch(displayMessage(msgObj)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SignUp);

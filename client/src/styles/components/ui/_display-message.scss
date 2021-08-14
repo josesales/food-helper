@@ -1,0 +1,46 @@
+.display-message {
+
+    margin-bottom: 3rem;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+
+    &__error,
+    &__alert,
+    &__success {
+        display: flex;
+        justify-content: center;
+        border-radius: 1rem;
+        padding: .5rem 0;
+        background-color: rgba($color-red, 0.8);
+        color: $color-white;
+        width: 58%;
+
+        @include respond(tab-port) {
+            width: 75%;
+        }
+        
+        @include respond(phone) {
+            width: 95%;
+        }
+    }
+
+    &__error {
+        background-color: rgba($color-red, 0.8);
+    }
+
+    &__alert {
+        background-color: rgba($color-yellow, 0.8);
+    }
+
+    &__success {
+        background-color: rgba($color-green, 0.8);
+    }
+
+    &__type {
+        text-transform: capitalize;
+        margin-right: 1rem;
+    }
+
+
+}

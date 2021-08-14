@@ -10,8 +10,7 @@ import pagination from '../util/pagination';
 import { selectCurrentPage, selectVisitedPage } from '../redux/pagination/pagination-selector';
 import { addVisitedPage, setCurrentPage, setVisitedPage } from '../redux/pagination/pagination-actions';
 import { fetchIngredients, setShowSelectedIngredients } from '../redux/ingredient/ingredient-actions';
-import ToggleSwitch from '../components/ToggleSwitch';
-import { toggleIsActive } from '../redux/filter/filter-actions';
+import DisplayMessage from '../components/ui/DisplayMessage';
 
 export const recipesPagination = pagination(0);
 
@@ -27,6 +26,7 @@ const Home = ({ recipes, visitedPage, setVisitedPage, total, fetchRecipes, fetch
     recipesPagination.total = total;
 
     const ingredients = useSelector(state => state.ingredient.ingredients);
+    const { type, message } = useSelector(state => state.message);
 
     //Fetch recipes like componentDidMount style
     useEffect(() => {
@@ -108,6 +108,10 @@ const Home = ({ recipes, visitedPage, setVisitedPage, total, fetchRecipes, fetch
                     <React.Fragment>
 
                         <div className="home">
+
+                        {
+                            type && message ? <DisplayMessage type={type} message={message} /> : null
+                        }
 
                             <div className="home__hidden-title">
                                 <h2 className="heading-primary">Home</h2>

@@ -1,5 +1,6 @@
 import pagination from '../../util/pagination';
 import { get, postPatch } from '../../util/request-sender';
+import { displayMessage } from '../message/message-actions';
 import { RecipeActionTypes } from './recipe-types';
 
 export const fetchRecipes = (currentPage = 0, getTotal = false, userId = null, filters = null) => {
@@ -39,7 +40,6 @@ export const fetchRecipes = (currentPage = 0, getTotal = false, userId = null, f
             } else {
                 dispatch({ type: RecipeActionTypes.FETCH_RECIPES, payload: { recipes, total } });
             }
-
         } catch (error) {
             console.log('Error while trying to communicate with the API: ' + error.message);
         }

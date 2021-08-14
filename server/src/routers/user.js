@@ -20,7 +20,7 @@ router.post('/users', jsonParser, async (req, res) => {
         // sendWelcomeEmail(user.email, user.name);
         res.status(httpStatus.created).send({ user, token });
     } catch (error) {
-        res.status(httpStatus.badRequest).send(error.message);
+        res.status(httpStatus.badRequest).send({ error: error.message });
     }
 });
 

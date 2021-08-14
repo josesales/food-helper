@@ -1,10 +1,12 @@
 import React, { useEffect, lazy, Suspense } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import RecipeHeader from '../components/RecipeHeader';
 import RecipeSteps from '../components/RecipeSteps';
+import DisplayMessage from '../components/ui/DisplayMessage';
 import Loader from '../components/ui/Loader';
 import Media from '../components/ui/Media';
+import { displayMessage } from '../redux/message/message-actions';
 import { selectCurrentRecipe } from '../redux/recipe/recipe-selector';
 import { getReviewsByRecipe } from '../redux/review/review-actions';
 import { selectReviews } from '../redux/review/review-selector';
@@ -14,12 +16,19 @@ const Review = lazy(() => import('../components/Review'));
 
 const Recipe = ({ recipe, getReviewsByRecipe, currentUser, reviews }) => {
 
+    const { type, message } = useSelector(state => state.message);
+
     useEffect(() => {
         getReviewsByRecipe(recipe._id);
     }, []);
 
     return (
         <React.Fragment>
+
+            {
+                type && message ? <DisplayMessage type={type} message={message} /> : null
+            }
+
             <RecipeHeader />
 
             <div className="recipe-container">
@@ -30,7 +39,7 @@ const Recipe = ({ recipe, getReviewsByRecipe, currentUser, reviews }) => {
             </div>
 
             {
-                (reviews && reviews.length > 0) || recipe.videoUrl ?
+                (reviews && reviews.length > 0) || recipe.videoUrl || currentUser ?
 
                     <div className="recipe-container">
                         {
@@ -68,7 +77,7 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const mapDispatchToProps = dispatch => ({
-    getReviewsByRecipe: recipeId => dispatch(getReviewsByRecipe(recipeId))
+    getReviewsByRecipe: recipeId => dispatch(getReviewsByRecipe(recipeId)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Recipe);

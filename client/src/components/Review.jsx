@@ -9,9 +9,10 @@ import { postPatch } from '../util/request-sender';
 import Rate from './Rate';
 import TextArea from './ui/TextArea';
 import { setReviews } from '../redux/review/review-actions';
+import { displayMessage } from '../redux/message/message-actions';
 
 
-const Review = ({ currentUser, currentRecipe, reviews, currentReview, setReviews, setCurrentRecipe }) => {
+const Review = ({ currentUser, currentRecipe, reviews, currentReview, setReviews, displayMessage }) => {
     
     const reviewInitialState = {
         message: '',
@@ -30,19 +31,22 @@ const Review = ({ currentUser, currentRecipe, reviews, currentReview, setReviews
 
         try {
             if (!review.message.trim() || review.message.length < 5) {
-                alert('Please write a Comment about this Recipe with a minimal of 5 characters.')
+                window.scrollTo(0, 0);
+                displayMessage({type:'error', message: 'Please write a Comment about this Recipe with a minimal of 5 characters.'});
                 return;
             }
-
+            
             if (review.rate == 0) {
-                alert('Please give your Rate to this Recipe.');
+                window.scrollTo(0, 0);
+                displayMessage({type:'error', message: 'Please give your Rate to this Recipe.'});
                 return;
             }
             
             const didUserGiveReview = reviews.filter(review => review.user._id === currentUser._id);
 
-            if(didUserGiveReview) {
-                alert('You already gave a review to this recipe.')
+            if(didUserGiveReview.length > 0) {
+                window.scrollTo(0, 0);
+                displayMessage({type:'error', message: 'You already gave a review to this Recipe.'});
                 return;
             }
 
@@ -55,10 +59,13 @@ const Review = ({ currentUser, currentRecipe, reviews, currentReview, setReviews
             recipeReviews = [].concat([savedReview]).concat(reviews);
             setReviews(recipeReviews);
 
-            alert("Review added successfully!");
+            window.scrollTo(0, 0);
+            displayMessage({type:'success', message: 'Your Review has been added.'});
+
             setReview(reviewInitialState);
         } catch (e) {
-            alert(e.message);
+            window.scrollTo(0, 0);
+            displayMessage({type:'error', message: e.message});
         }
     }
 
@@ -90,7 +97,8 @@ const mapStateToProps = createStructuredSelector({
 
 const mapDispatchToProps = dispatch => ({
     setCurrentRecipe: recipe => dispatch(setCurrentRecipe(recipe)),
-    setReviews: reviews => dispatch(setReviews(reviews))
+    setReviews: reviews => dispatch(setReviews(reviews)),
+    displayMessage: msgObj => dispatch(displayMessage(msgObj)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Review);

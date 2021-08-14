@@ -6,8 +6,8 @@
     &__rate {
         align-self: center;
         
-        @include respond(phone) {
-            margin-bottom: 3rem;
+        @include respond(tab-port) {
+            margin: 3rem 0;
         }
     }
 
