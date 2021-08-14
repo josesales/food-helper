@@ -85,6 +85,10 @@ const Filter = ({ isActive, toggleIsActive, fetchCategories, fetchDietTypes, cat
 
                         <div className="filter__container">
 
+                        <div className="filter__hidden-title">
+                            <h2 className="heading-primary">Filters</h2>
+                        </div>
+                        
                             <InputField>
 
                                 <Search isSelect={true} id="filter_categories" placeholder={'Category'}
