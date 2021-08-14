@@ -20,6 +20,10 @@
     &__logo {
         height: 90%;
         cursor: pointer;
+
+        @include respond(mini-phone) {
+            height: 55%;
+        }
     }
 
     &__search-container {
@@ -40,6 +44,10 @@
         @include respond(phone) {
             width: 80%;
             margin-left: 0;
+        }
+        @include respond(mini-phone) {
+            width: 70%;
+            margin-right: 2.5rem;
         }
     }
 }

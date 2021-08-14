@@ -88,7 +88,7 @@ const Filter = ({ isActive, toggleIsActive, fetchCategories, fetchDietTypes, cat
                             <InputField>
 
                                 <Search isSelect={true} id="filter_categories" placeholder={'Category'}
-                                    buttonName={HTML_ENTITIES.search} containerClass="field__select" inputClass="field__select__text"
+                                    buttonName={HTML_ENTITIES.search} containerClass="field__select input-margin" inputClass="field__select__text"
                                     collectionName="categories">
 
                                     <label htmlFor="filter_categories" className="field__label">Category</label>
@@ -97,7 +97,7 @@ const Filter = ({ isActive, toggleIsActive, fetchCategories, fetchDietTypes, cat
 
                             <InputField>
                                 <Search isSelect={true} id="filter_diet-type" placeholder={'Diet Type'}
-                                    buttonName={HTML_ENTITIES.search} containerClass="field__select" inputClass="field__select__text"
+                                    buttonName={HTML_ENTITIES.search} containerClass="field__select input-margin" inputClass="field__select__text"
                                     collectionName="dietTypes">
 
                                     <label htmlFor="filter_diet-type" className="field__label">Diet Type</label>
@@ -106,7 +106,7 @@ const Filter = ({ isActive, toggleIsActive, fetchCategories, fetchDietTypes, cat
 
                             <InputField>
                                 <Search isSelect={true} id="filter_order" placeholder={'Order'}
-                                    buttonName={HTML_ENTITIES.search} containerClass="field__select" inputClass="field__select__text"
+                                    buttonName={HTML_ENTITIES.search} containerClass="field__select input-margin" inputClass="field__select__text"
                                     documentName="filter" collectionName="order">
 
                                     <label htmlFor="filter_order" className="field__label">Order</label>

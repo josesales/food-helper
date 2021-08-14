@@ -10,6 +10,8 @@ import pagination from '../util/pagination';
 import { selectCurrentPage, selectVisitedPage } from '../redux/pagination/pagination-selector';
 import { addVisitedPage, setCurrentPage, setVisitedPage } from '../redux/pagination/pagination-actions';
 import { fetchIngredients, setShowSelectedIngredients } from '../redux/ingredient/ingredient-actions';
+import ToggleSwitch from '../components/ToggleSwitch';
+import { toggleIsActive } from '../redux/filter/filter-actions';
 
 export const recipesPagination = pagination(0);
 

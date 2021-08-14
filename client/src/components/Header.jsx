@@ -29,6 +29,7 @@ const Header = ({ toggleFilters, isActive }) => {
             if (isActive) {
                 toggleFilters();
             }
+            
             history.push('/');
         }
 
@@ -48,9 +49,9 @@ const Header = ({ toggleFilters, isActive }) => {
 
                     <ToggleSwitch name="Filters" onClickHandler={onFilterClick} />
 
-                    <Link className='header__logo' to='/'>
-                        <img title="Home" src={logo} alt="Food Helper Logo" className="header__logo" />
-                    </Link>
+                    <img title="Home" src={logo} alt="Food Helper Logo" className="header__logo" onClick={() => {
+                        history.push('/');
+                    }} />
                 </header>
 
             <div className="header-margin"></div>

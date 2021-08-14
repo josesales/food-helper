@@ -9,10 +9,10 @@
     }
     
     @include respond(mini-phone) {
-      margin-left: 0;
-      position: absolute;
-      left: 16.5%;
-      bottom: -7%;
+      margin: 0 1rem;
+      // position: absolute;
+      // left: 16.5%;
+      // bottom: -7%;
     }
    
 }
@@ -22,12 +22,6 @@
     font-family: inherit;
     font-size: $font-size-small;
     display: inline-block;
-    
-    label {
-      @include respond(mini-phone) {
-        display: none;
-      }
-    }
 }
 
 .toggle-switch {
