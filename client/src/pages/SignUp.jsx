@@ -53,7 +53,7 @@ const SignUp = ({ image, currentUser, setCurrentUser, setToken, displayMessage }
       setCurrentUser(user);
       setToken(token);
     } catch (error) {
-      console.log(error);
+      window.scrollTo(0, 0);
       displayMessage({type:'error', message: error.message});
     }
   };
