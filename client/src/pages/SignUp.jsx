@@ -65,6 +65,7 @@ const SignUp = ({ image, currentUser, setCurrentUser, setToken, displayMessage }
   };
 
   return (
+
     <React.Fragment>
       {
           type && message ? <DisplayMessage type={type} message={message} /> : null
