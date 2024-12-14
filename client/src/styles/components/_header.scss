@@ -1,47 +1,47 @@
 .header {
-    width: 100%;
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 16rem;
-    z-index: 1000;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: $color-white;
-    border-bottom: 2px solid rgba($color-grey-light-2, 0.5);
-    
-    &__logo {
-        height: 90%;
-        cursor: pointer;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 12rem;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: $color-white;
+  border-bottom: 2px solid rgba($color-grey-light-2, 0.5);
 
-        @include respond(phone) {
-            height: 55%;
-        }
+  &__logo {
+    height: 75%;
+    cursor: pointer;
+
+    @include respond(phone) {
+      height: 55%;
+    }
+  }
+
+  &__search-container {
+    width: 40%;
+    position: relative; //for the suggestions container
+    justify-self: flex-end;
+    margin-left: 20%;
+
+    @include respond(tab-land) {
+      margin-left: 12%;
     }
 
-    &__search-container {
-        width: 40%;
-        position: relative; //for the suggestions container
-        justify-self: flex-end;
-        margin-left: 20%;
-        
-        @include respond(tab-land) {
-            margin-left: 12%;
-        }
-        
-        @include respond(tab-port) {
-            width: 50%;
-            margin-left: 3%;
-        }
-        
-        @include respond(phone) {
-            width: 70%;
-            margin-left: 0;
-        }
-        @include respond(mini-phone) {
-            width: 70%;
-            margin-right: 2.5rem;
-        }
+    @include respond(tab-port) {
+      width: 50%;
+      margin-left: 3%;
     }
+
+    @include respond(phone) {
+      width: 70%;
+      margin-left: 0;
+    }
+    @include respond(mini-phone) {
+      width: 70%;
+      margin-right: 2.5rem;
+    }
+  }
 }

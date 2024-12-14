@@ -1,72 +1,64 @@
 .suggestion-display-search,
 .suggestion-display-form {
-    color: inherit;
+  color: inherit;
+  display: flex;
+  position: absolute;
+  top: -132%;
+  left: 20%;
+  width: 60%;
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  &__item {
     display: flex;
-    position: absolute;
-    top: -140%;
-    left: 20%;
-    width: 60%;
-    overflow-x: auto;
-    overflow-y: hidden;
+    padding: 0 0.5rem;
+    border-radius: 10px;
+    background-color: $color-grey-light-1;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
 
-    &__item {
-        display: flex;
-        padding: 0 .5rem;
-        border-radius: 10px;
-        background-color: $color-grey-light-1;
-        font-size: 1.4rem;
-        font-weight: 700;
-        margin-bottom: .5rem;
-        // cursor: pointer;
-
-        &:hover {
-            background-color: $color-white;
-            color: $color-red;
-        }
-
-        &--text{
-            margin-right: 1rem;
-            white-space: nowrap; //prevents line breaks
-            cursor: pointer;
-            // &:hover {
-            //     color: $color-primary;
-            // }
-        }
-        
-        &--remove{
-            cursor: pointer;
-
-            // &:hover {
-            //     color: $color-red;
-            // }
-        }
-        
-        &:not(:last-child) {
-            margin-right: 1rem;
-        }
+    &:hover {
+      background-color: $color-white;
+      color: $color-red;
     }
 
-    	/* width */
-		&::-webkit-scrollbar {
-			width: 1.5rem;
-            height: 1.5rem;
-		}
-		
-		/* Track */
-		&::-webkit-scrollbar-track {
-			box-shadow: inset 0 0 5px $color-grey-dark-1;
-			border-radius: 10px;
-		}
-		
-		/* Handle */
-		&::-webkit-scrollbar-thumb {
-			background: $color-grey-dark-1;
-			border-radius: 10px;
-		}
+    &--text {
+      margin-right: 1rem;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    &--remove {
+      cursor: pointer;
+    }
+
+    &:not(:last-child) {
+      margin-right: 1rem;
+    }
+  }
+
+  /* width */
+  &::-webkit-scrollbar {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  /* Track */
+  &::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px $color-grey-dark-1;
+    border-radius: 10px;
+  }
+
+  /* Handle */
+  &::-webkit-scrollbar-thumb {
+    background: $color-grey-dark-1;
+    border-radius: 10px;
+  }
 }
 
 .suggestion-display-form {
-    top: -45%;
-    left: 20%;
-    width: 60%;
+  top: -45%;
+  left: 20%;
+  width: 60%;
 }
