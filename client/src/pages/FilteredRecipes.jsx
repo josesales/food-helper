@@ -18,7 +18,6 @@ import {
 } from "../redux/pagination/pagination-actions";
 import { setShowSelectedIngredients } from "../redux/ingredient/ingredient-actions";
 import { useLocation } from "react-router";
-import is from "sharp/lib/is";
 
 const recipesPagination = pagination(0);
 
