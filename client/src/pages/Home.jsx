@@ -115,6 +115,7 @@ const Home = ({
   useEffect(() => {
     const fetchRecipesByPage = async () => {
       setCurrentPage(0);
+      setIsLoading(true);
 
       if (
         persistRecipe &&
@@ -122,11 +123,12 @@ const Home = ({
         persistRecipe.ingredients.length > 0
       ) {
         isSearchActive = true;
-        fetchRecipesByIngredients(persistRecipe.ingredients, 0, true);
+        await fetchRecipesByIngredients(persistRecipe.ingredients, 0, true);
       } else {
         isSearchActive = false;
-        fetchRecipes(0, true);
+        await fetchRecipes(0, true);
       }
+      setIsLoading(false);
 
       setVisitedPage({});
     };

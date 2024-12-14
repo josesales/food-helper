@@ -2,6 +2,9 @@
   "name": "food-helper",
   "version": "1.0.0",
   "description": "",
+  "engines": {
+    "node": "16.20.2"
+  },
   "scripts": {
     "client": "cd client && npm start",
     "server": " env-cmd -f server/config/dev.env nodemon server/src/server.js",
