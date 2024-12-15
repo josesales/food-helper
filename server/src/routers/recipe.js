@@ -8,6 +8,7 @@ const httpStatus = require("../util/httpStatus");
 const array = require("../util/array");
 const router = new express.Router();
 const sharp = require("sharp");
+const { createFile } = require("../util/storage");
 
 router.post(
   "/recipeImage",
@@ -21,7 +22,8 @@ router.post(
       .toBuffer();
 
     const recipe = await Recipe.findById(req.body.id);
-    recipe.image = buffer;
+    const imageUrl = await createFile(buffer, req.file.originalname);
+    recipe.image = imageUrl;
 
     await recipe.save();
     res.send(httpStatus.ok);
