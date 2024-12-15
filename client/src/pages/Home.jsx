@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { connect, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   fetchRecipes,
   fetchRecipesByIngredients,
-  setPersistRecipe,
   setRecipes,
 } from "../redux/recipe/recipe-actions";
 import RecipeItems from "../components/RecipeItems";
@@ -14,7 +13,6 @@ import {
 } from "../redux/recipe/recipe-selector";
 import Loader from "../components/ui/Loader";
 import Pagination from "../components/ui/Pagination";
-import { createStructuredSelector } from "reselect";
 import pagination from "../util/pagination";
 import {
   selectCurrentPage,
@@ -35,86 +33,80 @@ export const recipesPagination = pagination(0);
 
 let isSearchActive = false;
 
-const Home = ({
-  recipes,
-  visitedPage,
-  setVisitedPage,
-  total,
-  fetchRecipes,
-  fetchIngredients,
-  setRecipes,
-  addVisitedPage,
-  persistRecipe,
-  fetchRecipesByIngredients,
-  setShowSelectedIngredients,
-  setCurrentPage,
-  currentPage,
-}) => {
-  const [isComponentMounting, setIsComponentMounting] = useState(false);
+const Home = () => {
   const [isLoading, setIsLoading] = useState(false);
-
-  recipesPagination.total = total;
 
   const ingredients = useSelector((state) => state.ingredient.ingredients);
   const { type, message } = useSelector((state) => state.message);
 
+  const recipes = useSelector(selectRecipes);
+  const persistRecipe = useSelector(selectPersistRecipe);
+  const visitedPage = useSelector(selectVisitedPage);
+  const total = useSelector(selectTotal);
+  const currentPage = useSelector(selectCurrentPage);
+
+  recipesPagination.total = total;
+  const dispatch = useDispatch();
+
   //Fetch recipes like componentDidMount style
   useEffect(() => {
     const getRecipesFirstPage = async () => {
-      await setIsComponentMounting(true);
-      await fetchRecipes(0, true);
-      await setIsComponentMounting(false);
+      setIsLoading(true);
+      await dispatch(fetchRecipes(0, true));
+      setIsLoading(false);
     };
 
-    setShowSelectedIngredients(false);
-    setVisitedPage({});
-    setCurrentPage(0);
+    dispatch(setShowSelectedIngredients(false));
+    dispatch(setVisitedPage({}));
+    dispatch(setCurrentPage(0));
 
     getRecipesFirstPage();
-    setShowSelectedIngredients(true);
-    if (!ingredients || ingredients.length == 0) {
-      fetchIngredients();
+    dispatch(setShowSelectedIngredients(true));
+    if (!ingredients || ingredients.length === 0) {
+      dispatch(fetchIngredients());
     }
 
     //set global store props below to their respective initial state when component umount
     return () => {
-      setShowSelectedIngredients(false);
+      dispatch(setShowSelectedIngredients(false));
     };
   }, []);
 
   //search in the reducer the respective items of the current page and and if they are not there search in the db
   const fetchRecipesByPage = async (currentPageProp) => {
-    setCurrentPage(currentPageProp);
+    dispatch(setCurrentPage(currentPageProp));
     if (
       visitedPage[currentPageProp] &&
       visitedPage[currentPageProp].length > 0
     ) {
       //set the recipes of the global state with the recipes of the page that was already visited
-      setRecipes(visitedPage[currentPageProp]);
+      dispatch(setRecipes(visitedPage[currentPageProp]));
     } else {
-      await setIsLoading(true);
+      setIsLoading(true);
 
       if (isSearchActive) {
-        await fetchRecipesByIngredients(
-          persistRecipe.ingredients,
-          currentPageProp,
-          true
+        await dispatch(
+          fetchRecipesByIngredients(
+            persistRecipe.ingredients,
+            currentPageProp,
+            true
+          )
         );
       } else {
-        await fetchRecipes(currentPageProp);
+        await dispatch(fetchRecipes(currentPageProp));
       }
-      await setIsLoading(false);
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    addVisitedPage({ pageNumber: currentPage, items: recipes });
+    dispatch(addVisitedPage({ pageNumber: currentPage, items: recipes }));
   }, [recipes]);
 
   //Search for recipes according to the filtered ingredients in the search component from the header
   useEffect(() => {
     const fetchRecipesByPage = async () => {
-      setCurrentPage(0);
+      dispatch(setCurrentPage(0));
       setIsLoading(true);
 
       if (
@@ -123,14 +115,16 @@ const Home = ({
         persistRecipe.ingredients.length > 0
       ) {
         isSearchActive = true;
-        await fetchRecipesByIngredients(persistRecipe.ingredients, 0, true);
+        await dispatch(
+          fetchRecipesByIngredients(persistRecipe.ingredients, 0, true)
+        );
       } else {
         isSearchActive = false;
-        await fetchRecipes(0, true);
+        await dispatch(fetchRecipes(0, true));
       }
       setIsLoading(false);
 
-      setVisitedPage({});
+      dispatch(setVisitedPage({}));
     };
 
     fetchRecipesByPage();
@@ -138,54 +132,25 @@ const Home = ({
 
   return (
     <React.Fragment>
-      {isComponentMounting ? (
-        <Loader />
-      ) : (
-        <React.Fragment>
-          <div className="home">
-            {type && message ? (
-              <DisplayMessage type={type} message={message} />
-            ) : null}
+      <div className="home">
+        {type && message ? (
+          <DisplayMessage type={type} message={message} />
+        ) : null}
 
-            <div className="home__hidden-title">
-              <h2 className="heading-primary">Home</h2>
-            </div>
+        <div className="home__hidden-title">
+          <h2 className="heading-primary">Home</h2>
+        </div>
 
-            {isLoading ? <Loader /> : <RecipeItems recipes={recipes} />}
-            {!isLoading && (
-              <Pagination
-                paginationObj={recipesPagination}
-                fetchItems={fetchRecipesByPage}
-              />
-            )}
-          </div>
-        </React.Fragment>
-      )}
+        {isLoading ? <Loader /> : <RecipeItems recipes={recipes} />}
+        {!isLoading && (
+          <Pagination
+            paginationObj={recipesPagination}
+            fetchItems={fetchRecipesByPage}
+          />
+        )}
+      </div>
     </React.Fragment>
   );
 };
 
-const mapStateToProps = createStructuredSelector({
-  recipes: selectRecipes,
-  visitedPage: selectVisitedPage,
-  persistRecipe: selectPersistRecipe,
-  total: selectTotal,
-  currentPage: selectCurrentPage,
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  fetchRecipes: (currentPage, getTotal) =>
-    dispatch(fetchRecipes(currentPage, getTotal)),
-  fetchIngredients: () => dispatch(fetchIngredients()),
-  setRecipes: (recipes) => dispatch(setRecipes(recipes)),
-  setPersistRecipe: (recipe) => dispatch(setPersistRecipe(recipe)),
-  setVisitedPage: (visitedPage) => dispatch(setVisitedPage(visitedPage)),
-  setCurrentPage: (currentPage) => dispatch(setCurrentPage(currentPage)),
-  addVisitedPage: (visitedPage) => dispatch(addVisitedPage(visitedPage)),
-  fetchRecipesByIngredients: (ingredients, currentPage, getTotal) =>
-    dispatch(fetchRecipesByIngredients(ingredients, currentPage, getTotal)),
-  setShowSelectedIngredients: (showSelectedIngredients) =>
-    dispatch(setShowSelectedIngredients(showSelectedIngredients)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
+export default Home;

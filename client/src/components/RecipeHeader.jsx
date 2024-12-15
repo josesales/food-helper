@@ -1,73 +1,75 @@
-import React, { lazy, useEffect, useState } from 'react';
-import { connect } from 'react-redux';
-import { createStructuredSelector } from "reselect";
-import Rate from './Rate';
-import { selectCurrentRecipe } from '../redux/recipe/recipe-selector';
-import { selectCurrentUser, selectToken } from '../redux/user/user-selector';
-import { get, postPatch, remove } from '../util/request-sender';
+import React, { lazy, useEffect, useState } from "react";
+import Rate from "./Rate";
+import { selectCurrentRecipe } from "../redux/recipe/recipe-selector";
+import { selectCurrentUser, selectToken } from "../redux/user/user-selector";
+import { get, postPatch, remove } from "../util/request-sender";
 import { ReactComponent as AddFavorites } from "../assets/add-to-favorites.svg";
 import { ReactComponent as RemoveFavorites } from "../assets/remove-from-favorites.svg";
+import { useSelector } from "react-redux";
 
-const RecipeHeader = ({ recipe, token, currentUser }) => {
+const RecipeHeader = () => {
+  const [isFavorite, setIsFavorite] = useState(null);
+  const recipe = useSelector(selectCurrentRecipe);
+  const token = useSelector(selectToken);
+  const currentUser = useSelector(selectCurrentUser);
 
-    const [isFavorite, setIsFavorite] = useState(null);
-
-    useEffect(async () => {
-        if (token) {
-            const recipeDb = await get(`/recipeByFavorite/${recipe._id}/${currentUser._id}`);
-            if (recipeDb) {
-                setIsFavorite(true);
-            } else {
-                setIsFavorite(false);
-            }
-        }
-    }, [])
-
-    const onAddToMyFavoritesClick = async () => {
-        //TODO check why new recipe of the favorite is not always being saved in the db
-        await postPatch('/favorites', 'POST', { recipe: recipe._id }, token);
+  useEffect(async () => {
+    if (token) {
+      const recipeDb = await get(
+        `/recipeByFavorite/${recipe._id}/${currentUser._id}`
+      );
+      if (recipeDb) {
         setIsFavorite(true);
-    }
-
-    const onRemoveFromMyFavoritesClick = async () => {
-        await remove(`/favorites/${recipe._id}`, token);
+      } else {
         setIsFavorite(false);
+      }
     }
+  }, []);
 
-    return (
-        <React.Fragment>
-            <div className="recipe-header">
-                <h1 className="heading-primary recipe-header__title">{recipe.name}</h1>
+  const onAddToMyFavoritesClick = async () => {
+    //TODO check why new recipe of the favorite is not always being saved in the db
+    await postPatch("/favorites", "POST", { recipe: recipe._id }, token);
+    setIsFavorite(true);
+  };
 
+  const onRemoveFromMyFavoritesClick = async () => {
+    await remove(`/favorites/${recipe._id}`, token);
+    setIsFavorite(false);
+  };
 
-                <div title="Rating Given by the Users" className="recipe-header__rate">
-                    <Rate number={recipe.rate} />
-                </div>
+  return (
+    <React.Fragment>
+      <div className="recipe-header">
+        <h1 className="heading-primary recipe-header__title">{recipe.name}</h1>
 
-                {
-                    token && isFavorite === false ?
-                        <div title="Add this Recipe to your Favorites">
-                            <AddFavorites onClick={onAddToMyFavoritesClick} className="favorite-icon" />
-                        </div> : ''
-                }
+        <div title="Rating Given by the Users" className="recipe-header__rate">
+          <Rate number={recipe.rate} />
+        </div>
 
-                {
-                    token && isFavorite === true ?
-                        <div title="Remove this Recipe from your Favorites">
-                            <RemoveFavorites onClick={onRemoveFromMyFavoritesClick} className="favorite-icon" />
-                        </div> : ''
-                }
-            </div>
-        </React.Fragment>
+        {token && isFavorite === false ? (
+          <div title="Add this Recipe to your Favorites">
+            <AddFavorites
+              onClick={onAddToMyFavoritesClick}
+              className="favorite-icon"
+            />
+          </div>
+        ) : (
+          ""
+        )}
 
+        {token && isFavorite === true ? (
+          <div title="Remove this Recipe from your Favorites">
+            <RemoveFavorites
+              onClick={onRemoveFromMyFavoritesClick}
+              className="favorite-icon"
+            />
+          </div>
+        ) : (
+          ""
+        )}
+      </div>
+    </React.Fragment>
+  );
+};
 
-    );
-}
-
-const mapStateToProps = createStructuredSelector({
-    recipe: selectCurrentRecipe,
-    token: selectToken,
-    currentUser: selectCurrentUser,
-});
-
-export default connect(mapStateToProps)(RecipeHeader);
+export default RecipeHeader;

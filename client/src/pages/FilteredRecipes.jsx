@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchRecipes, setRecipes } from "../redux/recipe/recipe-actions";
 import RecipeItems from "../components/RecipeItems";
 import { selectRecipes, selectTotal } from "../redux/recipe/recipe-selector";
 import Loader from "../components/ui/Loader";
 import Pagination from "../components/ui/Pagination";
-import { createStructuredSelector } from "reselect";
 import pagination from "../util/pagination";
 import {
   selectCurrentPage,
@@ -21,54 +20,48 @@ import { useLocation } from "react-router";
 
 const recipesPagination = pagination(0);
 
-const FilteredRecipes = ({
-  recipes,
-  visitedPage,
-  total,
-  fetchRecipes,
-  setRecipes,
-  setVisitedPage,
-  addVisitedPage,
-  setCurrentPage,
-  currentPage,
-  setShowSelectedIngredients,
-}) => {
-  recipesPagination.total = total;
+const FilteredRecipes = () => {
   const [isComponentMounting, setIsComponentMounting] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const location = useLocation();
   const filters = location.state.filters;
+  const recipes = useSelector(selectRecipes);
+  const total = useSelector(selectTotal);
+  const visitedPage = useSelector(selectVisitedPage);
+  const currentPage = useSelector(selectCurrentPage);
+  recipesPagination.total = total;
+  const dispatch = useDispatch();
 
   //Fetch recipes like componentDidMount style
   useEffect(() => {
     const getFilteredRecipesFirstPage = async () => {
-      await setIsComponentMounting(true);
-      await fetchRecipes(0, true, null, filters);
-      await setIsComponentMounting(false);
+      setIsComponentMounting(true);
+      await dispatch(fetchRecipes(0, true, null, filters));
+      setIsComponentMounting(false);
     };
 
-    setShowSelectedIngredients(false);
-    setVisitedPage({});
-    setCurrentPage(0);
+    dispatch(setShowSelectedIngredients(false));
+    dispatch(setVisitedPage({}));
+    dispatch(setCurrentPage(0));
     getFilteredRecipesFirstPage();
   }, []);
 
   //search in the reducer the respective items of the current page and and if they are not there search in the db
   const fetchFilteredRecipesByPage = async (currentPageProp) => {
-    setCurrentPage(currentPageProp);
+    dispatch(setCurrentPage(currentPageProp));
 
     if (visitedPage[currentPageProp]) {
       //set the recipes of the global state with the recipes of the page that was already visited
-      setRecipes(visitedPage[currentPageProp]);
+      dispatch(setRecipes(visitedPage[currentPageProp]));
     } else {
-      await setIsLoading(true);
-      await fetchRecipes(currentPageProp, false, null, filters);
-      await setIsLoading(false);
+      setIsLoading(true);
+      await dispatch(fetchRecipes(currentPageProp, false, null, filters));
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    addVisitedPage({ pageNumber: currentPage, items: recipes });
+    dispatch(addVisitedPage({ pageNumber: currentPage, items: recipes }));
   }, [recipes]);
 
   return (
@@ -97,22 +90,4 @@ const FilteredRecipes = ({
   );
 };
 
-const mapStateToProps = createStructuredSelector({
-  recipes: selectRecipes,
-  total: selectTotal,
-  visitedPage: selectVisitedPage,
-  currentPage: selectCurrentPage,
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  fetchRecipes: (currentPage, getTotal, userId, filters) =>
-    dispatch(fetchRecipes(currentPage, getTotal, userId, filters)),
-  setRecipes: (recipes) => dispatch(setRecipes(recipes)),
-  addVisitedPage: (visitedPage) => dispatch(addVisitedPage(visitedPage)),
-  setVisitedPage: (visitedPage) => dispatch(setVisitedPage(visitedPage)),
-  setCurrentPage: (currentPage) => dispatch(setCurrentPage(currentPage)),
-  setShowSelectedIngredients: (showSelectedIngredients) =>
-    dispatch(setShowSelectedIngredients(showSelectedIngredients)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(FilteredRecipes);
+export default FilteredRecipes;

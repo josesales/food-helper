@@ -3,39 +3,26 @@ import logo from "../assets/logo-200x200.png";
 import Navigation from "./Navigation";
 import Search from "./Search";
 import ToggleSwitch from "./ToggleSwitch";
-import { Link, useHistory, useLocation } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import HTML_ENTITIES from "../util/htmlEntities";
-import { connect } from "react-redux";
-import {
-  selectPersistRecipe,
-  selectRecipes,
-} from "../redux/recipe/recipe-selector";
-import { createStructuredSelector } from "reselect";
-import {
-  fetchRecipes,
-  fetchRecipesByIngredients,
-  setPersistRecipe,
-  setRecipes,
-} from "../redux/recipe/recipe-actions";
-import {
-  setCurrentPage,
-  setVisitedPage,
-} from "../redux/pagination/pagination-actions";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleFilters } from "../redux/filter/filter-actions";
 import { selectIsActive } from "../redux/filter/filter-selector";
-import { toggleIsActive } from "../redux/filter/filter-actions";
 
-const Header = ({ toggleFilters, isActive }) => {
+const Header = () => {
+  const isActive = useSelector(selectIsActive);
   const history = useHistory();
   const location = useLocation();
+  const dispatch = useDispatch();
 
   const onFilterClick = () => {
-    toggleFilters();
+    dispatch(toggleFilters());
   };
 
   const onChangeHandler = () => {
     if (location.pathname != "/") {
       if (isActive) {
-        toggleFilters();
+        dispatch(toggleFilters());
       }
 
       history.push("/");
@@ -78,23 +65,4 @@ const Header = ({ toggleFilters, isActive }) => {
   );
 };
 
-const mapStateToProps = createStructuredSelector({
-  persistRecipe: selectPersistRecipe,
-  recipes: selectRecipes,
-  areFiltersActive: selectIsActive,
-  isActive: selectIsActive,
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  fetchRecipes: (currentPage, getTotal) =>
-    dispatch(fetchRecipes(currentPage, getTotal)),
-  fetchRecipesByIngredients: (ingredients, currentPage, getTotal) =>
-    dispatch(fetchRecipesByIngredients(ingredients, currentPage, getTotal)),
-  setRecipes: (recipes) => dispatch(setRecipes(recipes)),
-  setPersistRecipe: (recipe) => dispatch(setPersistRecipe(recipe)),
-  setVisitedPage: (visitedPage) => dispatch(setVisitedPage(visitedPage)),
-  setCurrentPage: (currentPage) => dispatch(setCurrentPage(currentPage)),
-  toggleFilters: () => dispatch(toggleIsActive()),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Header);
+export default Header;

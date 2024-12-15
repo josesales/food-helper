@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import { displayMessage } from "../../redux/message/message-actions";
 
-const DisplayMessage = ({ type, message, displayMessage }) => {
+const DisplayMessage = ({ type, message }) => {
   const [onDisplay, setOnDisplay] = useState(true);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setTimeout(() => {
-      displayMessage({ type: null, message: null });
+      dispatch(displayMessage({ type: null, message: null }));
       setOnDisplay(false);
     }, 5000);
   }, []);
@@ -26,8 +27,4 @@ const DisplayMessage = ({ type, message, displayMessage }) => {
   );
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  displayMessage: (messageObj) => dispatch(displayMessage(messageObj)),
-});
-
-export default connect(null, mapDispatchToProps)(DisplayMessage);
+export default DisplayMessage;

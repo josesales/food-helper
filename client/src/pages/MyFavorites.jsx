@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   fetchFavoriteRecipes,
   setFavoriteRecipes,
@@ -11,7 +11,6 @@ import {
 } from "../redux/recipe/recipe-selector";
 import Loader from "../components/ui/Loader";
 import Pagination from "../components/ui/Pagination";
-import { createStructuredSelector } from "reselect";
 import pagination from "../util/pagination";
 import {
   selectCurrentPage,
@@ -26,53 +25,54 @@ import { selectCurrentUser } from "../redux/user/user-selector";
 
 const recipesPagination = pagination(0);
 
-const MyFavorites = ({
-  favoriteRecipes,
-  visitedPage,
-  setVisitedPage,
-  total,
-  fetchFavoriteRecipes,
-  setFavoriteRecipes,
-  addVisitedPage,
-  currentUser,
-  setCurrentPage,
-  currentPage,
-}) => {
-  recipesPagination.total = total;
+const MyFavorites = () => {
   const [isComponentMounting, setIsComponentMounting] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const favoriteRecipes = useSelector(selectFavoriteRecipes);
+  const total = useSelector(selectTotal);
+  const visitedPage = useSelector(selectVisitedPage);
+  const currentUser = useSelector(selectCurrentUser);
+  const currentPage = useSelector(selectCurrentPage);
+  recipesPagination.total = total;
+
+  const dispatch = useDispatch();
 
   //Fetch recipes like componentDidMount style
   useEffect(() => {
     const getMyFavoritesFirstPage = async () => {
-      await setIsComponentMounting(true);
-      await fetchFavoriteRecipes(0, true, currentUser._id);
-      await setIsComponentMounting(false);
+      setIsComponentMounting(true);
+      await dispatch(fetchFavoriteRecipes(0, true, currentUser._id));
+      setIsComponentMounting(false);
     };
 
-    setVisitedPage({});
-    setCurrentPage(0);
+    dispatch(setVisitedPage({}));
+    dispatch(setCurrentPage(0));
     getMyFavoritesFirstPage();
   }, []);
 
   //search in the reducer the respective items of the current page and and if they are not there search in the db
   const fetchMyFavoritesByPage = async (currentPageProp) => {
-    setCurrentPage(currentPageProp);
+    dispatch(setCurrentPage(currentPageProp));
     if (
       visitedPage[currentPageProp] &&
       visitedPage[currentPageProp].length > 0
     ) {
       //set the recipes of the global state with the recipes of the page that was already visited
-      setFavoriteRecipes(visitedPage[currentPageProp]);
+      dispatch(setFavoriteRecipes(visitedPage[currentPageProp]));
     } else {
-      await setIsLoading(true);
-      await fetchFavoriteRecipes(currentPageProp, false, currentUser._id);
-      await setIsLoading(false);
+      setIsLoading(true);
+      await dispatch(
+        fetchFavoriteRecipes(currentPageProp, false, currentUser._id)
+      );
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    addVisitedPage({ pageNumber: currentPage, items: favoriteRecipes });
+    dispatch(
+      addVisitedPage({ pageNumber: currentPage, items: favoriteRecipes })
+    );
   }, [favoriteRecipes]);
 
   return (
@@ -101,21 +101,4 @@ const MyFavorites = ({
   );
 };
 
-const mapStateToProps = createStructuredSelector({
-  favoriteRecipes: selectFavoriteRecipes,
-  total: selectTotal,
-  visitedPage: selectVisitedPage,
-  currentUser: selectCurrentUser,
-  currentPage: selectCurrentPage,
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  fetchFavoriteRecipes: (currentPage, getTotal, userId) =>
-    dispatch(fetchFavoriteRecipes(currentPage, getTotal, userId)),
-  setFavoriteRecipes: (recipes) => dispatch(setFavoriteRecipes(recipes)),
-  addVisitedPage: (visitedPage) => dispatch(addVisitedPage(visitedPage)),
-  setVisitedPage: (visitedPage) => dispatch(setVisitedPage(visitedPage)),
-  setCurrentPage: (currentPage) => dispatch(setCurrentPage(currentPage)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(MyFavorites);
+export default MyFavorites;

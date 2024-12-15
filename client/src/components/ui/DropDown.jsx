@@ -1,7 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
-import { connect, useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import HelperButton from "../HelperButton";
-import SuggestionsDisplay from "../SuggestionsDisplay";
 import { setCurrentRecipe } from "../../redux/recipe/recipe-actions";
 import { toSingular } from "../../util/string";
 
@@ -13,11 +12,11 @@ const DropDown = ({
   containerClass,
   inputClass,
   children,
-  setCurrentRecipe,
   ...otherProps
 }) => {
   //convert to the singular to match the document name
   const documentName = toSingular(collectionName);
+  const dispatch = useDispatch();
 
   const [input, setInput] = useState("");
 
@@ -84,7 +83,7 @@ const DropDown = ({
 
   //Keep the recipe reducer update according to the selected suggestions
   useEffect(() => {
-    setCurrentRecipe({ [collectionName]: selectedItems });
+    dispatch(setCurrentRecipe({ [collectionName]: selectedItems }));
   }, [selectedItems]);
 
   return (
@@ -120,12 +119,4 @@ const DropDown = ({
   );
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  setCurrentRecipe: () => dispatch(setCurrentRecipe()),
-});
-
-// const mapStateToProps = createStructuredSelector({
-//     recipe: selectCurrentRecipe
-// });
-
-export default connect(null, mapDispatchToProps)(DropDown);
+export default DropDown;

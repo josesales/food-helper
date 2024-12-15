@@ -1,357 +1,462 @@
-import React, { useEffect, useState } from 'react';
-import { connect, useSelector } from 'react-redux';
-import { createStructuredSelector } from 'reselect';
-import ImageUpload from '../components/ImageUpload';
-import EditSteps from '../components/EditSteps';
-import Search from '../components/Search';
-import InputField from '../components/ui/InputField';
-import { selectPersistRecipe, selectImage, selectBase64Image } from '../redux/recipe/recipe-selector';
-import HTML_ENTITIES from '../util/htmlEntities';
-import TextArea from '../components/ui/TextArea';
-import { fetchIngredients } from '../redux/ingredient/ingredient-actions';
-import { fetchMaterials } from '../redux/material/material-actions';
-import { fetchCategories } from '../redux/category/category-actions';
-import { fetchDietTypes } from '../redux/diet-type/diet-type-actions';
-import { postPatch, upload } from '../util/request-sender';
-import { selectCurrentUser, selectToken } from '../redux/user/user-selector';
-import { useLocation } from 'react-router';
-import { setImage } from '../redux/recipe/recipe-actions';
-import { setCurrentUser } from '../redux/user/user-actions';
-import { displayMessage } from '../redux/message/message-actions';
-import DisplayMessage from '../components/ui/DisplayMessage';
-import { useHistory } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import ImageUpload from "../components/ImageUpload";
+import EditSteps from "../components/EditSteps";
+import Search from "../components/Search";
+import InputField from "../components/ui/InputField";
+import {
+  selectPersistRecipe,
+  selectImage,
+  selectBase64Image,
+} from "../redux/recipe/recipe-selector";
+import HTML_ENTITIES from "../util/htmlEntities";
+import TextArea from "../components/ui/TextArea";
+import { fetchIngredients } from "../redux/ingredient/ingredient-actions";
+import { fetchMaterials } from "../redux/material/material-actions";
+import { fetchCategories } from "../redux/category/category-actions";
+import { fetchDietTypes } from "../redux/diet-type/diet-type-actions";
+import { postPatch, upload } from "../util/request-sender";
+import { selectCurrentUser, selectToken } from "../redux/user/user-selector";
+import { useLocation } from "react-router";
+import { setImage } from "../redux/recipe/recipe-actions";
+import { setCurrentUser } from "../redux/user/user-actions";
+import { displayMessage } from "../redux/message/message-actions";
+import DisplayMessage from "../components/ui/DisplayMessage";
+import { useHistory } from "react-router-dom";
 
 let shouldPersistIngredient = true;
 let localBase64Image = null;
 
-const AddEditRecipe = (props) => {
+const AddEditRecipe = () => {
+  const persistRecipe = useSelector(selectPersistRecipe);
+  const image = useSelector(selectImage);
+  const base64Image = useSelector(selectBase64Image);
+  const token = useSelector(selectToken);
+  const currentUser = useSelector(selectCurrentUser);
 
-    const { persistRecipe, image, base64Image, fetchIngredients, fetchMaterials, fetchCategories, fetchDietTypes,
-        setImage, token, currentUser, setCurrentUser, displayMessage } = props;
+  const location = useLocation();
+  const history = useHistory();
+  const dispatch = useDispatch();
 
-    const location = useLocation();
-    const history = useHistory();
+  let recipeDb =
+    location &&
+    location.state &&
+    location.state.recipe &&
+    location.state.recipe._id
+      ? location.state.recipe
+      : null;
 
+  const { type, message } = useSelector((state) => state.message);
 
-    let recipeDb = location && location.state && location.state.recipe && location.state.recipe._id ?
-        location.state.recipe : null;
+  if (recipeDb) {
+    recipeDb = Object.assign({}, recipeDb);
+  }
 
-    const { type, message } = useSelector(state => state.message);
+  //set image in case user is editing an existing recipe
+  let imageDb = null;
+  if (recipeDb && recipeDb.image) {
+    imageDb = recipeDb.image;
+    //delete image from recipe recipeDb to avoid the entity is too large error
+    delete recipeDb.image;
+  }
 
-    if (recipeDb) {
-        recipeDb = Object.assign({}, recipeDb);
-    }
+  const [recipe, setRecipe] = useState(
+    recipeDb
+      ? recipeDb
+      : {
+          name: "",
+          videoUrl: "",
+          steps: [],
+          preparationTime: "",
+          peoplePerServing: "",
+          calories: "",
+        }
+  );
 
-    //set image in case user is editing an existing recipe
-    let imageDb = null;
-    if (recipeDb && recipeDb.image) {
-        imageDb = recipeDb.image;
-        //delete image from recipe recipeDb to avoid the entity is too large error
-        delete recipeDb.image;
-    }
+  //Recipe
+  const onRecipeChange = (e) => {
+    setRecipe({ ...recipe, [e.target.id]: e.target.value });
+  };
 
-    const [recipe, setRecipe] = useState(recipeDb ? recipeDb : {
-        name: '',
-        videoUrl: '',
-        steps: [],
-        preparationTime: '',
-        peoplePerServing: '',
-        calories: '',
+  // New Step
+  const [newStep, setNewStep] = useState("");
+
+  const onAddNewStepClick = async () => {
+    await setRecipe((prevRecipe) => ({
+      ...prevRecipe,
+      steps: prevRecipe.steps.concat([newStep]),
+    }));
+    setNewStep("");
+  };
+
+  const onNewStepChange = (e) => {
+    setNewStep(e.target.value);
+  };
+
+  //Step List
+  const onStepsChange = async (e) => {
+    const id = +e.target.id;
+    const text = e.target.value;
+
+    await setRecipe((recipe) => {
+      recipe.steps[id] = text;
+      return { ...recipe };
     });
+  };
 
-    //Recipe
-    const onRecipeChange = e => {
-        setRecipe({ ...recipe, [e.target.id]: e.target.value });
-    }
+  const onDeleteStepClick = async (e) => {
+    const id = +e.target.id;
 
-    // New Step
-    const [newStep, setNewStep] = useState('');
+    //Remove the selected element by its index
+    setRecipe((prevRecipe) => ({
+      ...prevRecipe,
+      steps: prevRecipe.steps.filter((step, index) => index != id),
+    }));
+  };
 
-    const onAddNewStepClick = async () => {
-        await setRecipe(prevRecipe => ({ ...prevRecipe, steps: prevRecipe.steps.concat([newStep]) }));
-        setNewStep('');
-    }
+  const onSaveRecipeClick = async () => {
+    try {
+      //In case user is editing a recipe the image will be already loaded by default
+      //so the user does not need necessarily to choose a new one
+      if ((!image || !image.type) && !recipeDb) {
+        throw new Error("Image is mandatory");
+      }
 
-    const onNewStepChange = e => {
-        setNewStep(e.target.value);
-    }
+      const savedRecipe = await postPatch("/recipes", "POST", recipe, token);
 
-    //Step List
-    const onStepsChange = async e => {
+      if (image) {
+        await upload("/recipeImage", image, savedRecipe._id, token);
+      }
 
-        const id = +e.target.id;
-        const text = e.target.value;
+      //clone the recipe to assign the image and avoid the Entity is too large error
+      const recipeWithImage = Object.assign({}, recipe);
+      recipeWithImage.image = imageDb;
 
-        await setRecipe(recipe => {
-            recipe.steps[id] = text;
-            return { ...recipe };
-        });
-    }
+      if (savedRecipe.videoUrl) {
+        //set videoUrl with embedded url
+        recipeWithImage.videoUrl = savedRecipe.videoUrl;
+      }
 
-    const onDeleteStepClick = async e => {
-
-        const id = +e.target.id;
-
-        //Remove the selected element by its index
-        setRecipe(prevRecipe => ({
-            ...prevRecipe,
-            steps: prevRecipe.steps.filter((step, index) => index != id)
-        }));
-    }
-
-    const onSaveRecipeClick = async () => {
-        try {
-
-            //In case user is editing a recipe the image will be already loaded by default 
-            //so the user does not need necessarily to choose a new one
-            if ((!image || !image.type) && !recipeDb) {
-                throw new Error('Image is mandatory');
-            }
-
-            const savedRecipe = await postPatch('/recipes', 'POST', recipe, token);
-
+      if (currentUser.recipes && currentUser.recipes.length > 0) {
+        //update currentUser state with the changes in the recipe
+        const userRecipes = currentUser.recipes.map((userRecipe) => {
+          if (userRecipe._id == recipeWithImage._id) {
             if (image) {
-                await upload('/recipeImage', image, savedRecipe._id, token);
-            }
-
-            //clone the recipe to assign the image and avoid the Entity is too large error
-            const recipeWithImage = Object.assign({}, recipe);
-            recipeWithImage.image = imageDb;
-
-            if (savedRecipe.videoUrl) {
-                //set videoUrl with embedded url
-                recipeWithImage.videoUrl = savedRecipe.videoUrl
-            }
-
-            if (currentUser.recipes && currentUser.recipes.length > 0) {
-                //update currentUser state with the changes in the recipe
-                const userRecipes = currentUser.recipes.map(userRecipe => {
-                    if (userRecipe._id == recipeWithImage._id) {
-                        if (image) {
-                            // set chosen image if there is one
-                            recipeWithImage.image = localBase64Image.split(',')[1];
-                        } else {
-                            // set current image from the db in case user does not choose a new one
-                            // recipeWithImage.image = imageDb;
-                        }
-                        return recipeWithImage;
-                    } else {
-                        return userRecipe
-                    }
-                });
-
-                if (recipeWithImage._id) {
-                    //Update current user state with updated recipe
-                    setCurrentUser({ ...currentUser, recipes: userRecipes });
-                } else {
-                    //Update current user state with new recipe
-                    recipeWithImage.image = localBase64Image.split(',')[1];
-                    let newUserRecipe = Object.assign({}, savedRecipe);
-                    newUserRecipe = Object.assign(newUserRecipe, recipeWithImage);
-
-                    if (userRecipes && userRecipes.length > 0) {
-                        //concat current recipes of the user with new one
-                        setCurrentUser({ ...currentUser, recipes: [].concat(userRecipes).concat([newUserRecipe]) });
-                    } else {
-                        //in case it's the first recipe user created
-                        setCurrentUser({ ...currentUser, recipes: [].concat([newUserRecipe]) });
-                    }
-                }
-
+              // set chosen image if there is one
+              recipeWithImage.image = localBase64Image.split(",")[1];
             } else {
-                setCurrentUser({ ...currentUser, recipes: [].concat(recipeWithImage) });
+              // set current image from the db in case user does not choose a new one
+              // recipeWithImage.image = imageDb;
             }
+            return recipeWithImage;
+          } else {
+            return userRecipe;
+          }
+        });
 
-            window.scrollTo(0, 0);
-            displayMessage({type:'success', message: 'Your Recipe has been saved.'});
-            history.push('/');
-        } catch (error) {
-            console.log('Error while saving the recipe: ' + error.message);
-            window.scrollTo(0, 0);
-            displayMessage({type:'error', message: error.message});
+        if (recipeWithImage._id) {
+          //Update current user state with updated recipe
+          dispatch(setCurrentUser({ ...currentUser, recipes: userRecipes }));
+        } else {
+          //Update current user state with new recipe
+          recipeWithImage.image = localBase64Image.split(",")[1];
+          let newUserRecipe = Object.assign({}, savedRecipe);
+          newUserRecipe = Object.assign(newUserRecipe, recipeWithImage);
+
+          if (userRecipes && userRecipes.length > 0) {
+            //concat current recipes of the user with new one
+            dispatch(
+              setCurrentUser({
+                ...currentUser,
+                recipes: [].concat(userRecipes).concat([newUserRecipe]),
+              })
+            );
+          } else {
+            //in case it's the first recipe user created
+            dispatch(
+              setCurrentUser({
+                ...currentUser,
+                recipes: [].concat([newUserRecipe]),
+              })
+            );
+          }
         }
+      } else {
+        dispatch(
+          setCurrentUser({
+            ...currentUser,
+            recipes: [].concat(recipeWithImage),
+          })
+        );
+      }
+
+      window.scrollTo(0, 0);
+      dispatch(
+        displayMessage({
+          type: "success",
+          message: "Your Recipe has been saved.",
+        })
+      );
+      history.push("/");
+    } catch (error) {
+      console.log("Error while saving the recipe: " + error.message);
+      window.scrollTo(0, 0);
+      dispatch(displayMessage({ type: "error", message: error.message }));
+    }
+  };
+
+  const ingredients = useSelector((state) => state.ingredient.ingredients);
+  const materials = useSelector((state) => state.material.materials);
+  const categories = useSelector((state) => state.category.categories);
+  const dietTypes = useSelector((state) => state.dietType.dietTypes);
+
+  // Get the collections for the search component
+  useEffect(() => {
+    shouldPersistIngredient = false;
+
+    //check if the collection are already in the reducer so it doesn't go to the db every time the user access this page
+    if (ingredients.length === 0) {
+      dispatch(fetchIngredients());
     }
 
+    if (materials.length === 0) {
+      dispatch(fetchMaterials());
+    }
 
-    const ingredients = useSelector(state => state.ingredient.ingredients);
-    const materials = useSelector(state => state.material.materials);
-    const categories = useSelector(state => state.category.categories);
-    const dietTypes = useSelector(state => state.dietType.dietTypes);
+    if (categories.length === 0) {
+      dispatch(fetchCategories());
+    }
 
-    // Get the collections for the search component
-    useEffect(() => {
+    if (dietTypes.length === 0) {
+      dispatch(fetchDietTypes());
+    }
 
-        shouldPersistIngredient = false;
+    dispatch(setImage(null));
+  }, []);
 
-        //check if the collection are already in the reducer so it doesn't go to the db every time the user access this page
-        if (ingredients.length == 0) {
-            fetchIngredients();
-        }
+  //Keep recipe useState in sync with persistRecipe to get ingredients, materials...
+  useEffect(() => {
+    //use this flag once the ingredients don't get set to empty by the search in the header which sets the ingredients
+    //on the persist recipe to empty during the first render of the AddEditRecipe page
+    if (shouldPersistIngredient || !persistRecipe.ingredients) {
+      setRecipe({ ...recipe, ...persistRecipe });
+    } else {
+      shouldPersistIngredient = true;
+    }
+  }, [persistRecipe]);
 
-        if (materials.length == 0) {
-            fetchMaterials();
-        }
+  useEffect(() => {
+    localBase64Image = base64Image;
+  }, [base64Image]);
 
-        if (categories.length == 0) {
-            fetchCategories();
-        }
+  return (
+    <React.Fragment>
+      {type && message ? (
+        <DisplayMessage type={type} message={message} />
+      ) : null}
 
-        if (dietTypes.length == 0) {
-            fetchDietTypes();
-        }
+      <div className="recipe-form">
+        <div className="recipe-form__title title-margin">
+          <h2 className="heading-primary">
+            {recipe.name ? recipe.name : "New Recipe"}
+          </h2>
+        </div>
 
-        setImage(null);
-    }, []);
+        <div className="center">
+          <div className="container">
+            <InputField>
+              <input
+                type="text"
+                id="name"
+                className="input-margin"
+                placeholder="Name"
+                required
+                value={recipe.name}
+                onChange={onRecipeChange}
+                autoComplete="off"
+              />
+            </InputField>
 
-    //Keep recipe useState in sync with persistRecipe to get ingredients, materials...
-    useEffect(() => {
-        //use this flag once the ingredients don't get set to empty by the search in the header which sets the ingredients
-        //on the persist recipe to empty during the first render of the AddEditRecipe page 
-        if (shouldPersistIngredient || !persistRecipe.ingredients) {
-            setRecipe({ ...recipe, ...persistRecipe });
-        } else {
-            shouldPersistIngredient = true;
-        }
-    }, [persistRecipe]);
+            <InputField>
+              <Search
+                id="recipe-form_ingredients"
+                placeholder={"Ingredients"}
+                buttonName={HTML_ENTITIES.add}
+                containerClass="field__select input-margin"
+                inputClass="field__select__text"
+                collectionName="ingredients"
+                collectionDb={
+                  recipeDb && recipeDb.ingredients ? recipeDb.ingredients : null
+                }
+              >
+                <label
+                  htmlFor="recipe-form_ingredients"
+                  className="field__label"
+                >
+                  Ingredients
+                </label>
+              </Search>
+            </InputField>
 
-    useEffect(() => {
-        localBase64Image = base64Image;
-    }, [base64Image]);
+            <InputField>
+              <Search
+                id="recipe-form_materials"
+                placeholder={"Materials"}
+                buttonName={HTML_ENTITIES.add}
+                containerClass="field__select input-margin"
+                inputClass="field__select__text"
+                collectionName="materials"
+                collectionDb={
+                  recipeDb && recipeDb.materials ? recipeDb.materials : null
+                }
+              >
+                <label htmlFor="recipe-form_materials" className="field__label">
+                  Materials
+                </label>
+              </Search>
+            </InputField>
 
-    return (
+            <InputField>
+              <input
+                type="text"
+                id="videoUrl"
+                placeholder="Youtube Video Url"
+                required
+                value={recipe.videoUrl}
+                onChange={onRecipeChange}
+                className="input-margin"
+                autoComplete="off"
+              />
+            </InputField>
+          </div>
 
-        <React.Fragment>
-            {
-                type && message ? <DisplayMessage type={type} message={message} /> : null
-            }
+          <div className="image-container">
+            <h2 className="heading-secondary text">Picture</h2>
+            <ImageUpload
+              image={imageDb ? "data:image/png;base64," + imageDb : null}
+            />
+          </div>
+        </div>
 
-            <div className="recipe-form">
+        <div className="center">
+          <div className="container-2">
+            <InputField>
+              <Search
+                isSelect={true}
+                id="recipe-form_categories"
+                placeholder={"Category"}
+                buttonName={HTML_ENTITIES.search}
+                containerClass="field__select input-margin"
+                inputClass="field__select__text"
+                collectionName="categories"
+                documentDb={
+                  recipeDb && recipeDb.category ? recipeDb.category : null
+                }
+              >
+                <label
+                  htmlFor="recipe-form_categories"
+                  className="field__label"
+                >
+                  Category
+                </label>
+              </Search>
+            </InputField>
 
-                <div className="recipe-form__title title-margin">
-                    <h2 className="heading-primary">{recipe.name ? recipe.name : "New Recipe"}</h2>
-                </div>
+            <InputField>
+              <Search
+                isSelect={true}
+                id="recipe-form_diet-type"
+                placeholder={"Diet Type"}
+                buttonName={HTML_ENTITIES.search}
+                containerClass="field__select input-margin"
+                inputClass="field__select__text"
+                collectionName="dietTypes"
+                documentDb={
+                  recipeDb && recipeDb.dietType ? recipeDb.dietType : null
+                }
+              >
+                <label htmlFor="recipe-form_diet-type" className="field__label">
+                  Diet Type
+                </label>
+              </Search>
+            </InputField>
 
-                <div className="center">
-                    <div className="container">
+            <InputField>
+              <input
+                type="text"
+                id="preparationTime"
+                placeholder="Preparation Time"
+                className="input-margin"
+                required
+                value={recipe.preparationTime}
+                onChange={onRecipeChange}
+                autoComplete="off"
+              />
+            </InputField>
+          </div>
 
-                        <InputField>
-                            <input type="text" id="name" className="input-margin" placeholder="Name" required value={recipe.name} onChange={onRecipeChange} autoComplete="off" />
-                        </InputField>
+          <div className="container-3">
+            <InputField>
+              <input
+                type="number"
+                min="1"
+                id="peoplePerServing"
+                placeholder="People per Serving"
+                value={recipe.peoplePerServing}
+                onChange={onRecipeChange}
+                className="input-margin"
+                autoComplete="off"
+              />
+            </InputField>
 
-                        <InputField>
+            <InputField>
+              <input
+                type="number"
+                min="1"
+                id="calories"
+                placeholder="Calories"
+                value={recipe.calories}
+                onChange={onRecipeChange}
+                className="input-margin"
+                autoComplete="off"
+              />
+            </InputField>
+          </div>
+        </div>
 
-                            <Search id="recipe-form_ingredients" placeholder={'Ingredients'} buttonName={HTML_ENTITIES.add}
-                                containerClass="field__select input-margin" inputClass="field__select__text" collectionName="ingredients"
-                                collectionDb={recipeDb && recipeDb.ingredients ? recipeDb.ingredients : null}>
-
-                                <label htmlFor="recipe-form_ingredients" className="field__label">Ingredients</label>
-                            </Search>
-                        </InputField>
-
-                        <InputField>
-
-                            <Search id="recipe-form_materials" placeholder={'Materials'} buttonName={HTML_ENTITIES.add}
-                                containerClass="field__select input-margin" inputClass="field__select__text" collectionName="materials"
-                                collectionDb={recipeDb && recipeDb.materials ? recipeDb.materials : null}>
-
-                                <label htmlFor="recipe-form_materials" className="field__label">Materials</label>
-                            </Search>
-                        </InputField>
-
-                        <InputField>
-                            <input type="text" id="videoUrl" placeholder="Youtube Video Url" required value={recipe.videoUrl}
-                                onChange={onRecipeChange} className="input-margin" autoComplete="off" />
-                        </InputField>
-                    </div>
-
-                    <div className="image-container">
-                        <h2 className="heading-secondary text">Picture</h2>
-                        <ImageUpload image={imageDb ? 'data:image/png;base64,' + imageDb : null} />
-                    </div>
-                </div>
-
-                <div className="center">
-                    <div className="container-2">
-
-                        <InputField>
-
-                            <Search isSelect={true} id="recipe-form_categories" placeholder={'Category'}
-                                buttonName={HTML_ENTITIES.search} containerClass="field__select input-margin" inputClass="field__select__text"
-                                collectionName="categories" documentDb={recipeDb && recipeDb.category ? recipeDb.category : null}>
-
-                                <label htmlFor="recipe-form_categories" className="field__label">Category</label>
-                            </Search>
-                        </InputField>
-
-                        <InputField>
-                            <Search isSelect={true} id="recipe-form_diet-type" placeholder={'Diet Type'}
-                                buttonName={HTML_ENTITIES.search} containerClass="field__select input-margin"
-                                inputClass="field__select__text" collectionName="dietTypes"
-                                documentDb={recipeDb && recipeDb.dietType ? recipeDb.dietType : null}>
-
-                                <label htmlFor="recipe-form_diet-type" className="field__label">Diet Type</label>
-                            </Search>
-                        </InputField>
-
-                        <InputField>
-                            <input type="text" id="preparationTime" placeholder="Preparation Time" className="input-margin" required value={recipe.preparationTime}
-                                onChange={onRecipeChange} autoComplete="off" />
-                        </InputField>
-                    </div>
-
-                    <div className="container-3">
-                        <InputField>
-                            <input type="number" min="1" id="peoplePerServing" placeholder="People per Serving" value={recipe.peoplePerServing} onChange={onRecipeChange} 
-                                className="input-margin" autoComplete="off" />
-                        </InputField>
-
-                        <InputField>
-                            <input type="number" min="1" id="calories" placeholder="Calories" value={recipe.calories} onChange={onRecipeChange} 
-                                className="input-margin" autoComplete="off" />
-                        </InputField>
-                    </div>
-                </div>
-
-
-
-                <div className="center">
-
-                    <div className="step-container">
-                        <div className="step-container__text-area">
-                            <TextArea id="new-step" placeholder="New Step" value={newStep} onChange={onNewStepChange} />
-                        </div>
-                        <button className="step-container__button" onClick={onAddNewStepClick}>Add Step</button>
-                    </div>
-                </div>
-
-                <EditSteps steps={recipe.steps} onChange={onStepsChange} onDelete={onDeleteStepClick} />
-
-                <div className="center">
-                    <div className="save-button-container input-margin">
-                        <button onClick={onSaveRecipeClick}>Save Recipe</button>
-                    </div>
-                </div>
+        <div className="center">
+          <div className="step-container">
+            <div className="step-container__text-area">
+              <TextArea
+                id="new-step"
+                placeholder="New Step"
+                value={newStep}
+                onChange={onNewStepChange}
+              />
             </div>
-        </React.Fragment>
-    );
-}
+            <button
+              className="step-container__button"
+              onClick={onAddNewStepClick}
+            >
+              Add Step
+            </button>
+          </div>
+        </div>
 
-const mapStateToProps = createStructuredSelector({
-    persistRecipe: selectPersistRecipe,
-    image: selectImage,
-    base64Image: selectBase64Image,
-    token: selectToken,
-    currentUser: selectCurrentUser,
-});
+        <EditSteps
+          steps={recipe.steps}
+          onChange={onStepsChange}
+          onDelete={onDeleteStepClick}
+        />
 
-const mapDispatchToProps = dispatch => ({
-    fetchIngredients: () => dispatch(fetchIngredients()),
-    fetchMaterials: () => dispatch(fetchMaterials()),
-    fetchCategories: () => dispatch(fetchCategories()),
-    fetchDietTypes: () => dispatch(fetchDietTypes()),
-    setImage: image => dispatch(setImage(image)),
-    setCurrentUser: user => dispatch(setCurrentUser(user)),
-    displayMessage: msgObj => dispatch(displayMessage(msgObj)),
-});
+        <div className="center">
+          <div className="save-button-container input-margin">
+            <button onClick={onSaveRecipeClick}>Save Recipe</button>
+          </div>
+        </div>
+      </div>
+    </React.Fragment>
+  );
+};
 
-export default connect(mapStateToProps, mapDispatchToProps)(AddEditRecipe);
+export default AddEditRecipe;
