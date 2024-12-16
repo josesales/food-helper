@@ -8,13 +8,11 @@ const Media = ({
   imageClass,
   videoClass,
   loadingClass,
+  onImgClick,
 }) => {
   try {
     const [isLoading, setIsLoading] = useState(true);
     const mediaClass = containerClass ? containerClass : "media-container";
-    const mediaLoadingClass = loadingClass
-      ? loadingClass
-      : "media-container__loading";
     const mediaImgClass = imageClass ? imageClass : "media-container__img";
     const mediaVideoClass = videoClass ? videoClass : "media-container__video";
     //When inserting a recipe the 'watch' from the video url must be replaced for 'embed'
@@ -32,7 +30,14 @@ const Media = ({
       <div className={mediaClass}>
         {isLoading && <Loader />}
         {image ? (
-          <img className={mediaImgClass} src={image} onLoad={onLoad} />
+          <img
+            className={mediaImgClass}
+            src={image}
+            alt="Media"
+            onLoad={onLoad}
+            onClick={onImgClick}
+            style={{ cursor: onImgClick ? "pointer" : "default" }}
+          />
         ) : (
           <iframe
             title="media-video"

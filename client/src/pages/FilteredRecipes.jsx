@@ -11,10 +11,8 @@ import {
   selectVisitedPage,
 } from "../redux/pagination/pagination-selector";
 import {
-  addVisitedPage,
   cleanVisitedPage,
   setCurrentPage,
-  setVisitedPage,
 } from "../redux/pagination/pagination-actions";
 import { setShowSelectedIngredients } from "../redux/ingredient/ingredient-actions";
 import { useLocation } from "react-router";
@@ -29,7 +27,6 @@ const FilteredRecipes = () => {
   const recipes = useSelector(selectRecipes);
   const total = useSelector(selectTotal);
   const visitedPage = useSelector(selectVisitedPage);
-  const currentPage = useSelector(selectCurrentPage);
   recipesPagination.total = total;
   const dispatch = useDispatch();
 
@@ -45,7 +42,7 @@ const FilteredRecipes = () => {
     dispatch(cleanVisitedPage());
     dispatch(setCurrentPage(0));
     getFilteredRecipesFirstPage();
-  }, []);
+  }, [dispatch, filters]);
 
   //search in the reducer the respective items of the current page and and if they are not there search in the db
   const fetchFilteredRecipesByPage = async (currentPageProp) => {

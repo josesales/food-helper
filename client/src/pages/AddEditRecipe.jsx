@@ -7,7 +7,6 @@ import InputField from "../components/ui/InputField";
 import {
   selectPersistRecipe,
   selectImage,
-  selectBase64Image,
 } from "../redux/recipe/recipe-selector";
 import HTML_ENTITIES from "../util/htmlEntities";
 import TextArea from "../components/ui/TextArea";
@@ -25,12 +24,11 @@ import DisplayMessage from "../components/ui/DisplayMessage";
 import { useHistory } from "react-router-dom";
 
 let shouldPersistIngredient = true;
-let localBase64Image = null;
+let localImage = null;
 
 const AddEditRecipe = () => {
   const persistRecipe = useSelector(selectPersistRecipe);
   const image = useSelector(selectImage);
-  const base64Image = useSelector(selectBase64Image);
   const token = useSelector(selectToken);
   const currentUser = useSelector(selectCurrentUser);
 
@@ -56,8 +54,6 @@ const AddEditRecipe = () => {
   let imageDb = null;
   if (recipeDb && recipeDb.image) {
     imageDb = recipeDb.image;
-    //delete image from recipe recipeDb to avoid the entity is too large error
-    delete recipeDb.image;
   }
 
   const [recipe, setRecipe] = useState(
@@ -140,10 +136,10 @@ const AddEditRecipe = () => {
       if (currentUser.recipes && currentUser.recipes.length > 0) {
         //update currentUser state with the changes in the recipe
         const userRecipes = currentUser.recipes.map((userRecipe) => {
-          if (userRecipe._id == recipeWithImage._id) {
+          if (userRecipe._id === recipeWithImage._id) {
             if (image) {
               // set chosen image if there is one
-              recipeWithImage.image = localBase64Image.split(",")[1];
+              recipeWithImage.image = localImage;
             } else {
               // set current image from the db in case user does not choose a new one
               // recipeWithImage.image = imageDb;
@@ -159,7 +155,7 @@ const AddEditRecipe = () => {
           dispatch(setCurrentUser({ ...currentUser, recipes: userRecipes }));
         } else {
           //Update current user state with new recipe
-          recipeWithImage.image = localBase64Image.split(",")[1];
+          recipeWithImage.image = localImage;
           let newUserRecipe = Object.assign({}, savedRecipe);
           newUserRecipe = Object.assign(newUserRecipe, recipeWithImage);
 
@@ -246,8 +242,8 @@ const AddEditRecipe = () => {
   }, [persistRecipe]);
 
   useEffect(() => {
-    localBase64Image = base64Image;
-  }, [base64Image]);
+    localImage = image;
+  }, [image]);
 
   return (
     <React.Fragment>
@@ -332,9 +328,7 @@ const AddEditRecipe = () => {
 
           <div className="image-container">
             <h2 className="heading-secondary text">Picture</h2>
-            <ImageUpload
-              image={imageDb ? "data:image/png;base64," + imageDb : null}
-            />
+            <ImageUpload image={imageDb ? imageDb : null} />
           </div>
         </div>
 

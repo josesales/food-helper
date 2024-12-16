@@ -99,7 +99,9 @@ router.get("/recipes", async (req, res) => {
           shouldApplyDefaultSearch = false;
           recipes = await Recipe.find({ ...filters })
             .populate("ingredients")
+            .populate("materials")
             .populate("user")
+            .populate("category")
             .populate("reviews");
 
           bestRatedRecipes = Recipe.orderByBestRated(
@@ -114,7 +116,9 @@ router.get("/recipes", async (req, res) => {
           shouldApplyDefaultSearch = false;
           recipes = await Recipe.find({ ...filters })
             .populate("ingredients")
+            .populate("materials")
             .populate("user")
+            .populate("category")
             .populate("reviews");
           recipes = Recipe.getRecipesWithRate(recipes);
 
@@ -131,7 +135,9 @@ router.get("/recipes", async (req, res) => {
           shouldApplyDefaultSearch = false;
           recipes = await Recipe.find({ ...filters })
             .populate("ingredients")
+            .populate("materials")
             .populate("user")
+            .populate("category")
             .populate("reviews");
           recipes = Recipe.getRecipesWithRate(recipes);
 
@@ -155,7 +161,9 @@ router.get("/recipes", async (req, res) => {
         sort,
       })
         .populate("ingredients")
+        .populate("materials")
         .populate("user")
+        .populate("category")
         .populate("reviews");
 
       recipes = Recipe.getRecipesWithRate(recipes);

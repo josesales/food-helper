@@ -1,4 +1,4 @@
-import { Link, useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setCurrentRecipe } from "../redux/recipe/recipe-actions";
 import HTML_ENTITIES from "../util/htmlEntities";
@@ -6,20 +6,24 @@ import Media from "./ui/Media";
 import LabelButton from "./ui/LabelButton";
 import Rate from "./Rate";
 import { selectCurrentUser } from "../redux/user/user-selector";
+import { useHistory } from "react-router";
 
 const RecipeItem = ({ recipe }) => {
   const IngredientsUi = recipe.ingredients.map((ingredient) => (
     <li key={ingredient._id}>{ingredient.name}</li>
   ));
 
-  const history = useHistory();
-  let userRecipe = null;
-
   const currentUser = useSelector(selectCurrentUser);
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const onRecipeClick = () => {
     dispatch(setCurrentRecipe(recipe));
+  };
+
+  const onImgClick = () => {
+    dispatch(setCurrentRecipe(recipe));
+    history.push("/recipe");
   };
 
   const isRecipeOfLoggedUser = () => {
@@ -36,7 +40,6 @@ const RecipeItem = ({ recipe }) => {
     );
 
     if (userRecipes && userRecipes.length > 0) {
-      userRecipe = userRecipes[0];
       return true;
     } else {
       return false;
@@ -56,7 +59,7 @@ const RecipeItem = ({ recipe }) => {
 
         <Rate number={recipe.rate} />
 
-        <Media image={recipe.image} />
+        <Media image={recipe.image} onImgClick={onImgClick} />
 
         <div className="front-button-container">
           <LabelButton htmlFor={"details-checkbox_" + recipe._id}>
@@ -66,7 +69,7 @@ const RecipeItem = ({ recipe }) => {
           {isRecipeOfLoggedUser() ? (
             <Link
               className="front-button-container__edit"
-              to={{ pathname: "/addEditRecipe", state: { recipe: userRecipe } }}
+              to={{ pathname: "/addEditRecipe", state: { recipe } }}
             >
               Edit
             </Link>

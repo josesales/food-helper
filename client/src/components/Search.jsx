@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import HelperButton from "./HelperButton";
 import SuggestionsDisplay from "./SuggestionsDisplay";
@@ -23,6 +23,7 @@ const Search = ({
 }) => {
   const showSelectedIngredients = useSelector(selectShowSelectedIngredients);
   const dispatch = useDispatch();
+  const inputRef = useRef();
 
   const searchContainerClass = containerClass
     ? containerClass
@@ -71,10 +72,10 @@ const Search = ({
   const handleOutsideSuggestionsClick = (e) => {
     //hides the suggestions if user clicks outside of the input and the suggestion container
     if (
-      e.target.className != searchInputClass &&
-      e.target.className != "suggestion-container" &&
-      e.target.className != "suggestion-container__list" &&
-      e.target.className != "suggestion-container__list-item"
+      e.target.className !== searchInputClass &&
+      e.target.className !== "suggestion-container" &&
+      e.target.className !== "suggestion-container__list" &&
+      e.target.className !== "suggestion-container__list-item"
     ) {
       //outside of the divs
       setItemsUi(null);
@@ -131,9 +132,10 @@ const Search = ({
 
     setSelectedItems((prevItems) => {
       //makes sure the an item is not added twice
-      const filteredItems = prevItems.filter((item) => item.name != itemName);
+      const filteredItems = prevItems.filter((item) => item.name !== itemName);
       return filteredItems.concat([{ _id: itemId, name: itemName }]);
     });
+    inputRef.current.focus();
   };
 
   //for the dropdown
@@ -150,12 +152,12 @@ const Search = ({
     if (e.target.attributes.suggestionId) {
       const suggestionId = e.target.attributes.suggestionId.nodeValue;
       setSelectedItems((prevItems) =>
-        prevItems.filter((item) => item._id != suggestionId)
+        prevItems.filter((item) => item._id !== suggestionId)
       );
     } else {
       const suggestionName = e.target.attributes.name.nodeValue;
       setSelectedItems((prevItems) =>
-        prevItems.filter((item) => item.name != suggestionName)
+        prevItems.filter((item) => item.name !== suggestionName)
       );
     }
   };
@@ -170,7 +172,7 @@ const Search = ({
       setSelectedItems((prevItems) => {
         //makes sure the an item is not added twice
         const filteredItems = prevItems.filter(
-          (item) => item.name != inputText
+          (item) => item.name !== inputText
         );
         return filteredItems.concat([{ name: inputText }]);
       });
@@ -236,6 +238,7 @@ const Search = ({
           <input
             id={id}
             type="text"
+            ref={inputRef}
             {...otherProps}
             value={input}
             onChange={onInputChange}
@@ -257,7 +260,6 @@ const Search = ({
             onButtonClick={onAddButtonClick}
           />
         )}
-
         {children}
       </div>
 

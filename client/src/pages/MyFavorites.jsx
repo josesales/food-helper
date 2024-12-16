@@ -17,7 +17,6 @@ import {
   selectVisitedPage,
 } from "../redux/pagination/pagination-selector";
 import {
-  addVisitedPage,
   cleanVisitedPage,
   setCurrentPage,
 } from "../redux/pagination/pagination-actions";
@@ -33,7 +32,6 @@ const MyFavorites = () => {
   const total = useSelector(selectTotal);
   const visitedPage = useSelector(selectVisitedPage);
   const currentUser = useSelector(selectCurrentUser);
-  const currentPage = useSelector(selectCurrentPage);
   recipesPagination.total = total;
 
   const dispatch = useDispatch();
@@ -49,7 +47,7 @@ const MyFavorites = () => {
     dispatch(cleanVisitedPage());
     dispatch(setCurrentPage(0));
     getMyFavoritesFirstPage();
-  }, []);
+  }, [currentUser._id, dispatch]);
 
   //search in the reducer the respective items of the current page and and if they are not there search in the db
   const fetchMyFavoritesByPage = async (currentPageProp) => {

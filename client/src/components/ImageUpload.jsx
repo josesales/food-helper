@@ -1,38 +1,29 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { ReactComponent as Upload } from "../assets/upload.svg";
-import { setImage, setBase64Image } from "../redux/recipe/recipe-actions";
+import { setImage } from "../redux/recipe/recipe-actions";
 
 const ImageUpload = ({ image }) => {
-  const [base64ImageState, setBase64ImageState] = useState(
-    image ? image : null
-  );
+  const [imageURL, setImageURL] = useState(image ? image : null);
   const dispatch = useDispatch();
 
   const onFileUploaded = ({ target }) => {
     if (target.files && target.files[0]) {
-      var reader = new FileReader();
+      const file = target.files[0];
+      const fileURL = URL.createObjectURL(file);
 
-      reader.onload = function (e) {
-        const setImg = async () => {
-          setBase64ImageState(e.target.result);
-          dispatch(setBase64Image(e.target.result));
-        };
-        setImg();
-      };
-
-      dispatch(setImage(target.files[0]));
-      reader.readAsDataURL(target.files[0]);
+      setImageURL(fileURL);
+      dispatch(setImage(file));
     }
   };
 
   return (
     <div className="image-upload">
       <label htmlFor="file-input">
-        {base64ImageState ? (
+        {imageURL ? (
           <form encType="multipart/form-data">
             <img
-              src={base64ImageState}
+              src={imageURL}
               alt="image-upload"
               className="image-upload__img"
             />

@@ -1,16 +1,19 @@
+/* eslint-disable jsx-a11y/img-redundant-alt */
 import React from "react";
 import Rate from "./Rate";
 
 const ReviewItem = ({ review }) => {
-  const avatar = "data:image/png;base64," + review.user.avatar;
-
   return (
     <div className="review-item">
       <figure className="review">
         <blockquote className="review__text">{review.message}</blockquote>
 
         <figcaption className="review__user">
-          <img src={avatar} alt="User Picture" className="review__photo" />
+          <img
+            src={review.user.avatar || null}
+            alt="User Picture"
+            className="review__photo"
+          />
 
           <div className="review__user-box">
             <p className="review__user-name">{review.user.name}</p>

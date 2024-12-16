@@ -10,6 +10,7 @@ const imageUpload = require("../util/imageUpload");
 const httpStatus = require("../util/httpStatus");
 // const storage = require("../util/storage");
 const bodyParser = require("body-parser");
+const { createFile } = require("../util/storage");
 const jsonParser = bodyParser.json();
 
 const router = new express.Router();
@@ -19,7 +20,6 @@ router.post("/users", jsonParser, async (req, res) => {
 
   try {
     const token = await user.generateAuthToken();
-    // sendWelcomeEmail(user.email, user.name);
     res.status(httpStatus.created).send({ user, token });
   } catch (error) {
     res.status(httpStatus.badRequest).send({ error: error.message });
@@ -121,10 +121,9 @@ router.post(
       .resize({ width: 250, height: 250 })
       .png()
       .toBuffer();
-    req.user.avatar = buffer;
 
-    // const result = await storage.listBuckets();
-    // console.log();
+    const imageUrl = await createFile(buffer, req.file.originalname);
+    req.user.avatar = imageUrl;
 
     await req.user.save();
 

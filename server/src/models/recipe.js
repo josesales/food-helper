@@ -93,11 +93,7 @@ const recipeSchema = new mongoose.Schema(
 
     rate: {
       type: Number,
-      validate: (value) => {
-        if (value < 1 || value > 5) {
-          throw Error("Rate must be a number between 1 and 5");
-        }
-      },
+      default: 0,
     },
   },
 
@@ -177,15 +173,25 @@ recipeSchema.statics.saveRecipe = async (recipeReq) => {
     recipeReq.ingredients,
     recipe._id
   );
+  console.log("recipeReq.ingredients: ", recipeReq.ingredients);
+  console.log("recipeReq.materials: ", recipeReq.materials);
   const materialsDb = await Material.saveMaterials(
     recipeReq.materials,
     recipe._id
   );
+  console.log("materialsDb: ", materialsDb);
 
   recipe.ingredients = ingredientsDb;
   recipe.materials = materialsDb;
 
   if (recipeReq._id) {
+    console.log(
+      "before findByIdAndUpdate: ",
+      "recipeReq._id: ",
+      recipeReq._id,
+      "recipe: ",
+      recipe
+    );
     //update
     recipe = await Recipe.findByIdAndUpdate(recipeReq._id, { ...recipe });
     recipe.ingredients = ingredientsDb;
@@ -202,7 +208,6 @@ recipeSchema.statics.saveRecipe = async (recipeReq) => {
 
 recipeSchema.statics.transform = async (recipeReq) => {
   const recipe = { ...recipeReq };
-
   const saveIngredient = async (ingredient) => {
     return await ingredient.save(ingredient);
   };

@@ -1,85 +1,94 @@
 @mixin primary-gradient {
-    background-image: linear-gradient(to right bottom, $color-grey-dark-1, $color-primary-light);
+  background-image: linear-gradient(
+    to right bottom,
+    $color-grey-dark-1,
+    $color-primary-light
+  );
 }
 
 @mixin secondary-gradient {
-    background-image: linear-gradient(to left bottom, $color-grey-dark-1, $color-primary-light);
+  background-image: linear-gradient(
+    to left bottom,
+    $color-grey-dark-1,
+    $color-primary-light
+  );
 }
 
 @mixin tertiary-gradient {
-    background-image: linear-gradient(to left top, $color-grey-dark-1, $color-primary-light);
+  background-image: linear-gradient(
+    to left top,
+    $color-grey-dark-1,
+    $color-primary-light
+  );
 }
 
 @mixin input {
-    background-color: $color-grey-light-1;
-    font-family: inherit;
-    color: inherit;
-    font-size: $font-size-default;
-    padding: 1.5rem 2rem;
-    border-radius: 10rem;
-    width: 100%;
-    display: block;
-    border: 3px solid transparent; //we also have to define here so elements around don't move during focus due to the 3px border-bottom 
+  background-color: $color-grey-light-1;
+  font-family: inherit;
+  color: inherit;
+  font-size: $font-size-default;
+  padding: 1.5rem 2rem;
+  border-radius: 10rem;
+  width: 100%;
+  display: block;
+  border: 3px solid transparent; //we also have to define here so elements around don't move during focus due to the 3px border-bottom
 }
 
 @mixin base-button {
-    padding: .8rem 2rem;
-    width: 10rem;
-    font-size: $font-size-default;
-    border: 1px solid $color-white;
-    border-radius: 10px;
-    cursor: pointer;
-    text-align: center;
-    
+  padding: 0.8rem 2rem;
+  width: 10rem;
+  font-size: $font-size-default;
+  border: 1px solid $color-white;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: center;
 }
 
 @mixin label-button {
-    
-    @include base-button;
-    margin-bottom: 1rem;
-    padding: .8rem;
+  @include base-button;
+  margin-bottom: 1rem;
+  padding: 0.8rem;
 
-    &:hover {
-        background-color: $color-white;
-        color: $color-primary;
-    }
+  &:hover {
+    background-color: $color-white;
+    color: $color-primary;
+  }
 }
 
 @mixin button {
+  @include base-button;
+  background-color: $color-grey-light-2;
+  color: $color-white;
+  padding: 0.8rem 2rem;
+  outline: none;
 
-    @include base-button;
-    background-color: $color-grey-light-2;
+  &:hover {
+    background-color: $color-primary;
     color: $color-white;
-    padding: .8rem 2rem;
-    outline: none;
-		
-    &:hover {
-        background-color: $color-primary;
-        color: $color-white;
-    }
+  }
 }
 
 @mixin hideLabel {
-    opacity: 0; //hides the label when the placeholder is shown which means by default it will be hidden
-    visibility: hidden;
-    // //sets the label up initially so when it gets shown the label goes back to it's original position being moved down by the animation
-    transform: translateY(4rem);
+  opacity: 0; //hides the label when the placeholder is shown which means by default it will be hidden
+  visibility: hidden;
+  // //sets the label up initially so when it gets shown the label goes back to it's original position being moved down by the animation
+  transform: translateY(4rem);
 }
 
 @mixin hideTitle {
-    margin-bottom: 1rem;
-    opacity: 0; //hides the label when the placeholder is shown which means by default it will be hidden
-    visibility: hidden;
-    @include notSelectable;
+  margin-bottom: 1rem;
+  opacity: 0; //hides the label when the placeholder is shown which means by default it will be hidden
+  visibility: hidden;
+  @include notSelectable;
 }
 
 @mixin notSelectable {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 //media query manager
@@ -100,8 +109,7 @@
     - big-desktop
 */
 @mixin respond($breakpoint) {
-
-        /*
+  /*
         In media queries rem and em don't get affected by the root font-size setting. 
         So they are equals to the default font-size that comes from the browser. 
         Rems don't work well in media queries so it's better to use em
@@ -112,23 +120,33 @@
         1200px= 75em 
         1800px= 112.5em 
         */
-        
-        //@if: an if statement like a normal programming language
-        //@content: allows to pass a block of code into a mixin
 
-        @if $breakpoint == mini-phone {
-            @media only screen and (max-width:28.5em) { @content }; //300px
-        }
-        @if $breakpoint == phone {
-            @media only screen and (max-width:37.5em) { @content }; //600px
-        }
-        @if $breakpoint == tab-port {
-            @media only screen and (max-width:56.25em) { @content }; //900px
-        }
-        @if $breakpoint == tab-land {
-            @media only screen and (max-width:75em) { @content }; //1200px
-        }
-        @if $breakpoint == big-desktop {
-            @media only screen and (min-width:112.5em) { @content }; //1800px
-        }
+  //@if: an if statement like a normal programming language
+  //@content: allows to pass a block of code into a mixin
+
+  @if $breakpoint == mini-phone {
+    @media only screen and (max-width: 28.5em) {
+      @content;
+    } //300px
+  }
+  @if $breakpoint == phone {
+    @media only screen and (max-width: 37.5em) {
+      @content;
+    } //600px
+  }
+  @if $breakpoint == tab-port {
+    @media only screen and (max-width: 56.25em) {
+      @content;
+    } //900px
+  }
+  @if $breakpoint == tab-land {
+    @media only screen and (max-width: 75em) {
+      @content;
+    } //1200px
+  }
+  @if $breakpoint == big-desktop {
+    @media only screen and (min-width: 112.5em) {
+      @content;
+    } //1800px
+  }
 }

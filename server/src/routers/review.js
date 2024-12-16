@@ -45,7 +45,7 @@ router.get("/reviews/:recipeId", async (req, res) => {
       limit: parseInt(req.query.limit), //if not provided it will or if its not an int its gonna be ignored by mongoose
       skip: parseInt(req.query.skip),
       sort,
-    }).populate("user");
+    }).populate("user", "_id name avatar");
 
     res.status(httpStatus.ok).send(reviews);
   } catch (error) {

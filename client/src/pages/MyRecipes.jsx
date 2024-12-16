@@ -6,12 +6,8 @@ import { selectMyRecipes, selectTotal } from "../redux/recipe/recipe-selector";
 import Loader from "../components/ui/Loader";
 import Pagination from "../components/ui/Pagination";
 import pagination from "../util/pagination";
+import { selectVisitedPage } from "../redux/pagination/pagination-selector";
 import {
-  selectCurrentPage,
-  selectVisitedPage,
-} from "../redux/pagination/pagination-selector";
-import {
-  addVisitedPage,
   cleanVisitedPage,
   setCurrentPage,
 } from "../redux/pagination/pagination-actions";
@@ -25,7 +21,6 @@ const MyRecipes = () => {
   const total = useSelector(selectTotal);
   const visitedPage = useSelector(selectVisitedPage);
   const currentUser = useSelector(selectCurrentUser);
-  const currentPage = useSelector(selectCurrentPage);
   recipesPagination.total = total;
 
   const [isComponentMounting, setIsComponentMounting] = useState(false);
@@ -44,7 +39,7 @@ const MyRecipes = () => {
     dispatch(cleanVisitedPage());
     dispatch(setCurrentPage(0));
     getMyRecipesFirstPage();
-  }, []);
+  }, [currentUser._id, dispatch]);
 
   //search in the reducer the respective items of the current page and and if they are not there search in the db
   const fetchMyRecipesByPage = async (currentPageProp) => {
@@ -57,9 +52,9 @@ const MyRecipes = () => {
       //set myRecipes of the global state with the recipes of the page that was already visited
       dispatch(visitedPage[currentPageProp]);
     } else {
-      await setIsLoading(true);
+      setIsLoading(true);
       await dispatch(fetchRecipes(currentPageProp, false, currentUser._id));
-      await setIsLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -75,12 +70,11 @@ const MyRecipes = () => {
             </div>
 
             {isLoading ? <Loader /> : <RecipeItems recipes={myRecipes} />}
+            <Pagination
+              paginationObj={recipesPagination}
+              fetchItems={fetchMyRecipesByPage}
+            />
           </div>
-
-          <Pagination
-            paginationObj={recipesPagination}
-            fetchItems={fetchMyRecipesByPage}
-          />
         </React.Fragment>
       )}
     </React.Fragment>

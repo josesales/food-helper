@@ -23,124 +23,44 @@ import {
   fetchIngredients,
   setShowSelectedIngredients,
 } from "../redux/ingredient/ingredient-actions";
-import DisplayMessage from "../components/ui/DisplayMessage";
-
-export const recipesPagination = pagination(0);
-
-let isSearchActive = false;
+import Recipes from "../components/Recipes";
+import Search from "../components/Search";
+import HTML_ENTITIES from "../util/htmlEntities";
+import { useHistory, useLocation } from "react-router-dom";
+import { selectIsActive } from "../redux/filter/filter-selector";
+import { toggleFilters } from "../redux/filter/filter-actions";
 
 const Home = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  const ingredients = useSelector((state) => state.ingredient.ingredients);
-  const { type, message } = useSelector((state) => state.message);
-
-  const recipes = useSelector(selectRecipes);
-  const persistRecipe = useSelector(selectPersistRecipe);
-  const visitedPage = useSelector(selectVisitedPage);
-  const total = useSelector(selectTotal);
-  // const currentPage = useSelector(selectCurrentPage);
-
-  recipesPagination.total = total;
+  const history = useHistory();
+  const location = useLocation();
   const dispatch = useDispatch();
+  const isActive = useSelector(selectIsActive);
 
-  //Fetch recipes like componentDidMount style
-  useEffect(() => {
-    const getRecipesFirstPage = async () => {
-      setIsLoading(true);
-      await dispatch(fetchRecipes(0, true));
-      setIsLoading(false);
-      setMounted(true);
-    };
-
-    dispatch(setShowSelectedIngredients(false));
-    dispatch(cleanVisitedPage());
-
-    getRecipesFirstPage();
-    dispatch(setShowSelectedIngredients(true));
-    if (!ingredients || ingredients.length === 0) {
-      dispatch(fetchIngredients());
-    }
-
-    //set global store props below to their respective initial state when component umount
-    return () => {
-      dispatch(setShowSelectedIngredients(false));
-    };
-  }, []);
-
-  //search in the reducer the respective items of the current page and and if they are not there search in the db
-  const fetchRecipesByPage = async (currentPageProp) => {
-    if (
-      visitedPage[currentPageProp] &&
-      visitedPage[currentPageProp].length > 0
-    ) {
-      //set the recipes of the global state with the recipes of the page that was already visited
-      dispatch(setCurrentPage(currentPageProp));
-      dispatch(setRecipes(visitedPage[currentPageProp]));
-    } else {
-      setIsLoading(true);
-
-      if (isSearchActive) {
-        await dispatch(
-          fetchRecipesByIngredients(
-            persistRecipe.ingredients,
-            currentPageProp,
-            true
-          )
-        );
-      } else {
-        await dispatch(fetchRecipes(currentPageProp));
+  const onChangeHandler = () => {
+    if (location.pathname != "/") {
+      if (isActive) {
+        dispatch(toggleFilters());
       }
-      setIsLoading(false);
+
+      history.push("/");
     }
   };
-
-  // Search for recipes according to the filtered ingredients in the search component from the header
-  useEffect(() => {
-    const fetchRecipesByPage = async () => {
-      setIsLoading(true);
-
-      if (
-        persistRecipe &&
-        persistRecipe.ingredients &&
-        persistRecipe.ingredients.length > 0
-      ) {
-        isSearchActive = true;
-        await dispatch(
-          fetchRecipesByIngredients(persistRecipe.ingredients, 0, true)
-        );
-      } else {
-        isSearchActive = false;
-        await dispatch(fetchRecipes(0, true));
-      }
-      setIsLoading(false);
-    };
-    if (mounted) {
-      fetchRecipesByPage();
-    }
-  }, [persistRecipe]);
-
   return (
-    <React.Fragment>
-      <div className="home">
-        {type && message ? (
-          <DisplayMessage type={type} message={message} />
-        ) : null}
-
-        <div className="home__hidden-title">
-          <h2 className="heading-primary">Home</h2>
-        </div>
-
-        {isLoading ? <Loader /> : <RecipeItems recipes={recipes} />}
-        {!isLoading && (
-          <Pagination
-            paginationObj={recipesPagination}
-            fetchItems={fetchRecipesByPage}
-          />
-        )}
+    <div className="home">
+      <div
+        title="Search Recipes by Ingredients"
+        className="home__search-container"
+      >
+        <Search
+          id="header-container_ingredients"
+          placeholder={"Write an Ingredient"}
+          buttonName={HTML_ENTITIES.add}
+          collectionName="ingredients"
+          onChangeCallback={onChangeHandler}
+        />
       </div>
-    </React.Fragment>
+      <Recipes />
+    </div>
   );
 };
 
