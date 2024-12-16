@@ -1,24 +1,21 @@
 .media-container {
-    width: 18rem;
-    height: 10rem;
-    display: flex;
-    align-items: flex-start;
+  width: 18rem;
+  height: 10rem;
+  display: "flex";
+  flex-direction: "column";
+  justify-content: "center";
+  align-items: "center";
 
-    // @include respond(tab-land) {
-    //     width: 15rem;
-    //     height: 7rem;
-    // }
+  &__img,
+  &__video {
+    border-radius: 10px;
+    width: 100%;
+    height: auto;
+    z-index: -100;
+    overflow: hidden;
+  }
 
-    &__img,
-    &__video {
-        border-radius: 10px;
-        width: 100%;
-        height: auto;
-        z-index: -100;
-        overflow: hidden;
-    }
-
-    &__video {
-        z-index: 0;
-    }
+  &__video {
+    z-index: 0;
+  }
 }

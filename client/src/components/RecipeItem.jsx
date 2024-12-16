@@ -43,10 +43,6 @@ const RecipeItem = ({ recipe }) => {
     }
   };
 
-  const onEditClick = () => {
-    history.push("/addEditRecipe", { state: { recipeDb: recipe } });
-  };
-
   return (
     <div className="recipe-item">
       <input

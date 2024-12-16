@@ -34,7 +34,11 @@ const Recipe = () => {
       <div className="recipe-container">
         <RecipeSteps />
 
-        <Media image={recipe.image} containerClass="image-container" />
+        <Media
+          image={recipe.image}
+          containerClass="image-container"
+          imageClass="image-container__img"
+        />
       </div>
 
       {(reviews && reviews.length > 0) || recipe.videoUrl || currentUser ? (
@@ -52,7 +56,11 @@ const Recipe = () => {
           )}
 
           {recipe.videoUrl ? (
-            <Media video={recipe.videoUrl} containerClass="video-container" />
+            <Media
+              video={recipe.videoUrl}
+              containerClass="video-container"
+              videoClass="video-container__video"
+            />
           ) : (
             ""
           )}

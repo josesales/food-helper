@@ -1,38 +1,43 @@
-import { PaginationActionTypes } from './pagination-types';
+import { PaginationActionTypes } from "./pagination-types";
 
 const INITIAL_STATE = {
-    visitedPage: {}, //{ [page number] : itemsArray }
-    currentPage: 0
-}
+  visitedPage: {}, //{ [page number] : itemsArray }
+  currentPage: 0,
+};
 
 const paginationReducer = (state = INITIAL_STATE, action) => {
+  switch (action.type) {
+    case PaginationActionTypes.ADD_VISITED_PAGE:
+      //add a new attribute to the visitedPage object, which is the page number, and assign it with the items array
+      const { pageNumber, items } = action.payload;
+      state.visitedPage[pageNumber] = items;
+      const updatedState = {
+        ...state,
+        visitedPage: {
+          ...state.visitedPage,
+          [pageNumber]: items,
+        },
+        currentPage: pageNumber,
+      };
+      return {
+        ...updatedState,
+      };
 
-    switch (action.type) {
+    case PaginationActionTypes.CLEAN_VISITED_PAGE:
+      return {
+        ...state,
+        visitedPage: {},
+      };
 
-        case PaginationActionTypes.ADD_VISITED_PAGE:
-            //add a new attribute to the visitedPage object, which is the page number, and assign it with the items array
-            const { pageNumber, items } = action.payload;
-            state.visitedPage[pageNumber] = items;
+    case PaginationActionTypes.SET_CURRENT_PAGE:
+      return {
+        ...state,
+        currentPage: action.payload,
+      };
 
-            return { ...state };
-
-        case PaginationActionTypes.SET_VISITED_PAGE:
-
-            return {
-                ...state,
-                visitedPage: {},
-            };
-
-        case PaginationActionTypes.SET_CURRENT_PAGE:
-
-            return {
-                ...state,
-                currentPage: action.payload,
-            };
-
-        default:
-            return state;
-    }
-}
+    default:
+      return state;
+  }
+};
 
 export default paginationReducer;

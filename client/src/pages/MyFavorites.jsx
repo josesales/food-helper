@@ -18,8 +18,8 @@ import {
 } from "../redux/pagination/pagination-selector";
 import {
   addVisitedPage,
+  cleanVisitedPage,
   setCurrentPage,
-  setVisitedPage,
 } from "../redux/pagination/pagination-actions";
 import { selectCurrentUser } from "../redux/user/user-selector";
 
@@ -46,7 +46,7 @@ const MyFavorites = () => {
       setIsComponentMounting(false);
     };
 
-    dispatch(setVisitedPage({}));
+    dispatch(cleanVisitedPage());
     dispatch(setCurrentPage(0));
     getMyFavoritesFirstPage();
   }, []);
@@ -68,12 +68,6 @@ const MyFavorites = () => {
       setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    dispatch(
-      addVisitedPage({ pageNumber: currentPage, items: favoriteRecipes })
-    );
-  }, [favoriteRecipes]);
 
   return (
     <React.Fragment>

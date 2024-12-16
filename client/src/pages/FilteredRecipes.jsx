@@ -12,6 +12,7 @@ import {
 } from "../redux/pagination/pagination-selector";
 import {
   addVisitedPage,
+  cleanVisitedPage,
   setCurrentPage,
   setVisitedPage,
 } from "../redux/pagination/pagination-actions";
@@ -41,7 +42,7 @@ const FilteredRecipes = () => {
     };
 
     dispatch(setShowSelectedIngredients(false));
-    dispatch(setVisitedPage({}));
+    dispatch(cleanVisitedPage());
     dispatch(setCurrentPage(0));
     getFilteredRecipesFirstPage();
   }, []);
@@ -59,10 +60,6 @@ const FilteredRecipes = () => {
       setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    dispatch(addVisitedPage({ pageNumber: currentPage, items: recipes }));
-  }, [recipes]);
 
   return (
     <React.Fragment>

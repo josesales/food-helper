@@ -1,8 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
+import Loader from "./Loader";
 
-const Media = ({ image, video, containerClass, imageClass, videoClass }) => {
+const Media = ({
+  image,
+  video,
+  containerClass,
+  imageClass,
+  videoClass,
+  loadingClass,
+}) => {
   try {
+    const [isLoading, setIsLoading] = useState(true);
     const mediaClass = containerClass ? containerClass : "media-container";
+    const mediaLoadingClass = loadingClass
+      ? loadingClass
+      : "media-container__loading";
     const mediaImgClass = imageClass ? imageClass : "media-container__img";
     const mediaVideoClass = videoClass ? videoClass : "media-container__video";
     //When inserting a recipe the 'watch' from the video url must be replaced for 'embed'
@@ -12,14 +24,21 @@ const Media = ({ image, video, containerClass, imageClass, videoClass }) => {
       throw new Error("You can cannot send both image and video together");
     }
 
+    const onLoad = () => {
+      setIsLoading(false);
+    };
+
     return (
       <div className={mediaClass}>
+        {isLoading && <Loader />}
         {image ? (
-          <img className={mediaImgClass} src={image} />
+          <img className={mediaImgClass} src={image} onLoad={onLoad} />
         ) : (
           <iframe
+            title="media-video"
             className={mediaVideoClass}
             src={video}
+            onLoad={onLoad}
             frameBorder="0"
             allowFullScreen
           />

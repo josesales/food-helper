@@ -12,8 +12,8 @@ import {
 } from "../redux/pagination/pagination-selector";
 import {
   addVisitedPage,
+  cleanVisitedPage,
   setCurrentPage,
-  setVisitedPage,
 } from "../redux/pagination/pagination-actions";
 import { selectCurrentUser } from "../redux/user/user-selector";
 import { setShowSelectedIngredients } from "../redux/ingredient/ingredient-actions";
@@ -41,7 +41,7 @@ const MyRecipes = () => {
     };
 
     dispatch(setShowSelectedIngredients(false));
-    dispatch(setVisitedPage({}));
+    dispatch(cleanVisitedPage());
     dispatch(setCurrentPage(0));
     getMyRecipesFirstPage();
   }, []);
@@ -62,10 +62,6 @@ const MyRecipes = () => {
       await setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    dispatch(addVisitedPage({ pageNumber: currentPage, items: myRecipes }));
-  }, [myRecipes]);
 
   return (
     <React.Fragment>

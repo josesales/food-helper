@@ -1,5 +1,6 @@
 import pagination from "../../util/pagination";
 import { get, postPatch } from "../../util/request-sender";
+import { addVisitedPage } from "../pagination/pagination-actions";
 import { RecipeActionTypes } from "./recipe-types";
 
 export const fetchRecipes = (
@@ -47,6 +48,7 @@ export const fetchRecipes = (
           payload: { recipes, total },
         });
       }
+      dispatch(addVisitedPage({ pageNumber: currentPage, items: recipes }));
     } catch (error) {
       console.log(
         "Error while trying to communicate with the API: " + error.message
@@ -75,6 +77,7 @@ export const fetchRecipesByIngredients = (
         type: RecipeActionTypes.FETCH_RECIPES_BY_INGREDIENTS,
         payload: { recipes, total },
       });
+      dispatch(addVisitedPage({ pageNumber: currentPage, items: recipes }));
     } catch (error) {
       console.log(
         "Error while trying to communicate with the API: " + error.message
@@ -101,6 +104,7 @@ export const fetchFavoriteRecipes = (
         type: RecipeActionTypes.FETCH_FAVORITE_RECIPES,
         payload: { recipes, total },
       });
+      dispatch(addVisitedPage({ pageNumber: currentPage, items: recipes }));
     } catch (error) {
       console.log(
         "Error while trying to communicate with the API: " + error.message

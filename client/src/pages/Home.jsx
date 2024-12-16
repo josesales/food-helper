@@ -14,14 +14,10 @@ import {
 import Loader from "../components/ui/Loader";
 import Pagination from "../components/ui/Pagination";
 import pagination from "../util/pagination";
+import { selectVisitedPage } from "../redux/pagination/pagination-selector";
 import {
-  selectCurrentPage,
-  selectVisitedPage,
-} from "../redux/pagination/pagination-selector";
-import {
-  addVisitedPage,
   setCurrentPage,
-  setVisitedPage,
+  cleanVisitedPage,
 } from "../redux/pagination/pagination-actions";
 import {
   fetchIngredients,
@@ -35,6 +31,7 @@ let isSearchActive = false;
 
 const Home = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   const ingredients = useSelector((state) => state.ingredient.ingredients);
   const { type, message } = useSelector((state) => state.message);
@@ -43,7 +40,7 @@ const Home = () => {
   const persistRecipe = useSelector(selectPersistRecipe);
   const visitedPage = useSelector(selectVisitedPage);
   const total = useSelector(selectTotal);
-  const currentPage = useSelector(selectCurrentPage);
+  // const currentPage = useSelector(selectCurrentPage);
 
   recipesPagination.total = total;
   const dispatch = useDispatch();
@@ -54,11 +51,11 @@ const Home = () => {
       setIsLoading(true);
       await dispatch(fetchRecipes(0, true));
       setIsLoading(false);
+      setMounted(true);
     };
 
     dispatch(setShowSelectedIngredients(false));
-    dispatch(setVisitedPage({}));
-    dispatch(setCurrentPage(0));
+    dispatch(cleanVisitedPage());
 
     getRecipesFirstPage();
     dispatch(setShowSelectedIngredients(true));
@@ -74,12 +71,12 @@ const Home = () => {
 
   //search in the reducer the respective items of the current page and and if they are not there search in the db
   const fetchRecipesByPage = async (currentPageProp) => {
-    dispatch(setCurrentPage(currentPageProp));
     if (
       visitedPage[currentPageProp] &&
       visitedPage[currentPageProp].length > 0
     ) {
       //set the recipes of the global state with the recipes of the page that was already visited
+      dispatch(setCurrentPage(currentPageProp));
       dispatch(setRecipes(visitedPage[currentPageProp]));
     } else {
       setIsLoading(true);
@@ -99,14 +96,9 @@ const Home = () => {
     }
   };
 
-  useEffect(() => {
-    dispatch(addVisitedPage({ pageNumber: currentPage, items: recipes }));
-  }, [recipes]);
-
-  //Search for recipes according to the filtered ingredients in the search component from the header
+  // Search for recipes according to the filtered ingredients in the search component from the header
   useEffect(() => {
     const fetchRecipesByPage = async () => {
-      dispatch(setCurrentPage(0));
       setIsLoading(true);
 
       if (
@@ -123,11 +115,10 @@ const Home = () => {
         await dispatch(fetchRecipes(0, true));
       }
       setIsLoading(false);
-
-      dispatch(setVisitedPage({}));
     };
-
-    fetchRecipesByPage();
+    if (mounted) {
+      fetchRecipesByPage();
+    }
   }, [persistRecipe]);
 
   return (

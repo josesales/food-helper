@@ -1,13 +1,11 @@
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { setCurrentPage } from "../../redux/pagination/pagination-actions";
+import { useSelector } from "react-redux";
 import { selectCurrentPage } from "../../redux/pagination/pagination-selector";
 import HTML_ENTITIES from "../../util/htmlEntities";
 import LabelButton from "./LabelButton";
 
 const Pagination = ({ paginationObj, fetchItems }) => {
   const currentPage = useSelector(selectCurrentPage);
-  const dispatch = useDispatch();
   const ItemsUi = [];
 
   //Size of collection in the db / Number of items that should be shown per page
@@ -15,7 +13,6 @@ const Pagination = ({ paginationObj, fetchItems }) => {
 
   const onItemUiClick = (e) => {
     const page = +e.target.innerText - 1;
-    dispatch(setCurrentPage(page));
     fetchItems(page);
     window.scrollTo({
       top: 0,
@@ -25,7 +22,6 @@ const Pagination = ({ paginationObj, fetchItems }) => {
 
   const onLeftArrowClick = () => {
     if (currentPage > 0) {
-      dispatch(setCurrentPage(currentPage - 1));
       fetchItems(currentPage - 1);
       window.scrollTo({
         top: 0,
@@ -36,7 +32,6 @@ const Pagination = ({ paginationObj, fetchItems }) => {
 
   const onRightArrowClick = () => {
     if (currentPage < pagesNumber - 1) {
-      dispatch(setCurrentPage(currentPage + 1));
       fetchItems(currentPage + 1);
       window.scrollTo({
         top: 0,

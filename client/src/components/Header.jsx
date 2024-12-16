@@ -55,6 +55,9 @@ const Header = () => {
           alt="Food Helper Logo"
           className="header__logo"
           onClick={() => {
+            if (isActive) {
+              dispatch(toggleFilters());
+            }
             history.push("/");
           }}
         />
