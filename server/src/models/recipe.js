@@ -185,13 +185,6 @@ recipeSchema.statics.saveRecipe = async (recipeReq) => {
   recipe.materials = materialsDb;
 
   if (recipeReq._id) {
-    console.log(
-      "before findByIdAndUpdate: ",
-      "recipeReq._id: ",
-      recipeReq._id,
-      "recipe: ",
-      recipe
-    );
     //update
     recipe = await Recipe.findByIdAndUpdate(recipeReq._id, { ...recipe });
     recipe.ingredients = ingredientsDb;

@@ -42,7 +42,9 @@ const Search = ({
 
   const items = useSelector((state) => state[documentNameTemp][collectionName]);
 
-  const [ItemsUi, setItemsUi] = useState(null);
+  const [filteredItems, setFilteredItems] = useState([]);
+  const [displaySuggestionItems, setDisplaySuggestionItems] = useState(false);
+  const [highlightedItemIndex, setHighlightedItemIndex] = useState(-1);
 
   //for the search (ingredients, materials...)
   const [selectedItems, setSelectedItems] = useState(
@@ -78,7 +80,7 @@ const Search = ({
       e.target.className !== "suggestion-container__list-item"
     ) {
       //outside of the divs
-      setItemsUi(null);
+      setDisplaySuggestionItems(false);
     }
   };
 
@@ -95,33 +97,22 @@ const Search = ({
 
   //filter the items to show suggestions that are already in the db
   const filterAndDisplayItems = (value) => {
-    const filteredItems = items.filter((item) =>
+    const updatedFilteredItems = items.filter((item) =>
       item.name.toUpperCase().trim().includes(value.toUpperCase().trim())
     );
 
     //show the items only when it is filtered to less than 10 so the screen doesn't get very full
-    if (filteredItems.length < 10) {
-      setItemsUi(
-        filteredItems.map((item) => (
-          <li key={item._id}>
-            <h3
-              onClick={onListItemClick}
-              itemId={item._id}
-              className="suggestion-container__list-item"
-            >
-              {item.name}
-            </h3>
-          </li>
-        ))
-      );
+    if (updatedFilteredItems.length < 10) {
+      setFilteredItems(updatedFilteredItems);
+      setDisplaySuggestionItems(true);
     } else {
       //if the items get more than 10 then it sets the ItemsUi to null again
-      setItemsUi(null);
+      setDisplaySuggestionItems(false);
     }
 
     //if there is no value then it removes previous suggestions
     if (!value) {
-      setItemsUi(null);
+      setDisplaySuggestionItems(false);
     }
   };
 
@@ -135,6 +126,7 @@ const Search = ({
       const filteredItems = prevItems.filter((item) => item.name !== itemName);
       return filteredItems.concat([{ _id: itemId, name: itemName }]);
     });
+    setDisplaySuggestionItems(false);
     inputRef.current.focus();
   };
 
@@ -144,7 +136,7 @@ const Search = ({
     const itemId = e.target.attributes.itemId.value;
 
     setSelectedItem({ _id: itemId, name: itemName });
-    setItemsUi(null);
+    setDisplaySuggestionItems(false);
   };
 
   //Remove the selected suggestion from the local state
@@ -181,20 +173,7 @@ const Search = ({
 
   //for the dropdown
   const onSelectClick = (e) => {
-    const value = e.target.value;
-    setItemsUi(
-      items.map((item, index) => (
-        <li key={index}>
-          <h3
-            onClick={onListItemDropDownClick}
-            itemId={item._id}
-            className="suggestion-container__list-item"
-          >
-            {item.name}
-          </h3>
-        </li>
-      ))
-    );
+    setDisplaySuggestionItems(true);
   };
 
   //Keep the recipe reducer update according to the selected suggestions of materials and ingredients
@@ -214,6 +193,43 @@ const Search = ({
     }
   }, [showSelectedIngredients]);
 
+  const onSearchKeydown = (e) => {
+    if (displaySuggestionItems && filteredItems?.length > 0) {
+      switch (e.key) {
+        case "ArrowDown":
+          setHighlightedItemIndex((prevIndex) =>
+            prevIndex < filteredItems.length - 1 ? prevIndex + 1 : 0
+          );
+          break;
+        case "ArrowUp":
+          setHighlightedItemIndex((prevIndex) =>
+            prevIndex > 0 ? prevIndex - 1 : filteredItems.length - 1
+          );
+          break;
+        case "Enter":
+          if (
+            highlightedItemIndex >= 0 &&
+            highlightedItemIndex < filteredItems.length
+          ) {
+            const highlightedItem = filteredItems[highlightedItemIndex];
+
+            setSelectedItems((prevItems) => {
+              return prevItems.concat([
+                { _id: highlightedItem._id, name: highlightedItem.name },
+              ]);
+            });
+            setFilteredItems([]);
+            setHighlightedItemIndex(-1);
+            setDisplaySuggestionItems(false);
+            inputRef.current.focus();
+          }
+          break;
+        default:
+          break;
+      }
+    }
+  };
+
   return (
     <React.Fragment>
       <SuggestionsDisplay
@@ -224,48 +240,76 @@ const Search = ({
 
       <div className={searchContainerClass}>
         {isSelect ? (
-          <input
-            id={id}
-            type="text"
-            {...otherProps}
-            value={selectedItem.name}
-            onClick={onSelectClick}
-            className={searchInputClass + " select"}
-            readOnly
-            autoComplete="off"
-          />
+          <>
+            <input
+              id={id}
+              type="text"
+              {...otherProps}
+              value={selectedItem.name}
+              onClick={onSelectClick}
+              className={searchInputClass + " select"}
+              readOnly
+              autoComplete="off"
+            />
+            <HelperButton
+              inputText={input}
+              name={buttonName}
+              onButtonClick={onSelectClick}
+              isSelect={true}
+            />
+          </>
         ) : (
-          <input
-            id={id}
-            type="text"
-            ref={inputRef}
-            {...otherProps}
-            value={input}
-            onChange={onInputChange}
-            className={searchInputClass}
-            autoComplete="off"
-          />
-        )}
-        {isSelect ? (
-          <HelperButton
-            inputText={input}
-            name={buttonName}
-            onButtonClick={onSelectClick}
-            isSelect={true}
-          />
-        ) : (
-          <HelperButton
-            inputText={input}
-            name={buttonName}
-            onButtonClick={onAddButtonClick}
-          />
+          <>
+            <input
+              id={id}
+              type="text"
+              ref={inputRef}
+              {...otherProps}
+              value={input}
+              onChange={onInputChange}
+              onKeyDown={onSearchKeydown}
+              className={searchInputClass}
+              autoComplete="off"
+            />
+            <HelperButton
+              inputText={input}
+              name={buttonName}
+              onButtonClick={onAddButtonClick}
+            />
+          </>
         )}
         {children}
       </div>
 
-      {ItemsUi ? (
+      {displaySuggestionItems ? (
         <div className="suggestion-container">
-          <ul className="suggestion-container__list">{ItemsUi}</ul>
+          <ul className="suggestion-container__list">
+            {isSelect
+              ? items.map((item, index) => (
+                  <li key={index}>
+                    <h3
+                      onClick={onListItemDropDownClick}
+                      itemId={item._id}
+                      className="suggestion-container__list-item"
+                    >
+                      {item.name}
+                    </h3>
+                  </li>
+                ))
+              : filteredItems.map((item, index) => (
+                  <li key={item._id}>
+                    <h3
+                      onClick={onListItemClick}
+                      itemId={item._id}
+                      className={`suggestion-container__list-item${
+                        index === highlightedItemIndex ? "--selected" : ""
+                      }`}
+                    >
+                      {item.name}
+                    </h3>
+                  </li>
+                ))}
+          </ul>
         </div>
       ) : (
         ""

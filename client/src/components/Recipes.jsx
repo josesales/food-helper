@@ -23,7 +23,6 @@ import {
   fetchIngredients,
   setShowSelectedIngredients,
 } from "../redux/ingredient/ingredient-actions";
-import DisplayMessage from "./ui/DisplayMessage";
 
 export const recipesPagination = pagination(0);
 
@@ -34,13 +33,11 @@ const Recipes = () => {
   const [mounted, setMounted] = useState(false);
 
   const ingredients = useSelector((state) => state.ingredient.ingredients);
-  const { type, message } = useSelector((state) => state.message);
 
   const recipes = useSelector(selectRecipes);
   const persistRecipe = useSelector(selectPersistRecipe);
   const visitedPage = useSelector(selectVisitedPage);
   const total = useSelector(selectTotal);
-  // const currentPage = useSelector(selectCurrentPage);
 
   recipesPagination.total = total;
   const dispatch = useDispatch();
@@ -124,10 +121,6 @@ const Recipes = () => {
   return (
     <React.Fragment>
       <div className="recipes">
-        {type && message ? (
-          <DisplayMessage type={type} message={message} />
-        ) : null}
-
         {isLoading ? <Loader /> : <RecipeItems recipes={recipes} />}
         {!isLoading && (
           <Pagination

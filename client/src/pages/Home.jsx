@@ -29,12 +29,14 @@ import HTML_ENTITIES from "../util/htmlEntities";
 import { useHistory, useLocation } from "react-router-dom";
 import { selectIsActive } from "../redux/filter/filter-selector";
 import { toggleFilters } from "../redux/filter/filter-actions";
+import DisplayMessage from "../components/ui/DisplayMessage";
 
 const Home = () => {
   const history = useHistory();
   const location = useLocation();
   const dispatch = useDispatch();
   const isActive = useSelector(selectIsActive);
+  const { type, message } = useSelector((state) => state.message);
 
   const onChangeHandler = () => {
     if (location.pathname != "/") {
@@ -47,6 +49,9 @@ const Home = () => {
   };
   return (
     <div className="home">
+      {type && message ? (
+        <DisplayMessage type={type} message={message} />
+      ) : null}
       <div
         title="Search Recipes by Ingredients"
         className="home__search-container"
