@@ -2,6 +2,7 @@
 .suggestion-display-form {
   color: inherit;
   display: flex;
+  flex-direction: row-reverse;
   position: absolute;
   top: -170%;
   left: 42%;
