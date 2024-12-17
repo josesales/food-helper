@@ -10,7 +10,6 @@
   &__search-container {
     width: 40%;
     position: relative; //for the suggestions container
-    justify-self: flex-end;
 
     @include respond(tab-port) {
       width: 50%;

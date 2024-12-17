@@ -225,7 +225,7 @@ const Search = ({
           }
           break;
         default:
-          break;
+          return;
       }
     }
   };
