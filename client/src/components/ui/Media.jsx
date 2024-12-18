@@ -28,7 +28,7 @@ const Media = ({
 
     return (
       <div className={mediaClass}>
-        {isLoading && <Loader />}
+        {image && isLoading && <Loader />}
         {image ? (
           <img
             className={mediaImgClass}
@@ -43,7 +43,6 @@ const Media = ({
             title="media-video"
             className={mediaVideoClass}
             src={video}
-            onLoad={onLoad}
             frameBorder="0"
             allowFullScreen
           />
