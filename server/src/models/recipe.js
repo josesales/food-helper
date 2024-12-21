@@ -111,7 +111,7 @@ const validate = (recipe) => {
     throw new Error("Name must contain at least 5 characters.");
   }
 
-  if (!recipe.ingredients || recipe.ingredients.length == 0) {
+  if (!recipe.ingredients || recipe.ingredients.length === 0) {
     throw new Error("Ingredients are mandatory.");
   }
 
@@ -150,7 +150,7 @@ const validate = (recipe) => {
     throw new Error("Category is mandatory");
   }
 
-  if (!recipe.steps || recipe.steps.length == 0) {
+  if (!recipe.steps || recipe.steps.length === 0) {
     throw new Error("Steps are mandatory");
   } else {
     recipe.steps.forEach((step, index) => {
@@ -173,13 +173,10 @@ recipeSchema.statics.saveRecipe = async (recipeReq) => {
     recipeReq.ingredients,
     recipe._id
   );
-  console.log("recipeReq.ingredients: ", recipeReq.ingredients);
-  console.log("recipeReq.materials: ", recipeReq.materials);
   const materialsDb = await Material.saveMaterials(
     recipeReq.materials,
     recipe._id
   );
-  console.log("materialsDb: ", materialsDb);
 
   recipe.ingredients = ingredientsDb;
   recipe.materials = materialsDb;
@@ -220,7 +217,7 @@ recipeSchema.statics.getRecipesWithRate = (recipes) => {
   try {
     recipes.forEach((recipe) => {
       const reviews = recipe.reviews;
-      if (reviews.length == 0) {
+      if (reviews.length === 0) {
         recipe.rate = 0;
         return;
       }

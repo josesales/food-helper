@@ -3,8 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 import HelperButton from "./HelperButton";
 import SuggestionsDisplay from "./SuggestionsDisplay";
 import { setPersistRecipe } from "../redux/recipe/recipe-actions";
-import { toSingular } from "../util/string";
+import { capitalizeFirstLetter, toSingular } from "../util/string";
 import { selectShowSelectedIngredients } from "../redux/ingredient/ingredient-selector";
+import { get } from "../util/request-sender";
+import { useDebounce } from "../hooks/useDebounce";
 
 //Id must match with the name of the collection and predeceased by '_'
 const Search = ({
@@ -16,7 +18,6 @@ const Search = ({
   inputClass,
   children,
   isSelect,
-  onChangeCallback,
   collectionDb,
   documentDb,
   ...otherProps
@@ -24,13 +25,14 @@ const Search = ({
   const showSelectedIngredients = useSelector(selectShowSelectedIngredients);
   const dispatch = useDispatch();
   const inputRef = useRef();
+  const debounce = useDebounce(1000);
 
   const searchContainerClass = containerClass
     ? containerClass
     : "search-container";
   const searchInputClass = inputClass ? inputClass : "search-container__input";
   const displaySuggestionsOrigin =
-    searchContainerClass == "search-container" ? "search" : "form";
+    searchContainerClass === "search-container" ? "search" : "form";
 
   //if documentName is not passed then it converts the collectionName to the singular
   const documentNameTemp =
@@ -69,6 +71,7 @@ const Search = ({
     return () => {
       document.removeEventListener("mousedown", handleOutsideSuggestionsClick);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleOutsideSuggestionsClick = (e) => {
@@ -88,33 +91,37 @@ const Search = ({
   const onInputChange = (e) => {
     const value = e.target.value;
     setInput(value);
-    filterAndDisplayItems(value);
-
-    if (onChangeCallback) {
-      onChangeCallback();
-    }
-  };
-
-  //filter the items to show suggestions that are already in the db
-  const filterAndDisplayItems = (value) => {
-    const updatedFilteredItems = items.filter((item) =>
-      item.name.toUpperCase().trim().includes(value.toUpperCase().trim())
-    );
-
-    //show the items only when it is filtered to less than 10 so the screen doesn't get very full
-    if (updatedFilteredItems.length < 10) {
-      setFilteredItems(updatedFilteredItems);
-      setDisplaySuggestionItems(true);
-    } else {
-      //if the items get more than 10 then it sets the ItemsUi to null again
-      setDisplaySuggestionItems(false);
+    if (value?.length > 2) {
+      filterAndDisplayItems(value);
+      return;
     }
 
     //if there is no value then it removes previous suggestions
     if (!value) {
+      setFilteredItems([]);
       setDisplaySuggestionItems(false);
     }
   };
+
+  //filter the items to show suggestions that are already in the db
+  const filterAndDisplayItems = debounce(async (value) => {
+    let updatedFilteredItems = [];
+
+    updatedFilteredItems = await get(
+      `/fetch${capitalizeFirstLetter(
+        collectionName
+      )}ByFilters?name=${value}&limit=10`
+    );
+
+    if (updatedFilteredItems?.length > 0) {
+      setFilteredItems(updatedFilteredItems);
+      setDisplaySuggestionItems(true);
+      return;
+    }
+
+    setFilteredItems([]);
+    setDisplaySuggestionItems(false);
+  });
 
   //for the search
   const onListItemClick = (e) => {
@@ -180,17 +187,20 @@ const Search = ({
   useEffect(() => {
     dispatch(setPersistRecipe({ [collectionName]: selectedItems }));
     setInput("");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedItems]);
 
   //Keep the recipe reducer update according to the selected suggestions of category and diet type
   useEffect(() => {
     dispatch(setPersistRecipe({ [documentNameTemp]: selectedItem }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedItem]);
 
   useEffect(() => {
     if (!showSelectedIngredients && !collectionDb) {
       setSelectedItems([]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showSelectedIngredients]);
 
   const onSearchKeydown = (e) => {

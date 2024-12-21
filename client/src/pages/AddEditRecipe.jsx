@@ -10,8 +10,6 @@ import {
 } from "../redux/recipe/recipe-selector";
 import HTML_ENTITIES from "../util/htmlEntities";
 import TextArea from "../components/ui/TextArea";
-import { fetchIngredients } from "../redux/ingredient/ingredient-actions";
-import { fetchMaterials } from "../redux/material/material-actions";
 import { fetchCategories } from "../redux/category/category-actions";
 import { fetchDietTypes } from "../redux/diet-type/diet-type-actions";
 import { postPatch, upload } from "../util/request-sender";
@@ -22,6 +20,7 @@ import { setCurrentUser } from "../redux/user/user-actions";
 import { displayMessage } from "../redux/message/message-actions";
 import DisplayMessage from "../components/ui/DisplayMessage";
 import { useHistory } from "react-router-dom";
+import Loader from "../components/ui/Loader";
 
 let shouldPersistIngredient = true;
 let localImage = null;
@@ -69,6 +68,8 @@ const AddEditRecipe = () => {
         }
   );
 
+  const [isLoading, setIsLoading] = useState(false);
+
   //Recipe
   const onRecipeChange = (e) => {
     setRecipe({ ...recipe, [e.target.id]: e.target.value });
@@ -106,23 +107,30 @@ const AddEditRecipe = () => {
     //Remove the selected element by its index
     setRecipe((prevRecipe) => ({
       ...prevRecipe,
-      steps: prevRecipe.steps.filter((step, index) => index != id),
+      steps: prevRecipe.steps.filter((step, index) => index !== id),
     }));
   };
 
   const onSaveRecipeClick = async () => {
     try {
+      if (isLoading) {
+        return;
+      }
       //In case user is editing a recipe the image will be already loaded by default
       //so the user does not need necessarily to choose a new one
       if ((!image || !image.type) && !recipeDb) {
         throw new Error("Image is mandatory");
       }
 
+      setIsLoading(true);
+
       const savedRecipe = await postPatch("/recipes", "POST", recipe, token);
 
       if (image) {
         await upload("/recipeImage", image, savedRecipe._id, token);
       }
+
+      setIsLoading(false);
 
       //clone the recipe to assign the image and avoid the Entity is too large error
       const recipeWithImage = Object.assign({}, recipe);
@@ -195,29 +203,19 @@ const AddEditRecipe = () => {
       );
       history.push("/");
     } catch (error) {
+      setIsLoading(false);
       console.log("Error while saving the recipe: " + error.message);
       window.scrollTo(0, 0);
       dispatch(displayMessage({ type: "error", message: error.message }));
     }
   };
 
-  const ingredients = useSelector((state) => state.ingredient.ingredients);
-  const materials = useSelector((state) => state.material.materials);
   const categories = useSelector((state) => state.category.categories);
   const dietTypes = useSelector((state) => state.dietType.dietTypes);
 
   // Get the collections for the search component
   useEffect(() => {
     shouldPersistIngredient = false;
-
-    //check if the collection are already in the reducer so it doesn't go to the db every time the user access this page
-    if (ingredients.length === 0) {
-      dispatch(fetchIngredients());
-    }
-
-    if (materials.length === 0) {
-      dispatch(fetchMaterials());
-    }
 
     if (categories.length === 0) {
       dispatch(fetchCategories());
@@ -228,6 +226,7 @@ const AddEditRecipe = () => {
     }
 
     dispatch(setImage(null));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   //Keep recipe useState in sync with persistRecipe to get ingredients, materials...
@@ -239,6 +238,7 @@ const AddEditRecipe = () => {
     } else {
       shouldPersistIngredient = true;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [persistRecipe]);
 
   useEffect(() => {
@@ -445,7 +445,9 @@ const AddEditRecipe = () => {
 
         <div className="center">
           <div className="save-button-container input-margin">
-            <button onClick={onSaveRecipeClick}>Save Recipe</button>
+            <button onClick={onSaveRecipeClick} disabled={isLoading}>
+              {isLoading ? <Loader mini /> : "Save Recipe"}
+            </button>
           </div>
         </div>
       </div>

@@ -70,10 +70,12 @@ const MyRecipes = () => {
             </div>
 
             {isLoading ? <Loader /> : <RecipeItems recipes={myRecipes} />}
-            <Pagination
-              paginationObj={recipesPagination}
-              fetchItems={fetchMyRecipesByPage}
-            />
+            {!isLoading && myRecipes?.length > 0 && (
+              <Pagination
+                paginationObj={recipesPagination}
+                fetchItems={fetchMyRecipesByPage}
+              />
+            )}
           </div>
         </React.Fragment>
       )}

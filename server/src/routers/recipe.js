@@ -18,7 +18,10 @@ router.post(
     // req.filter.buffer is accessible when we don't set the dest property on multer
     const buffer = await sharp(req.file.buffer)
       .resize({ width: 350, height: 350 })
-      .png()
+      .toFormat("webp", {
+        quality: 80,
+      })
+      .webp()
       .toBuffer();
 
     const recipe = await Recipe.findById(req.body.id);
@@ -55,7 +58,7 @@ router.get("/recipes", async (req, res) => {
 
   if (req.query.sortBy) {
     const parts = req.query.sortBy.split("_");
-    sort[parts[0]] = parts[1] == "desc" ? -1 : 1; //set the field name on the sort object and assign -1 or 1 for the order value
+    sort[parts[0]] = parts[1] === "desc" ? -1 : 1; //set the field name on the sort object and assign -1 or 1 for the order value
   }
 
   if (req.query.total && req.query.total === "true") {
@@ -188,7 +191,7 @@ router.post("/fetchRecipesByIngredients", async (req, res) => {
 
   if (req.query.sortBy) {
     const parts = req.query.sortBy.split("_");
-    sort[parts[0]] = parts[1] == "desc" ? -1 : 1; //set the field name on the sort object and assign -1 or 1 for the order value
+    sort[parts[0]] = parts[1] === "desc" ? -1 : 1; //set the field name on the sort object and assign -1 or 1 for the order value
   }
 
   if (req.query.total && req.query.total === "true") {

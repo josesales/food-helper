@@ -46,7 +46,7 @@ const Review = () => {
         return;
       }
 
-      if (review.rate == 0) {
+      if (review.rate === 0) {
         window.scrollTo(0, 0);
         dispatch(
           displayMessage({

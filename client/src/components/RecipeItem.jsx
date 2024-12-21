@@ -30,13 +30,13 @@ const RecipeItem = ({ recipe }) => {
     if (
       !currentUser ||
       !currentUser.recipes ||
-      currentUser.recipes.length == 0
+      currentUser.recipes.length === 0
     ) {
       return false;
     }
 
     const userRecipes = currentUser.recipes.filter(
-      (userRecipe) => userRecipe._id == recipe._id
+      (userRecipe) => userRecipe._id === recipe._id
     );
 
     if (userRecipes && userRecipes.length > 0) {

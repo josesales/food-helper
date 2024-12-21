@@ -7,23 +7,28 @@ import { setCurrentUser, setToken } from "../redux/user/user-actions";
 import { selectCurrentUser } from "../redux/user/user-selector";
 import { displayMessage } from "../redux/message/message-actions";
 import DisplayMessage from "../components/ui/DisplayMessage";
+import Loader from "../components/ui/Loader";
 
 const Login = () => {
   const [credentials, setCredentials] = useState({ email: "", password: "" });
+  const [isLoading, setIsLoading] = useState(false);
   const { type, message } = useSelector((state) => state.message);
   const currentUser = useSelector(selectCurrentUser);
   const dispatch = useDispatch();
 
-  const onLoginClick = async (event) => {
+  const onLoginClick = async () => {
     try {
+      setIsLoading(true);
       const { user, token } = await postPatch(
         "/users/login",
         "POST",
         credentials
       );
+      setIsLoading(false);
       dispatch(setCurrentUser(user));
       dispatch(setToken(token));
     } catch (error) {
+      setIsLoading(false);
       window.scrollTo(0, 0);
       dispatch(displayMessage({ type: "error", message: error.message }));
     }
@@ -79,7 +84,9 @@ const Login = () => {
             </div>
 
             <div className="login__button-container">
-              <button onClick={onLoginClick}>Login</button>
+              <button onClick={onLoginClick} disabled={isLoading}>
+                {isLoading ? <Loader mini /> : "Login"}
+              </button>
 
               <Link className="login__button-container--sign-up" to="/signUp">
                 Create Account

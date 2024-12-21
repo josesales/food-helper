@@ -42,7 +42,7 @@ router.get("/favoriteRecipes/:userId", async (req, res) => {
 
   if (req.query.sortBy) {
     const parts = req.query.sortBy.split("_");
-    sort[parts[0]] = parts[1] == "desc" ? -1 : 1; //set the field name on the sort object and assign -1 or 1 for the order value
+    sort[parts[0]] = parts[1] === "desc" ? -1 : 1; //set the field name on the sort object and assign -1 or 1 for the order value
   }
 
   if (req.query.total && req.query.total === "true") {
@@ -100,7 +100,7 @@ router.get("/recipeByFavorite/:recipeId/:userId", async (req, res) => {
 
     let favorite = await Favorite.findOne({ user: userId }).populate("recipes");
     const recipes = favorite?.recipes?.filter(
-      (recipe) => recipe._id == recipeId
+      (recipe) => recipe._id === recipeId
     );
     const recipe = recipes?.length > 0 ? recipes[0] : null;
     if (recipe) {

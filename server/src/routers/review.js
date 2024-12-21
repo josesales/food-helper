@@ -35,7 +35,7 @@ router.get("/reviews/:recipeId", async (req, res) => {
 
   if (req.query.sortBy) {
     const parts = req.query.sortBy.split("_");
-    sort[parts[0]] = parts[1] == "desc" ? -1 : 1; //set the field name on the sort object and assign -1 or 1 for the order value
+    sort[parts[0]] = parts[1] === "desc" ? -1 : 1; //set the field name on the sort object and assign -1 or 1 for the order value
   }
 
   try {

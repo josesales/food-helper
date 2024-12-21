@@ -5,16 +5,18 @@ import { selectCurrentUser, selectToken } from "../redux/user/user-selector";
 import { get, postPatch, remove } from "../util/request-sender";
 import { ReactComponent as AddFavorites } from "../assets/add-to-favorites.svg";
 import { ReactComponent as RemoveFavorites } from "../assets/remove-from-favorites.svg";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { displayMessage } from "../redux/message/message-actions";
 
 const RecipeHeader = () => {
   const [isFavorite, setIsFavorite] = useState(null);
   const recipe = useSelector(selectCurrentRecipe);
   const token = useSelector(selectToken);
   const currentUser = useSelector(selectCurrentUser);
+  const dispatch = useDispatch();
 
-  useEffect(async () => {
-    if (token) {
+  useEffect(() => {
+    const getRecipeByFavorite = async () => {
       const recipeDb = await get(
         `/recipeByFavorite/${recipe._id}/${currentUser._id}`
       );
@@ -23,18 +25,41 @@ const RecipeHeader = () => {
       } else {
         setIsFavorite(false);
       }
+    };
+
+    if (token) {
+      getRecipeByFavorite();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onAddToMyFavoritesClick = async () => {
     //TODO check why new recipe of the favorite is not always being saved in the db
-    await postPatch("/favorites", "POST", { recipe: recipe._id }, token);
-    setIsFavorite(true);
+    try {
+      await postPatch("/favorites", "POST", { recipe: recipe._id }, token);
+      setIsFavorite(true);
+    } catch (_e) {
+      dispatch(
+        displayMessage({
+          type: "error",
+          message: "Error on adding recipe to favorites",
+        })
+      );
+    }
   };
 
   const onRemoveFromMyFavoritesClick = async () => {
-    await remove(`/favorites/${recipe._id}`, token);
-    setIsFavorite(false);
+    try {
+      await remove(`/favorites/${recipe._id}`, token);
+      setIsFavorite(false);
+    } catch (_e) {
+      dispatch(
+        displayMessage({
+          type: "error",
+          message: "Error on removing recipe from favorites",
+        })
+      );
+    }
   };
 
   return (

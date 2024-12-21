@@ -80,7 +80,7 @@ const MyFavorites = () => {
 
             {isLoading ? <Loader /> : <RecipeItems recipes={favoriteRecipes} />}
 
-            {!isLoading && (
+            {!isLoading && favoriteRecipes?.length > 0 && (
               <Pagination
                 paginationObj={recipesPagination}
                 fetchItems={fetchMyFavoritesByPage}

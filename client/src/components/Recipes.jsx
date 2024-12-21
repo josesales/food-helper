@@ -19,10 +19,7 @@ import {
   setCurrentPage,
   cleanVisitedPage,
 } from "../redux/pagination/pagination-actions";
-import {
-  fetchIngredients,
-  setShowSelectedIngredients,
-} from "../redux/ingredient/ingredient-actions";
+import { setShowSelectedIngredients } from "../redux/ingredient/ingredient-actions";
 
 export const recipesPagination = pagination(0);
 
@@ -31,8 +28,6 @@ let isSearchActive = false;
 const Recipes = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
-
-  const ingredients = useSelector((state) => state.ingredient.ingredients);
 
   const recipes = useSelector(selectRecipes);
   const persistRecipe = useSelector(selectPersistRecipe);
@@ -56,15 +51,12 @@ const Recipes = () => {
 
     getRecipesFirstPage();
     dispatch(setShowSelectedIngredients(true));
-    if (!ingredients || ingredients.length === 0) {
-      dispatch(fetchIngredients());
-    }
 
     //set global store props below to their respective initial state when component umount
     return () => {
       dispatch(setShowSelectedIngredients(false));
     };
-  }, []);
+  }, [dispatch]);
 
   //search in the reducer the respective items of the current page and and if they are not there search in the db
   const fetchRecipesByPage = async (currentPageProp) => {
@@ -116,13 +108,14 @@ const Recipes = () => {
     if (mounted) {
       fetchRecipesByPage();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [persistRecipe]);
 
   return (
     <React.Fragment>
       <div className="recipes">
         {isLoading ? <Loader /> : <RecipeItems recipes={recipes} />}
-        {!isLoading && (
+        {!isLoading && recipes?.length > 0 && (
           <Pagination
             paginationObj={recipesPagination}
             fetchItems={fetchRecipesByPage}

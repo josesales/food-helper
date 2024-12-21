@@ -1,10 +1,9 @@
-import React from 'react';
+import React from "react";
 
-const Loader = () => (
-
-    <div className="loader-overlay">
-        <div className="loader-container"></div>
-    </div>
-)
+const Loader = ({ mini }) => (
+  <div className={`loader-overlay${mini ? "-mini" : ""}`}>
+    <div className={`loader-container${mini ? "-mini" : ""}`} />
+  </div>
+);
 
 export default Loader;

@@ -5,7 +5,7 @@ const EditSteps = ({ steps, onChange, onDelete }) => {
   let StepsUi = null;
   let NoStepsUi = null;
 
-  if (!steps || steps.length == 0) {
+  if (!steps || steps.length === 0) {
     NoStepsUi = (
       <li className="no-steps" key={0}>
         <h3>Currently there are no steps added</h3>

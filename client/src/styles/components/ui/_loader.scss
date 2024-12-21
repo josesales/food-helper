@@ -1,4 +1,5 @@
-.loader-overlay {
+.loader-overlay,
+.loader-overlay-mini {
   margin-top: $margin-from-header;
   width: 100%;
   height: 35rem;
@@ -7,7 +8,13 @@
   align-items: center;
 }
 
-.loader-container {
+.loader-overlay-mini {
+  margin-top: 0;
+  height: fit-content;
+}
+
+.loader-container,
+.loader-container-mini {
   display: block;
   width: 50px;
   height: 50px;
@@ -27,4 +34,10 @@
       -webkit-transform: rotate(360deg);
     }
   }
+}
+
+.loader-container-mini {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
 }

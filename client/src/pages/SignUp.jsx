@@ -9,6 +9,7 @@ import { selectCurrentUser } from "../redux/user/user-selector";
 import { setCurrentUser, setToken } from "../redux/user/user-actions";
 import { displayMessage } from "../redux/message/message-actions";
 import DisplayMessage from "../components/ui/DisplayMessage";
+import Loader from "../components/ui/Loader";
 
 const SignUp = () => {
   const [userState, setUserState] = useState({
@@ -19,6 +20,7 @@ const SignUp = () => {
     confirmPassword: "",
   });
 
+  const [isLoading, setIsLoading] = useState(false);
   const { type, message } = useSelector((state) => state.message);
   const image = useSelector(selectImage);
   const currentUser = useSelector(selectCurrentUser);
@@ -40,7 +42,7 @@ const SignUp = () => {
     if (!userState.confirmPassword.trim()) {
       throw new Error("Confirm Password is mandatory.");
     }
-    if (userState.password != userState.confirmPassword) {
+    if (userState.password !== userState.confirmPassword) {
       throw new Error("Password and Confirm Password don't match.");
     }
   };
@@ -48,16 +50,18 @@ const SignUp = () => {
   const onSignUpClick = async () => {
     try {
       validateUser();
-
+      setIsLoading(true);
       const { user, token } = await postPatch("/users", "POST", userState);
 
       if (image) {
         await upload("/users/me/avatar", image, null, token);
       }
+      setIsLoading(false);
 
       dispatch(setCurrentUser(user));
       dispatch(setToken(token));
     } catch (error) {
+      setIsLoading(false);
       window.scrollTo(0, 0);
       dispatch(displayMessage({ type: "error", message: error.message }));
     }
@@ -139,7 +143,9 @@ const SignUp = () => {
             </div>
 
             <div className="user-data__button-container">
-              <button onClick={onSignUpClick}>Sign Up</button>
+              <button onClick={onSignUpClick} disabled={isLoading}>
+                {isLoading ? <Loader mini /> : "Sign Up"}
+              </button>
 
               <Link
                 className="user-data__button-container--sign-in"
