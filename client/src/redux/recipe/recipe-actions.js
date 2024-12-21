@@ -89,16 +89,16 @@ export const fetchRecipesByIngredients = (
 export const fetchFavoriteRecipes = (
   currentPage = 0,
   getTotal = false,
-  userId = null
+  token = null
 ) => {
   return async (dispatch) => {
     try {
       const recipePagination = pagination(currentPage);
 
-      let recipeUri = `/favoriteRecipes/${userId}?limit=${recipePagination.limit}&skip=${recipePagination.skip}`;
+      let recipeUri = `/favoriteRecipes/?limit=${recipePagination.limit}&skip=${recipePagination.skip}`;
       recipeUri += `&sortBy=${recipePagination.sortBy}&total=${getTotal}`;
 
-      const { recipes, total } = await get(recipeUri);
+      const { recipes, total } = await get(recipeUri, token);
 
       dispatch({
         type: RecipeActionTypes.FETCH_FAVORITE_RECIPES,

@@ -35,9 +35,8 @@ router.delete("/favorites/:recipeId", auth, async (req, res) => {
 //GET /favorites?completed=true
 //GET /favorites?limit=10&skip=10
 //GET /favorites?sortBy=createdAt_desc
-router.get("/favoriteRecipes/:userId", async (req, res) => {
+router.get("/favoriteRecipes", auth, async (req, res) => {
   const sort = {};
-
   let shouldGetTotal = false;
 
   if (req.query.sortBy) {
@@ -49,13 +48,14 @@ router.get("/favoriteRecipes/:userId", async (req, res) => {
     shouldGetTotal = true;
   }
 
-  const userId = req.params.userId;
+  const userId = req.user._id;
 
   try {
     if (!userId) {
       throw new Error("User should be sent");
     }
-
+    console.log("req.query: ", req.query);
+    console.log("req.query: ", req.query);
     let favorite = await Favorite.findOne({ user: userId }, null).populate({
       path: "recipes",
       options: {
@@ -93,14 +93,16 @@ router.get("/favoriteRecipes/:userId", async (req, res) => {
   }
 });
 
-router.get("/recipeByFavorite/:recipeId/:userId", async (req, res) => {
+router.get("/recipeByFavorite/:recipeId", auth, async (req, res) => {
   try {
     const recipeId = req.params.recipeId;
-    const userId = req.params.userId;
-
+    const userId = req.user._id;
+    console.log("recipeId: ", recipeId);
+    console.log("recipeId: ", userId);
     let favorite = await Favorite.findOne({ user: userId }).populate("recipes");
+    console.log("favorite: ", favorite);
     const recipes = favorite?.recipes?.filter(
-      (recipe) => recipe._id === recipeId
+      (recipe) => recipe._id == recipeId
     );
     const recipe = recipes?.length > 0 ? recipes[0] : null;
     if (recipe) {

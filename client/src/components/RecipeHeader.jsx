@@ -1,7 +1,7 @@
-import React, { lazy, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Rate from "./Rate";
 import { selectCurrentRecipe } from "../redux/recipe/recipe-selector";
-import { selectCurrentUser, selectToken } from "../redux/user/user-selector";
+import { selectToken } from "../redux/user/user-selector";
 import { get, postPatch, remove } from "../util/request-sender";
 import { ReactComponent as AddFavorites } from "../assets/add-to-favorites.svg";
 import { ReactComponent as RemoveFavorites } from "../assets/remove-from-favorites.svg";
@@ -12,14 +12,11 @@ const RecipeHeader = () => {
   const [isFavorite, setIsFavorite] = useState(null);
   const recipe = useSelector(selectCurrentRecipe);
   const token = useSelector(selectToken);
-  const currentUser = useSelector(selectCurrentUser);
   const dispatch = useDispatch();
 
   useEffect(() => {
     const getRecipeByFavorite = async () => {
-      const recipeDb = await get(
-        `/recipeByFavorite/${recipe._id}/${currentUser._id}`
-      );
+      const recipeDb = await get(`/recipeByFavorite/${recipe._id}`, token);
       if (recipeDb) {
         setIsFavorite(true);
       } else {

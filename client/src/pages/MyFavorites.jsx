@@ -12,15 +12,12 @@ import {
 import Loader from "../components/ui/Loader";
 import Pagination from "../components/ui/Pagination";
 import pagination from "../util/pagination";
-import {
-  selectCurrentPage,
-  selectVisitedPage,
-} from "../redux/pagination/pagination-selector";
+import { selectVisitedPage } from "../redux/pagination/pagination-selector";
 import {
   cleanVisitedPage,
   setCurrentPage,
 } from "../redux/pagination/pagination-actions";
-import { selectCurrentUser } from "../redux/user/user-selector";
+import { selectToken } from "../redux/user/user-selector";
 
 const recipesPagination = pagination(0);
 
@@ -31,7 +28,7 @@ const MyFavorites = () => {
   const favoriteRecipes = useSelector(selectFavoriteRecipes);
   const total = useSelector(selectTotal);
   const visitedPage = useSelector(selectVisitedPage);
-  const currentUser = useSelector(selectCurrentUser);
+  const token = useSelector(selectToken);
   recipesPagination.total = total;
 
   const dispatch = useDispatch();
@@ -40,14 +37,14 @@ const MyFavorites = () => {
   useEffect(() => {
     const getMyFavoritesFirstPage = async () => {
       setIsComponentMounting(true);
-      await dispatch(fetchFavoriteRecipes(0, true, currentUser._id));
+      await dispatch(fetchFavoriteRecipes(0, true, token));
       setIsComponentMounting(false);
     };
 
     dispatch(cleanVisitedPage());
     dispatch(setCurrentPage(0));
     getMyFavoritesFirstPage();
-  }, [currentUser._id, dispatch]);
+  }, [token, dispatch]);
 
   //search in the reducer the respective items of the current page and and if they are not there search in the db
   const fetchMyFavoritesByPage = async (currentPageProp) => {
@@ -60,9 +57,7 @@ const MyFavorites = () => {
       dispatch(setFavoriteRecipes(visitedPage[currentPageProp]));
     } else {
       setIsLoading(true);
-      await dispatch(
-        fetchFavoriteRecipes(currentPageProp, false, currentUser._id)
-      );
+      await dispatch(fetchFavoriteRecipes(currentPageProp, false, token));
       setIsLoading(false);
     }
   };
