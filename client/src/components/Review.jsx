@@ -11,12 +11,14 @@ import Rate from "./Rate";
 import TextArea from "./ui/TextArea";
 import { setReviews } from "../redux/review/review-actions";
 import { displayMessage } from "../redux/message/message-actions";
+import Loader from "./ui/Loader";
 
 const Review = () => {
   const currentUser = useSelector(selectCurrentUser);
   const currentRecipe = useSelector(selectCurrentRecipe);
   const currentReview = useSelector(selectCurrentReview);
   const reviews = useSelector(selectReviews);
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
 
   const reviewInitialState = {
@@ -71,6 +73,7 @@ const Review = () => {
         );
         return;
       }
+      setIsLoading(true);
 
       const savedReview = await postPatch(
         "/reviews",
@@ -84,7 +87,7 @@ const Review = () => {
 
       recipeReviews = [].concat([savedReview]).concat(reviews);
       dispatch(setReviews(recipeReviews));
-
+      setIsLoading(false);
       window.scrollTo(0, 0);
       dispatch(
         displayMessage({
@@ -102,6 +105,7 @@ const Review = () => {
 
   useEffect(() => {
     setReview({ ...review, ...currentReview });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentReview]);
 
   return (
@@ -120,7 +124,7 @@ const Review = () => {
       </div>
 
       <button className="input-margin" onClick={onAddReviewClick}>
-        Add Your Comment
+        {isLoading ? <Loader mini /> : "Add Your Comment"}
       </button>
     </div>
   );

@@ -133,7 +133,7 @@ const AddEditRecipe = () => {
       setIsLoading(false);
 
       //clone the recipe to assign the image and avoid the Entity is too large error
-      const recipeWithImage = Object.assign({}, recipe);
+      const recipeWithImage = Object.assign({}, savedRecipe);
       recipeWithImage.image = imageDb;
 
       if (savedRecipe.videoUrl) {
@@ -148,9 +148,6 @@ const AddEditRecipe = () => {
             if (image) {
               // set chosen image if there is one
               recipeWithImage.image = localImage;
-            } else {
-              // set current image from the db in case user does not choose a new one
-              // recipeWithImage.image = imageDb;
             }
             return recipeWithImage;
           } else {
@@ -158,7 +155,7 @@ const AddEditRecipe = () => {
           }
         });
 
-        if (recipeWithImage._id) {
+        if (recipe._id) {
           //Update current user state with updated recipe
           dispatch(setCurrentUser({ ...currentUser, recipes: userRecipes }));
         } else {

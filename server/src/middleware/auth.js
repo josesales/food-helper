@@ -4,7 +4,6 @@ const User = require("../models/user");
 const auth = async (req, res, next) => {
   try {
     const token = req.header("Authorization").replace("Bearer ", "");
-    console.log("token: ", token);
     //returns the token object if its a valid token in which give us access to the user's id used during the token creation
     const decoded = jwt.verify(token, process.env.JWT_KEY);
 

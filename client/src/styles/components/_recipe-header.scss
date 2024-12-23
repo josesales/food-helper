@@ -1,38 +1,37 @@
 .recipe-header {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    margin-bottom: 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 3rem;
 
-        &__title {
-            @include respond(phone) {
-                font-size: 3rem;
-            }
-        }
+  &__title {
+    @include respond(phone) {
+      font-size: 3rem;
+    }
+  }
 }
 
 .recipe-header__rate {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: $color-primary;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: $color-primary;
 }
 
 .favorite-icon {
-        margin-top: 1rem;
-        cursor: pointer;
-        width: 3rem;
-        height: 3rem;
-        display: flex;
-        box-shadow: $shadow-dark;
-        border-radius: 10px; //for the bottom corners
-        transition: all .2s;
-        // filter: brightness(0.5);
-        background-color: rgba($color-white-2, 0.5);
-  
-        &:hover {
-            fill: $color-red;
-            transform: scale(1.05) translateY(-.5rem);
-        }
+  margin-top: 1rem;
+  cursor: pointer;
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  box-shadow: $shadow-dark;
+  border-radius: 10px; //for the bottom corners
+  transition: all 0.2s;
+  background-color: rgba($color-white-2, 0.5);
+
+  &:hover {
+    fill: $color-red;
+    transform: scale(1.05) translateY(-0.5rem);
+  }
 }

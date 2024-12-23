@@ -54,8 +54,6 @@ router.get("/favoriteRecipes", auth, async (req, res) => {
     if (!userId) {
       throw new Error("User should be sent");
     }
-    console.log("req.query: ", req.query);
-    console.log("req.query: ", req.query);
     let favorite = await Favorite.findOne({ user: userId }, null).populate({
       path: "recipes",
       options: {
@@ -97,16 +95,14 @@ router.get("/recipeByFavorite/:recipeId", auth, async (req, res) => {
   try {
     const recipeId = req.params.recipeId;
     const userId = req.user._id;
-    console.log("recipeId: ", recipeId);
-    console.log("recipeId: ", userId);
-    let favorite = await Favorite.findOne({ user: userId }).populate("recipes");
-    console.log("favorite: ", favorite);
+    const favorite = await Favorite.findOne({ user: userId });
+
     const recipes = favorite?.recipes?.filter(
       (recipe) => recipe._id == recipeId
     );
-    const recipe = recipes?.length > 0 ? recipes[0] : null;
-    if (recipe) {
-      res.status(httpStatus.ok).send({ recipe });
+    const isFavorite = recipes?.length > 0 ? true : false;
+    if (isFavorite) {
+      res.status(httpStatus.ok).send(isFavorite);
     } else {
       res.sendStatus(httpStatus.notFound);
     }

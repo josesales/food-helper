@@ -7,34 +7,33 @@ import { ReactComponent as AddFavorites } from "../assets/add-to-favorites.svg";
 import { ReactComponent as RemoveFavorites } from "../assets/remove-from-favorites.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { displayMessage } from "../redux/message/message-actions";
+import Loader from "./ui/Loader";
 
-const RecipeHeader = () => {
-  const [isFavorite, setIsFavorite] = useState(null);
-  const recipe = useSelector(selectCurrentRecipe);
+const RecipeHeader = ({ favorite }) => {
+  const [isFavorite, setIsFavorite] = useState(favorite);
   const token = useSelector(selectToken);
+  const recipe = useSelector(selectCurrentRecipe);
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const getRecipeByFavorite = async () => {
-      const recipeDb = await get(`/recipeByFavorite/${recipe._id}`, token);
-      if (recipeDb) {
-        setIsFavorite(true);
-      } else {
-        setIsFavorite(false);
-      }
+      const favorite = await get(`/recipeByFavorite/${recipe._id}`, token);
+      setIsFavorite(favorite);
     };
 
     if (token) {
       getRecipeByFavorite();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [recipe, token]);
 
   const onAddToMyFavoritesClick = async () => {
     //TODO check why new recipe of the favorite is not always being saved in the db
     try {
+      setIsLoading(true);
       await postPatch("/favorites", "POST", { recipe: recipe._id }, token);
       setIsFavorite(true);
+      setIsLoading(false);
     } catch (_e) {
       dispatch(
         displayMessage({
@@ -47,7 +46,9 @@ const RecipeHeader = () => {
 
   const onRemoveFromMyFavoritesClick = async () => {
     try {
+      setIsLoading(true);
       await remove(`/favorites/${recipe._id}`, token);
+      setIsLoading(false);
       setIsFavorite(false);
     } catch (_e) {
       dispatch(
@@ -68,23 +69,31 @@ const RecipeHeader = () => {
           <Rate number={recipe.rate} />
         </div>
 
-        {token && isFavorite === false ? (
+        {token && !isFavorite ? (
           <div title="Add this Recipe to your Favorites">
-            <AddFavorites
-              onClick={onAddToMyFavoritesClick}
-              className="favorite-icon"
-            />
+            {isLoading ? (
+              <Loader mini containerStyle={{ width: "4rem", height: "4rem" }} />
+            ) : (
+              <AddFavorites
+                onClick={onAddToMyFavoritesClick}
+                className="favorite-icon"
+              />
+            )}
           </div>
         ) : (
           ""
         )}
 
-        {token && isFavorite === true ? (
+        {token && isFavorite ? (
           <div title="Remove this Recipe from your Favorites">
-            <RemoveFavorites
-              onClick={onRemoveFromMyFavoritesClick}
-              className="favorite-icon"
-            />
+            {isLoading ? (
+              <Loader mini containerStyle={{ width: "4rem", height: "4rem" }} />
+            ) : (
+              <RemoveFavorites
+                onClick={onRemoveFromMyFavoritesClick}
+                className="favorite-icon"
+              />
+            )}
           </div>
         ) : (
           ""

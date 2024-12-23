@@ -91,32 +91,25 @@ const Search = ({
   const onInputChange = (e) => {
     const value = e.target.value;
     setInput(value);
-    if (value?.length > 2) {
-      filterAndDisplayItems(value);
-      return;
-    }
-
-    //if there is no value then it removes previous suggestions
-    if (!value) {
-      setFilteredItems([]);
-      setDisplaySuggestionItems(false);
-    }
+    filterAndDisplayItems(value);
   };
 
   //filter the items to show suggestions that are already in the db
   const filterAndDisplayItems = debounce(async (value) => {
-    let updatedFilteredItems = [];
+    if (value) {
+      let updatedFilteredItems = [];
 
-    updatedFilteredItems = await get(
-      `/fetch${capitalizeFirstLetter(
-        collectionName
-      )}ByFilters?name=${value}&limit=10`
-    );
+      updatedFilteredItems = await get(
+        `/fetch${capitalizeFirstLetter(
+          collectionName
+        )}ByFilters?name=${value}&limit=10`
+      );
 
-    if (updatedFilteredItems?.length > 0) {
-      setFilteredItems(updatedFilteredItems);
-      setDisplaySuggestionItems(true);
-      return;
+      if (updatedFilteredItems?.length > 0) {
+        setFilteredItems(updatedFilteredItems);
+        setDisplaySuggestionItems(true);
+        return;
+      }
     }
 
     setFilteredItems([]);

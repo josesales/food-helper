@@ -1,4 +1,4 @@
-import React, { useEffect, lazy, Suspense } from "react";
+import React, { useEffect, lazy, Suspense, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import RecipeHeader from "../components/RecipeHeader";
 import RecipeSteps from "../components/RecipeSteps";
@@ -8,7 +8,8 @@ import Media from "../components/ui/Media";
 import { selectCurrentRecipe } from "../redux/recipe/recipe-selector";
 import { getReviewsByRecipe } from "../redux/review/review-actions";
 import { selectReviews } from "../redux/review/review-selector";
-import { selectCurrentUser } from "../redux/user/user-selector";
+import { selectCurrentUser, selectToken } from "../redux/user/user-selector";
+import { get } from "../util/request-sender";
 const ReviewItems = lazy(() => import("../components/ReviewItems"));
 const Review = lazy(() => import("../components/Review"));
 
@@ -18,10 +19,28 @@ const Recipe = () => {
   const recipe = useSelector(selectCurrentRecipe);
   const currentUser = useSelector(selectCurrentUser);
   const reviews = useSelector(selectReviews);
+  const [favorite, setFavorite] = useState(false);
+  const token = useSelector(selectToken);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    dispatch(getReviewsByRecipe(recipe._id));
-  }, []);
+    const getRecipeByFavorite = async () => {
+      setIsLoading(true);
+      const reviews = await get(`/reviews/${recipe._id}?sortBy=createdAt_desc`);
+      const favorite = await get(`/recipeByFavorite/${recipe._id}`, token);
+      setFavorite(favorite);
+      dispatch(getReviewsByRecipe(reviews));
+      setIsLoading(false);
+    };
+
+    if (token) {
+      getRecipeByFavorite();
+    }
+  }, [dispatch, recipe, token]);
+
+  if (isLoading) {
+    return <Loader />;
+  }
 
   return (
     <React.Fragment>
@@ -29,7 +48,7 @@ const Recipe = () => {
         <DisplayMessage type={type} message={message} />
       ) : null}
 
-      <RecipeHeader />
+      <RecipeHeader favorite={favorite} />
 
       <div className="recipe-container">
         <RecipeSteps />

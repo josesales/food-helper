@@ -9,11 +9,13 @@ const ReviewItem = ({ review }) => {
         <blockquote className="review__text">{review.message}</blockquote>
 
         <figcaption className="review__user">
-          <img
-            src={review.user.avatar || null}
-            alt="User Picture"
-            className="review__photo"
-          />
+          {review.user.avatar && (
+            <img
+              src={review.user.avatar}
+              alt="User Picture"
+              className="review__photo"
+            />
+          )}
 
           <div className="review__user-box">
             <p className="review__user-name">{review.user.name}</p>
