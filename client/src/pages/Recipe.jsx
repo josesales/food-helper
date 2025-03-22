@@ -1,4 +1,4 @@
-import React, { useEffect, lazy, Suspense, useState, useCallback } from "react";
+import React, { useEffect, lazy, Suspense, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import RecipeHeader from "../components/RecipeHeader";
 import RecipeSteps from "../components/RecipeSteps";
@@ -26,16 +26,16 @@ const Recipe = () => {
   useEffect(() => {
     const getRecipeByFavorite = async () => {
       setIsLoading(true);
+      if (token) {
+        const favorite = await get(`/recipeByFavorite/${recipe._id}`, token);
+        setFavorite(favorite);
+      }
       const reviews = await get(`/reviews/${recipe._id}?sortBy=createdAt_desc`);
-      const favorite = await get(`/recipeByFavorite/${recipe._id}`, token);
-      setFavorite(favorite);
       dispatch(getReviewsByRecipe(reviews));
       setIsLoading(false);
     };
 
-    if (token) {
-      getRecipeByFavorite();
-    }
+    getRecipeByFavorite();
   }, [dispatch, recipe, token]);
 
   if (isLoading) {
