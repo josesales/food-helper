@@ -39,7 +39,6 @@ const Media = React.memo(
               alt="Media"
               onLoad={onLoad}
               onClick={onImgClick}
-              loading="lazy"
               style={{ cursor: onImgClick ? "pointer" : "default" }}
             />
           ) : (
