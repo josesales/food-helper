@@ -36,7 +36,11 @@ const NavigationItems = () => {
           </li>
           {!currentUser ? (
             <li className="navigation__item">
-              <Link className="navigation__link" to="/login">
+              <Link
+                className="navigation__link"
+                to="/login"
+                onClick={recipesAndPaginationCleanUp}
+              >
                 Login
               </Link>
             </li>
@@ -46,6 +50,7 @@ const NavigationItems = () => {
                 href="#"
                 className="navigation__link"
                 onClick={() => {
+                  recipesAndPaginationCleanUp();
                   dispatch(logout(token));
                   history.push("/");
                 }}
